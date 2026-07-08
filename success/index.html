@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Booking Confirmed — Taylormade Creative</title>
+  <meta name="description" content="Your Taylormade Creative booking confirmation.">
+  <meta name="robots" content="noindex">
+  <link rel="canonical" href="https://www.taylormadecreative.net/success/">
+  <link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 fill=%27%2308080a%27/%3E%3Cpath d=%27M5 12V5h7M20 5h7v7M27 20v7h-7M12 27H5v-7%27 stroke=%27%23e9b949%27 stroke-width=%273%27 fill=%27none%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%274%27 fill=%27%23e9b949%27/%3E%3C/svg%3E">
+  <script>document.documentElement.classList.add("js");</script>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;800;900&family=Familjen+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="../css/site.css">
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PS0H5W3ZX7"></script>
+  <script>
+    window.dataLayer = window.dataLayer || [];
+    function gtag(){dataLayer.push(arguments);}
+    gtag('js', new Date());
+    gtag('config', 'G-PS0H5W3ZX7');
+  </script>
+</head>
+<body>
+  <nav class="nav" aria-label="Main">
+    <a class="nav-logo" href="../">TAYLORMADE<span class="slash">/</span>CREATIVE<span class="tag">DFW</span></a>
+    <div class="nav-links">
+      <a class="btn btn-gold" href="../book/">Book another</a>
+    </div>
+  </nav>
+
+  <main class="book-main wrap" style="max-width: 760px;">
+    <div id="panel">
+      <p class="slate">FINALIZING</p>
+      <h1 class="display" style="font-size: clamp(30px, 5.4vw, 60px); margin: 14px 0 18px;">Confirming your <span class="gold">booking…</span></h1>
+      <p class="lede" style="color: var(--smoke);">Payment received — giving the paperwork a second to catch up.</p>
+      <div class="spin" style="margin-top: 26px;"></div>
+    </div>
+  </main>
+
+  <footer class="footer">
+    <div class="wrap footer-bottom" style="border-top:0; margin-top:0; padding-top:0;">
+      <span>© <span id="year">2026</span> Taylormade Creative · DFW</span>
+      <a href="../" style="color: var(--smoke);">← Back to the studio</a>
+    </div>
+  </footer>
+
+  <script src="../js/config.js"></script>
+  <script>
+  (async () => {
+    const q = new URLSearchParams(location.search);
+    const p = q.get("p"), t = q.get("t");
+    const panel = document.getElementById("panel");
+    const TZ = "America/Chicago";
+    const fmtLong = (iso) => new Intl.DateTimeFormat("en-US", { timeZone: TZ, weekday: "long", month: "long", day: "numeric", year: "numeric" }).format(new Date(iso));
+    const fmtTime = (iso) => new Intl.DateTimeFormat("en-US", { timeZone: TZ, hour: "numeric", minute: "2-digit" }).format(new Date(iso));
+    const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+
+    if (!p || !t) { location.replace("../book/"); return; }
+    const portal = `${window.TM.PORTAL_BASE}/portal.html?p=${p}&t=${t}`;
+
+    // the Stripe webhook usually lands within seconds — poll briefly
+    let status = null;
+    for (let i = 0; i < 10; i++) {
+      try {
+        status = await window.TM.rpc("bk_booking_status", { p_project: p, p_token: t });
+        if (status?.invoice?.status === "paid" || status?.booking?.status === "confirmed") break;
+      } catch (_) { /* transient */ }
+      await new Promise((r) => setTimeout(r, 1800));
+    }
+
+    const b = status?.booking, inv = status?.invoice, paid = inv?.status === "paid" || b?.status === "confirmed";
+    panel.innerHTML = `
+      <p class="slate">${paid ? "BOOKING CONFIRMED" : "PAYMENT RECEIVED"}</p>
+      <h1 class="display" style="font-size: clamp(30px, 5.4vw, 60px); margin: 14px 0 18px;">${paid ? `You're <span class="gold">booked.</span>` : `Almost <span class="gold">there.</span>`}</h1>
+      ${b ? `
+      <div class="bk-summary" style="max-width: 520px; margin-bottom: 22px;">
+        <div class="row"><span>Session</span><b>${esc(b.service_name)}</b></div>
+        <div class="row"><span>Date</span><b>${fmtLong(b.starts_at)}</b></div>
+        <div class="row"><span>Time</span><b>${fmtTime(b.starts_at)} CT · ${b.duration_min} min</b></div>
+        ${b.location ? `<div class="row"><span>Location</span><b>${esc(b.location)}</b></div>` : ""}
+      </div>` : ""}
+      <p class="lede" style="color: var(--smoke); max-width: 56ch;">${paid
+        ? "A confirmation email is on its way, a prep email lands a few days before your shoot, and you'll get a reminder the day before. Your client portal has everything else."
+        : "Your payment went through — the confirmation is processing and your email will arrive in the next few minutes. Your portal link below works right now."}</p>
+      <div class="hero-ctas" style="margin-top: 26px;">
+        <a class="btn btn-gold" href="${portal}">Open your client portal</a>
+        <a class="btn btn-ghost" href="../">← Back to the studio</a>
+      </div>`;
+    document.getElementById("year").textContent = new Date().getFullYear();
+  })();
+  </script>
+</body>
+</html>
