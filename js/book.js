@@ -298,6 +298,10 @@
             </select></div>`}
           <div class="bk-field"><label for="fNotes">${isSession ? "Anything I should know? (optional)" : "Tell me about the project *"}</label>
             <textarea id="fNotes" name="notes" rows="4" maxlength="3000" ${isSession ? "" : "required"} placeholder="${isSession ? "Looks you want, references, questions…" : "What are we making? Goals, timeline, references…"}">${esc(d.notes)}</textarea></div>
+          <label style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--smoke);cursor:pointer;">
+            <input type="checkbox" name="subscribe" ${d.subscribe ? "checked" : ""} style="margin-top:3px;accent-color:var(--gold);">
+            <span>Keep me in the loop — occasional studio news, new work, and open dates. No spam, unsubscribe anytime.</span>
+          </label>
           <p class="bk-err" id="formErr" hidden></p>
           <div style="display:flex; gap:12px; flex-wrap:wrap;">
             <button type="submit" class="btn btn-gold">Review ${isSession ? "&amp; pay" : "&amp; send"} →</button>
@@ -316,6 +320,7 @@
         company: isSession ? state.details.company : f.company.value,
         budget: isSession ? state.details.budget : f.budget.value,
         notes: f.notes.value,
+        subscribe: f.subscribe.checked,
       };
     });
     f.addEventListener("submit", (e) => {
@@ -331,6 +336,7 @@
         company: isSession ? "" : f.company.value.trim(),
         budget: isSession ? "" : f.budget.value,
         notes: f.notes.value.trim(),
+        subscribe: f.subscribe.checked,
       };
       renderConfirm();
     });
@@ -401,6 +407,9 @@
         state.bkCache = { key: bkKey, bk };
       }
       track("begin_checkout", { currency: "USD", value: bk.amount_cents / 100, service: state.svc.slug });
+      if (state.details.subscribe) {
+        TM.rpc("bk_subscribe", { p_email: state.details.email, p_name: state.details.name, p_source: "booking" }).catch(() => {});
+      }
       const successUrl = new URL(`../success/?p=${bk.project_id}&t=${bk.token}`, location.href).href;
       const res = await fetch(`${TM.FUNCTIONS_BASE}/bk-create-checkout`, {
         method: "POST",
@@ -444,6 +453,9 @@
         p_source: "website",
       });
       track("generate_lead", { service: state.svc.slug });
+      if (state.details.subscribe) {
+        TM.rpc("bk_subscribe", { p_email: state.details.email, p_name: state.details.name, p_source: "inquiry" }).catch(() => {});
+      }
       const portal = `${TM.PORTAL_BASE}/portal.html?p=${res.id}&t=${res.token}`;
       host.innerHTML = `
         <section aria-label="Inquiry sent" style="max-width:640px;">

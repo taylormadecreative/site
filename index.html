@@ -390,6 +390,15 @@
         <div>
           <a class="nav-logo" href="./">TAYLORMADE<span class="slash">/</span>CREATIVE</a>
           <p style="margin-top:14px;color:var(--smoke);font-size:14.5px;max-width:34ch;">Dallas–Fort Worth creative studio. Cinematic video, photography, AI content, web, social, and live workshops.</p>
+          <form id="newsForm" style="margin-top:20px;max-width:340px;" aria-label="Newsletter signup">
+            <label for="newsEmail" class="slate" style="display:block;margin-bottom:10px;">THE STUDIO LETTER — WORK, IDEAS &amp; OPEN DATES</label>
+            <div style="display:flex;gap:8px;">
+              <input id="newsEmail" type="email" required placeholder="you@email.com" autocomplete="email"
+                style="flex:1;min-width:0;background:var(--ink-2);color:var(--paper);border:1px solid var(--line-d);border-radius:10px;padding:12px 14px;font:inherit;font-size:15px;">
+              <button class="btn btn-gold" type="submit" style="padding:12px 18px;">Join</button>
+            </div>
+            <p id="newsMsg" class="slate slate--dim" style="margin-top:10px;min-height:1.2em;" aria-live="polite"></p>
+          </form>
         </div>
         <div>
           <h4>Services</h4>
@@ -420,6 +429,7 @@
     </div>
   </footer>
 
+  <script src="js/config.js"></script>
   <script src="js/site.js" defer></script>
 </body>
 </html>

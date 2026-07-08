@@ -208,6 +208,18 @@ function renderInvoiceSent(
   return { subject, html };
 }
 
+function renderContractSent(ctx: Ctx, title: string): { subject: string; html: string } {
+  const subject = `Your contract is ready to sign · Taylormade Creative`;
+  const html = shell(subject,
+    h1(`One signature and we're official, ${firstName(ctx)}.`) +
+    p(`The agreement for <b>${esc(ctx.project?.title ?? "your project")}</b> is ready in your private portal. Read it over, type your name to sign, and you're set — takes about a minute.`) +
+    detailCard([["Document", esc(title || "Service Agreement")]]) +
+    p(`Questions about anything in it? Reply to this email before you sign and we'll sort it out.`) +
+    btn(portalUrl(ctx), "REVIEW & SIGN IN YOUR PORTAL"),
+  );
+  return { subject, html };
+}
+
 function renderNewMessage(ctx: Ctx): { subject: string; html: string } {
   const snippet = String(ctx.payload?.snippet ?? "");
   const subject = `New message from Taylormade Creative`;
@@ -233,6 +245,9 @@ function renderNelsonAlert(ctx: Ctx): { subject: string; html: string } {
   } else if (type === "inquiry") {
     subject = `📥 New inquiry · ${pj?.title ?? "website"}`;
     lead = `New project inquiry from <b>${esc(who)}</b> — service: ${esc(String(pl.service ?? "n/a"))}. Reply within one business day (the client was told to expect that).`;
+  } else if (type === "contract_signed") {
+    subject = `✍️ Contract signed · ${pj?.title ?? ""}`;
+    lead = `<b>${esc(String(pl.signer ?? "The client"))}</b> just signed <b>${esc(String(pl.title ?? "the agreement"))}</b> for ${esc(pj?.title ?? "a project")}. Name, timestamp, and device details are on record.`;
   } else if (type === "test") {
     subject = `✅ Booking email automation is live`;
     lead = `This is the end-to-end test of the new bk-mailer pipeline on taylormadecreative.net. Queue → Resend → inbox all working.`;
@@ -347,6 +362,19 @@ Deno.serve(async (req: Request) => {
         case "new_message": {
           if (!project) throw new Error("missing project");
           rendered = renderNewMessage(ctx); to = project.client_email; break;
+        }
+        case "contract_sent": {
+          if (!project) throw new Error("missing project");
+          const cId = String((row.payload as Record<string, unknown>)?.contract_id ?? "");
+          const { data: c } = await db.from("bk_contracts").select("status, title").eq("id", cId).maybeSingle();
+          if (!c || c.status !== "sent") {
+            await db.from("bk_email_queue").update({
+              sent_at: new Date().toISOString(),
+              last_error: `skipped: contract ${c?.status ?? "missing"}`,
+            }).eq("id", row.id);
+            skipped++; continue;
+          }
+          rendered = renderContractSent(ctx, c.title); to = project.client_email; break;
         }
         case "nelson_alert": rendered = renderNelsonAlert(ctx); to = NELSON; break;
         default: throw new Error(`unknown kind ${row.kind}`);

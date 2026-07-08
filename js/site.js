@@ -98,6 +98,25 @@
     });
   });
 
+  /* ---------- newsletter signup (footer) ---------- */
+  const newsForm = $("#newsForm");
+  if (newsForm && window.TM?.rpc) {
+    newsForm.addEventListener("submit", async (e) => {
+      e.preventDefault();
+      const email = $("#newsEmail").value.trim();
+      const msg = $("#newsMsg");
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) { msg.textContent = "ENTER A VALID EMAIL"; return; }
+      msg.textContent = "…";
+      try {
+        await window.TM.rpc("bk_subscribe", { p_email: email, p_source: "website" });
+        msg.textContent = "YOU'RE IN — TALK SOON";
+        newsForm.querySelector("input").value = "";
+      } catch (_) {
+        msg.textContent = "DIDN'T GO THROUGH — TRY AGAIN";
+      }
+    });
+  }
+
   /* ---------- year ---------- */
   const y = $("#year"); if (y) y.textContent = new Date().getFullYear();
 })();
