@@ -10,8 +10,14 @@
   const hero = $(".hero");
   function armHero() { if (hero) hero.classList.add("armed"); }
 
-  if (leader && !reduced && !sessionStorage.getItem("tm-leader")) {
+  // storage can throw under "block all cookies" — never let that kill the page
+  let leaderSeen = true;
+  try {
+    leaderSeen = !!sessionStorage.getItem("tm-leader");
     sessionStorage.setItem("tm-leader", "1");
+  } catch (_) { leaderSeen = true; }
+
+  if (leader && !reduced && !leaderSeen) {
     const num = $("#leaderNum");
     const sweep = $("#leaderSweep");
     const flash = $("#leaderFlash");
@@ -55,7 +61,13 @@
   /* ---------- nav ---------- */
   const nav = $(".nav");
   const burger = $("#burger");
-  if (burger) burger.addEventListener("click", () => nav.classList.toggle("open"));
+  if (burger) {
+    burger.setAttribute("aria-expanded", "false");
+    burger.addEventListener("click", () => {
+      const open = nav.classList.toggle("open");
+      burger.setAttribute("aria-expanded", String(open));
+    });
+  }
   $$(".nav-links a").forEach((a) => a.addEventListener("click", () => nav.classList.remove("open")));
   let lastY = 0;
   addEventListener("scroll", () => {
@@ -80,6 +92,10 @@
         title="${el.dataset.title || "Video player"}" loading="lazy"
         allow="autoplay; encrypted-media; picture-in-picture" allowfullscreen></iframe>`;
     }, { once: true });
+    // role="button" needs real keyboard activation
+    el.addEventListener("keydown", (e) => {
+      if (e.key === "Enter" || e.key === " ") { e.preventDefault(); el.click(); }
+    });
   });
 
   /* ---------- year ---------- */

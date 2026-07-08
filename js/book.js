@@ -35,6 +35,24 @@
   const money = (c) => "$" + (c / 100).toLocaleString("en-US", { maximumFractionDigits: c % 100 ? 2 : 0, minimumFractionDigits: c % 100 ? 2 : 0 });
 
   const esc = (s) => String(s ?? "").replace(/[&<>"']/g, (m) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" }[m]));
+  const fmtDur = (min) => min < 60 ? `${min} min`
+    : min % 60 === 0 ? `${min / 60} ${min === 60 ? "hr" : "hrs"}`
+    : `${Math.floor(min / 60)}h ${min % 60}m`;
+  const isMobile = () => matchMedia("(max-width: 820px)").matches;
+  const track = (name, params) => { try { window.gtag?.("event", name, params); } catch (_) { /* analytics never blocks booking */ } };
+
+  // the phone/browser Back button should step back through the wizard,
+  // not eject a half-finished booking to the homepage
+  let suppressPush = false;
+  history.replaceState({ step: 1 }, "");
+  addEventListener("popstate", (e) => {
+    const s = e.state?.step ?? 1;
+    suppressPush = true;
+    if (s <= 1 || !state.svc) renderServices();
+    else if (s === 3 && (state.slot || state.flexible)) renderDetails();
+    else if (s === 4 && state.details.name) renderConfirm();
+    else renderCalendar();
+  });
 
   function setStep(n) {
     stepsBar.querySelectorAll("span").forEach((el) => {
@@ -42,6 +60,9 @@
       el.classList.toggle("on", s === n);
       el.classList.toggle("done", s < n);
     });
+    if (suppressPush) suppressPush = false;
+    else if (n > 1) history.pushState({ step: n }, "");
+    track("book_step", { step: n, service: state.svc?.slug ?? "none" });
     window.scrollTo({ top: 0, behavior: "smooth" });
   }
 
@@ -59,7 +80,7 @@
         <p>${esc(s.tagline || "")}</p>
         <span class="price">${
           s.kind === "session"
-            ? `<b>${money(s.deposit_cents ?? s.price_cents)}</b> · ${s.deposit_cents ? "deposit locks your date" : "flat, paid at booking"} · ${s.duration_min} min`
+            ? `<b>${money(s.deposit_cents ?? s.price_cents)}</b> · ${s.deposit_cents ? "deposit locks your date" : "flat, paid at booking"} · ${fmtDur(s.duration_min)}`
             : `<b>Quoted per project</b> · reply within 1 business day`
         }</span>
       </button>`;
@@ -106,7 +127,7 @@
     }
     host.innerHTML = `
       <section aria-label="Pick a date and time">
-        <p class="slate" style="margin-bottom:10px;">${esc(state.svc.name).toUpperCase()} · ${state.svc.duration_min} MIN${state.svc.kind === "project" ? " · PREFERRED DATE (OPTIONAL)" : ""}</p>
+        <p class="slate" style="margin-bottom:10px;">${esc(state.svc.name).toUpperCase()} · ${fmtDur(state.svc.duration_min).toUpperCase()}${state.svc.kind === "project" ? " · PREFERRED DATE (OPTIONAL)" : ""}</p>
         <div class="cal-wrap">
           <div class="cal" id="cal"><div class="spin" style="margin: 40px auto;"></div></div>
           <div class="slots" id="slots">
@@ -123,9 +144,41 @@
 
     try {
       await fetchMonth(state.month);
+      // nothing this month? quietly hop forward to the first month with open time
+      let hops = 0;
+      while (Object.keys(state.slotsByDay).length === 0 && hops < 2) {
+        const y = state.month.getFullYear(), m = state.month.getMonth();
+        state.month = new Date(y, m + 1, 1);
+        await fetchMonth(state.month);
+        hops++;
+      }
       drawGrid();
+      drawSlots();
     } catch (e) {
-      document.getElementById("cal").innerHTML = `<p class="bk-err">Couldn't load the calendar (${esc(e.message)}). Refresh to try again.</p>`;
+      calError(e);
+    }
+  }
+
+  function calError(e) {
+    const cal = document.getElementById("cal");
+    if (!cal) return;
+    cal.innerHTML = `<p class="bk-err" style="padding:26px 8px 14px;">Couldn't load the calendar (${esc(e.message)}).</p>
+      <button class="btn btn-ghost" id="calRetry" style="margin:0 0 14px;">Try again</button>`;
+    document.getElementById("calRetry").addEventListener("click", () => goMonth(0));
+  }
+
+  async function goMonth(delta) {
+    const y = state.month.getFullYear(), m = state.month.getMonth();
+    state.month = new Date(y, m + delta, 1);
+    state.day = null; state.slot = null;
+    const cal = document.getElementById("cal");
+    cal.innerHTML = `<div class="spin" style="margin:40px auto;"></div>`;
+    try {
+      await fetchMonth(state.month);
+      drawGrid();
+      drawSlots();
+    } catch (e) {
+      calError(e);
     }
   }
 
@@ -144,7 +197,8 @@
     for (let d = 1; d <= days; d++) {
       const key = `${y}-${String(m + 1).padStart(2, "0")}-${String(d).padStart(2, "0")}`;
       const open = !!state.slotsByDay[key];
-      cells += `<span class="cal-day${open ? " open" : ""}${state.day === key ? " sel" : ""}" ${open ? `role="button" tabindex="0" data-day="${key}" aria-label="See times for ${key}"` : ""}>${d}</span>`;
+      const spoken = new Date(`${key}T12:00:00`).toLocaleDateString("en-US", { weekday: "long", month: "long", day: "numeric" });
+      cells += `<span class="cal-day${open ? " open" : ""}${state.day === key ? " sel" : ""}" ${open ? `role="button" tabindex="0" data-day="${key}" aria-label="See open times for ${spoken}"` : ""}>${d}</span>`;
     }
     cal.innerHTML = `
       <div class="cal-head">
@@ -157,26 +211,34 @@
       <div class="cal-dow"><span>S</span><span>M</span><span>T</span><span>W</span><span>T</span><span>F</span><span>S</span></div>
       <div class="cal-grid">${cells}</div>`;
     cal.querySelectorAll(".cal-day.open").forEach((el) => {
-      const pick = () => { state.day = el.dataset.day; state.slot = null; drawGrid(); drawSlots(); };
+      const pick = () => {
+        state.day = el.dataset.day; state.slot = null;
+        drawGrid(); drawSlots();
+        const slots = document.getElementById("slots");
+        if (isMobile()) slots?.scrollIntoView({ behavior: "smooth", block: "start" });
+        const t = slots?.querySelector(".slots-title");
+        if (t) { t.setAttribute("tabindex", "-1"); t.focus({ preventScroll: true }); }
+      };
       el.addEventListener("click", pick);
       el.addEventListener("keydown", (e) => { if (e.key === "Enter" || e.key === " ") { e.preventDefault(); pick(); } });
     });
-    document.getElementById("calNext").addEventListener("click", async () => {
-      state.month = new Date(y, m + 1, 1); state.day = null; state.slot = null;
-      cal.innerHTML = `<div class="spin" style="margin:40px auto;"></div>`;
-      await fetchMonth(state.month); drawGrid(); drawSlots();
-    });
+    document.getElementById("calNext").addEventListener("click", () => goMonth(1));
     const prev = document.getElementById("calPrev");
-    if (!prevDisabled) prev.addEventListener("click", async () => {
-      state.month = new Date(y, m - 1, 1); state.day = null; state.slot = null;
-      cal.innerHTML = `<div class="spin" style="margin:40px auto;"></div>`;
-      await fetchMonth(state.month); drawGrid(); drawSlots();
-    });
+    if (!prevDisabled) prev.addEventListener("click", () => goMonth(-1));
   }
 
   function drawSlots() {
     const box = document.getElementById("slots");
-    if (!state.day) {
+    const monthEmpty = Object.keys(state.slotsByDay).length === 0;
+    if (!state.day && monthEmpty) {
+      const monthName = state.month.toLocaleString("en-US", { month: "long" });
+      box.innerHTML = `<span class="slots-title">No open times in ${monthName}</span>
+        <p class="empty">My calendar is booked out (or not open yet) for ${monthName}. The next month usually has room.</p>
+        <button class="btn btn-gold" id="emptyNext" style="align-self:flex-start;">Check next month →</button>
+        ${state.svc.kind === "project" ? `<button class="btn btn-ghost" id="skipCal" style="align-self:flex-start;">I'm flexible — skip the calendar</button>` : ""}
+        <button class="btn btn-ghost" id="backSvc" style="align-self:flex-start;">← Change service</button>`;
+      document.getElementById("emptyNext").addEventListener("click", () => goMonth(1));
+    } else if (!state.day) {
       box.innerHTML = `<span class="slots-title">Pick a day to see times</span>
         <p class="empty">Days with a gold dot have open times. All times Central.</p>
         ${state.svc.kind === "project" ? `<button class="btn btn-ghost" id="skipCal" style="align-self:flex-start;">I'm flexible — skip this</button>` : ""}
@@ -190,7 +252,11 @@
         <button class="btn btn-gold" id="toDetails" ${state.slot ? "" : "disabled style='opacity:.45'"}>Continue →</button>
         <button class="btn btn-ghost" id="backSvc" style="align-self:flex-start;">← Change service</button>`;
       box.querySelectorAll(".slot").forEach((el) =>
-        el.addEventListener("click", () => { state.slot = el.dataset.iso; drawSlots(); }));
+        el.addEventListener("click", () => {
+          state.slot = el.dataset.iso;
+          drawSlots();
+          if (isMobile()) document.getElementById("toDetails")?.scrollIntoView({ behavior: "smooth", block: "center" });
+        }));
       const go = document.getElementById("toDetails");
       if (state.slot) go.addEventListener("click", renderDetails);
     }
@@ -225,7 +291,7 @@
           <div class="bk-field"><label for="fBudget">Budget range</label>
             <select id="fBudget" name="budget">
               <option${d.budget === "Not sure yet" ? " selected" : ""}>Not sure yet</option>
-              <option${d.budget === "Under $1,000" ? " selected" : ""}>Under $1,000</option>
+              ${state.svc.slug === "web-design" ? "" : `<option${d.budget === "Under $1,000" ? " selected" : ""}>Under $1,000</option>`}
               <option${d.budget === "$1,000–$2,500" ? " selected" : ""}>$1,000–$2,500</option>
               <option${d.budget === "$2,500–$5,000" ? " selected" : ""}>$2,500–$5,000</option>
               <option${d.budget === "$5,000+" ? " selected" : ""}>$5,000+</option>
@@ -240,14 +306,25 @@
         </form>
       </section>`;
     document.getElementById("backCal").addEventListener("click", renderCalendar);
-    document.getElementById("bkForm").addEventListener("submit", (e) => {
+    const f = document.getElementById("bkForm");
+    // keep typed values even if the user steps back to re-check the calendar
+    f.addEventListener("input", () => {
+      state.details = {
+        ...state.details,
+        name: f.name.value, email: f.email.value, phone: f.phone.value,
+        location: isSession ? f.location.value : state.details.location,
+        company: isSession ? state.details.company : f.company.value,
+        budget: isSession ? state.details.budget : f.budget.value,
+        notes: f.notes.value,
+      };
+    });
+    f.addEventListener("submit", (e) => {
       e.preventDefault();
-      const f = e.target;
       const err = document.getElementById("formErr");
       const email = f.email.value.trim();
-      if (!f.name.value.trim()) return showErr(err, "Your name is required.");
-      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return showErr(err, "Enter a valid email — your confirmation goes there.");
-      if (!isSession && !f.notes.value.trim()) return showErr(err, "Tell me a little about the project.");
+      if (!f.name.value.trim()) return showErr(err, "Your name is required.", f.name);
+      if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return showErr(err, "Enter a valid email — your confirmation goes there.", f.email);
+      if (!isSession && !f.notes.value.trim()) return showErr(err, "Tell me a little about the project.", f.notes);
       state.details = {
         name: f.name.value.trim(), email, phone: f.phone.value.trim(),
         location: isSession ? f.location.value.trim() : "",
@@ -259,7 +336,14 @@
     });
   }
   state.details = { name: "", email: "", phone: "", location: "", company: "", budget: "", notes: "" };
-  function showErr(el, msg) { el.textContent = msg; el.hidden = false; }
+  function showErr(el, msg, field) {
+    el.textContent = msg; el.hidden = false;
+    if (field) {
+      field.style.borderColor = "#ffb3a0";
+      field.focus();
+      field.addEventListener("input", () => { field.style.borderColor = ""; }, { once: true });
+    }
+  }
 
   /* ================================================================
      STEP 4 — confirm: pay (session) or send (project)
@@ -273,7 +357,7 @@
         <div class="bk-summary" style="max-width:560px;">
           <div class="row"><span>Service</span><b>${esc(state.svc.name)}</b></div>
           ${state.slot ? `<div class="row"><span>Date</span><b>${fmtLong(state.slot)}</b></div>
-          <div class="row"><span>Time</span><b>${fmtTime(state.slot)} CT · ${state.svc.duration_min} min</b></div>` :
+          <div class="row"><span>Time</span><b>${fmtTime(state.slot)} CT · ${fmtDur(state.svc.duration_min)}</b></div>` :
           `<div class="row"><span>Date</span><b>Flexible — we'll schedule together</b></div>`}
           <div class="row"><span>Name</span><b>${esc(state.details.name)}</b></div>
           <div class="row"><span>Email</span><b>${esc(state.details.email)}</b></div>
@@ -300,15 +384,23 @@
     const err = document.getElementById("payErr");
     btn.innerHTML = `<span class="spin"></span> Locking your slot…`;
     try {
-      const bk = await TM.rpc("bk_create_booking", {
-        p_service: state.svc.slug,
-        p_starts_at: state.slot,
-        p_name: state.details.name,
-        p_email: state.details.email,
-        p_phone: state.details.phone || null,
-        p_location: state.details.location || null,
-        p_details: state.details.notes || null,
-      });
+      // if the booking was already created and only the checkout hop failed,
+      // retry must NOT create a second booking (our own hold would block us)
+      const bkKey = `${state.svc.slug}|${state.slot}|${state.details.email}`;
+      let bk = state.bkCache?.key === bkKey ? state.bkCache.bk : null;
+      if (!bk) {
+        bk = await TM.rpc("bk_create_booking", {
+          p_service: state.svc.slug,
+          p_starts_at: state.slot,
+          p_name: state.details.name,
+          p_email: state.details.email,
+          p_phone: state.details.phone || null,
+          p_location: state.details.location || null,
+          p_details: state.details.notes || null,
+        });
+        state.bkCache = { key: bkKey, bk };
+      }
+      track("begin_checkout", { currency: "USD", value: bk.amount_cents / 100, service: state.svc.slug });
       const successUrl = new URL(`../success/?p=${bk.project_id}&t=${bk.token}`, location.href).href;
       const res = await fetch(`${TM.FUNCTIONS_BASE}/bk-create-checkout`, {
         method: "POST",
@@ -351,6 +443,7 @@
         p_details: notes,
         p_source: "website",
       });
+      track("generate_lead", { service: state.svc.slug });
       const portal = `${TM.PORTAL_BASE}/portal.html?p=${res.id}&t=${res.token}`;
       host.innerHTML = `
         <section aria-label="Inquiry sent" style="max-width:640px;">
@@ -376,7 +469,20 @@
   (async () => {
     try {
       state.services = await TM.rpc("bk_public_services", {});
-      const want = new URLSearchParams(location.search).get("service");
+      const params = new URLSearchParams(location.search);
+      const want = params.get("service");
+      // web-design tier deep links carry the buyer's choice through the funnel
+      const TIERS = {
+        landing: ["Tier interest: Ad Landing Page — $1,200", "$1,000–$2,500"],
+        starter: ["Tier interest: Starter Business Website — $2,000", "$1,000–$2,500"],
+        premium: ["Tier interest: Premium Business Website — $3,500", "$2,500–$5,000"],
+        custom: ["Tier interest: Custom / Multi-Site — from $6,000", "$5,000+"],
+      };
+      const tier = TIERS[params.get("tier")];
+      if (tier && want === "web-design") {
+        state.details.notes = tier[0];
+        state.details.budget = tier[1];
+      }
       renderServices();
       if (want && state.services.some((s) => s.slug === want)) selectService(want);
       else if (location.hash === "#project") document.getElementById("project")?.scrollIntoView();

@@ -13,6 +13,7 @@
   --paper-2: #ebe6d8;
   --gold: #e9b949;
   --gold-deep: #b8871b;
+  --gold-ink: #7a5a0e;     /* gold voice on paper — AA contrast for small text */
   --smoke: #99948a;        /* muted on dark */
   --ink-soft: #55524a;     /* muted on paper */
   --line-d: rgba(233, 185, 73, .22);
@@ -53,7 +54,9 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
   color: var(--gold);
 }
 .slate--dim { color: var(--smoke); }
+.on-paper .slate { color: var(--gold-ink); }
 .on-paper .slate--dim { color: var(--ink-soft); }
+.act--paper .gold, .on-paper .gold { color: var(--gold-ink); }
 
 .display {
   font-family: var(--font-d);
@@ -198,6 +201,10 @@ section { position: relative; }
   animation: blink 1.6s steps(1) infinite;
 }
 @keyframes blink { 50% { opacity: .15; } }
+@media (max-width: 520px) {
+  /* third HUD item duplicates the call sheet one scroll below — drop the orphan */
+  .hero-hud span:nth-child(3) { display: none; }
+}
 
 .hero h1 { position: relative; z-index: 2; max-width: 14ch; }
 .hero h1 .h-line { display: block; overflow: hidden; }
@@ -255,14 +262,14 @@ section { position: relative; }
 }
 .sheet-row:hover { padding-left: 18px; }
 .sheet-row:hover::before { width: 4px; }
-.sheet-row .sc { font-family: var(--font-m); font-size: 11px; letter-spacing: .16em; color: var(--gold-deep); }
+.sheet-row .sc { font-family: var(--font-m); font-size: 11px; letter-spacing: .16em; color: var(--gold-ink); }
 .sheet-row h3 { font-family: var(--font-d); font-weight: 700; text-transform: uppercase; font-size: clamp(17px, 2.4vw, 26px); letter-spacing: 0; }
 .sheet-row p { margin-top: 6px; font-size: 15.5px; max-width: 58ch; }
 .sheet-row .go {
   font-family: var(--font-m); font-size: 11px; letter-spacing: .14em; text-transform: uppercase;
   color: var(--ink); display: inline-flex; align-items: center; gap: 8px; white-space: nowrap;
 }
-.sheet-row .go b { color: var(--gold-deep); font-weight: 500; }
+.sheet-row .go b { color: var(--gold-ink); font-weight: 500; }
 .sheet-row .go .arr { transition: transform .25s ease; }
 .sheet-row:hover .go .arr { transform: translateX(6px); }
 @media (max-width: 720px) {
@@ -322,10 +329,11 @@ section { position: relative; }
 }
 .step::before {
   counter-increment: step; content: "0" counter(step);
-  font-family: var(--font-m); font-size: 11px; letter-spacing: .16em; color: var(--gold-deep);
+  font-family: var(--font-m); font-size: 11px; letter-spacing: .16em; color: var(--gold-ink);
 }
-.step h3 { margin: 12px 0 8px; }
-.step p { font-size: 15px; }
+/* cards are self-colored so they read right on paper AND dark acts */
+.step h3 { margin: 12px 0 8px; color: var(--ink); }
+.step p { font-size: 15px; color: var(--ink-soft); }
 
 /* ---------- digitals band ---------- */
 .band {
@@ -349,6 +357,9 @@ section { position: relative; }
 .quote .mark { font-family: var(--font-d); font-size: 40px; line-height: .6; color: var(--gold); }
 .quote blockquote { font-size: 16.5px; line-height: 1.6; color: var(--ink); font-weight: 500; }
 .quote cite { font-family: var(--font-m); font-style: normal; font-size: 10.5px; letter-spacing: .15em; text-transform: uppercase; color: var(--ink-soft); margin-top: auto; }
+.quote p { color: var(--ink-soft); }
+a.quote { transition: transform .2s ease, border-color .2s ease, box-shadow .2s ease; }
+a.quote:hover { transform: translateY(-3px); border-color: var(--gold-deep); }
 
 /* ---------- about ---------- */
 .about-grid { display: grid; grid-template-columns: 1.2fr .8fr; gap: clamp(30px, 5vw, 70px); align-items: start; }
@@ -366,7 +377,7 @@ section { position: relative; }
   padding: 20px 0; font-weight: 700; font-size: clamp(16px, 1.8vw, 19px); color: var(--ink);
 }
 .faq summary::-webkit-details-marker { display: none; }
-.faq summary::after { content: "+"; font-family: var(--font-d); color: var(--gold-deep); font-size: 20px; transition: transform .25s ease; flex-shrink: 0; }
+.faq summary::after { content: "+"; font-family: var(--font-d); color: var(--gold-ink); font-size: 20px; transition: transform .25s ease; flex-shrink: 0; }
 .faq details[open] summary::after { transform: rotate(45deg); }
 .faq .a { padding: 0 0 22px; max-width: 68ch; color: var(--ink-soft); }
 .act:not(.act--paper) .faq { border-top-color: var(--line-d); }
