@@ -175,7 +175,8 @@ section { position: relative; }
 .hero {
   min-height: 100svh;
   display: flex; flex-direction: column; justify-content: center;
-  padding: 120px 0 90px;
+  /* top/bottom only — horizontal padding comes from .wrap and must survive */
+  padding-top: 120px; padding-bottom: 90px;
   position: relative; overflow: clip;
 }
 .hero-ghost {
