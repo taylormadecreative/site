@@ -12,6 +12,7 @@
 
   const state = {
     services: [],
+    addons: [],       // rentable gear (studio services): {slug, name, price_cents|null}
     svc: null,        // selected service object
     month: null,      // Date of displayed month (1st)
     slotsByDay: {},   // 'YYYY-MM-DD' (CT) -> [iso,...]
@@ -308,17 +309,14 @@
             </select></div>`}
           <div class="bk-field"><label for="fNotes">${isSession ? "Anything I should know? (optional)" : "Tell me about the project *"}</label>
             <textarea id="fNotes" name="notes" rows="4" maxlength="3000" ${isSession ? "" : "required"} placeholder="${isSession ? "Looks you want, references, questions…" : "What are we making? Goals, timeline, references…"}">${esc(d.notes)}</textarea></div>
-          ${isStudio(state.svc) ? `
-          <div class="bk-field"><label>Add-ons (no charge now — confirmed with you before your booking)</label>
+          ${isStudio(state.svc) && state.addons.length ? `
+          <div class="bk-field"><label>Rent gear with the space (added to your total)</label>
+            ${state.addons.map((a) => `
             <label style="display:flex;gap:10px;align-items:flex-start;font-size:14.5px;color:var(--paper);cursor:pointer;margin-bottom:8px;">
-              <input type="checkbox" name="addonLight" ${d.addonLight ? "checked" : ""} style="margin-top:3px;accent-color:var(--gold);">
-              <span>Lighting kit rental</span>
-            </label>
-            <label style="display:flex;gap:10px;align-items:flex-start;font-size:14.5px;color:var(--paper);cursor:pointer;">
-              <input type="checkbox" name="addonSmoke" ${d.addonSmoke ? "checked" : ""} style="margin-top:3px;accent-color:var(--gold);">
-              <span>Smoke machine</span>
-            </label>
-            <p class="bk-note" style="margin-top:8px;">Bring your own cameras and gear — there are none on site.</p>
+              <input type="checkbox" name="addon" value="${esc(a.slug)}" ${(d.addons || []).includes(a.slug) ? "checked" : ""} style="margin-top:3px;accent-color:var(--gold);">
+              <span>${esc(a.name)} — <b style="color:var(--gold);">${a.price_cents != null ? money(a.price_cents) : "priced on request"}</b></span>
+            </label>`).join("")}
+            <p class="bk-note" style="margin-top:8px;">Bring your own cameras — there are none on site.</p>
           </div>` : ""}
           <label style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--smoke);cursor:pointer;">
             <input type="checkbox" name="subscribe" ${d.subscribe ? "checked" : ""} style="margin-top:3px;accent-color:var(--gold);">
@@ -343,8 +341,7 @@
         budget: isSession ? state.details.budget : f.budget.value,
         notes: f.notes.value,
         subscribe: f.subscribe.checked,
-        addonLight: f.addonLight ? f.addonLight.checked : state.details.addonLight,
-        addonSmoke: f.addonSmoke ? f.addonSmoke.checked : state.details.addonSmoke,
+        addons: [...f.querySelectorAll('input[name="addon"]:checked')].map((el) => el.value),
       };
     });
     f.addEventListener("submit", (e) => {
@@ -361,8 +358,7 @@
         budget: isSession ? "" : f.budget.value,
         notes: f.notes.value.trim(),
         subscribe: f.subscribe.checked,
-        addonLight: f.addonLight ? f.addonLight.checked : false,
-        addonSmoke: f.addonSmoke ? f.addonSmoke.checked : false,
+        addons: [...f.querySelectorAll('input[name="addon"]:checked')].map((el) => el.value),
       };
       renderConfirm();
     });
@@ -383,8 +379,11 @@
   function renderConfirm() {
     setStep(4);
     const isSession = state.svc.kind === "session";
-    const amount = amountFor(state.svc, state.slot);
-    const addons = [state.details.addonLight && "Lighting kit", state.details.addonSmoke && "Smoke machine"].filter(Boolean);
+    const picked = (state.details.addons || [])
+      .map((slug) => state.addons.find((a) => a.slug === slug)).filter(Boolean);
+    const addonTotal = picked.reduce((n, a) => n + (a.price_cents ?? 0), 0);
+    const amount = amountFor(state.svc, state.slot) + addonTotal;
+    const addons = picked.map((a) => `${a.name}${a.price_cents == null ? " (priced on request)" : ""}`);
     host.innerHTML = `
       <section aria-label="Confirm">
         <div class="bk-summary" style="max-width:560px;">
@@ -394,7 +393,7 @@
           `<div class="row"><span>Date</span><b>Flexible — we'll schedule together</b></div>`}
           <div class="row"><span>Name</span><b>${esc(state.details.name)}</b></div>
           <div class="row"><span>Email</span><b>${esc(state.details.email)}</b></div>
-          ${addons.length ? `<div class="row"><span>Add-ons</span><b>${addons.join(" + ")} (confirmed with you)</b></div>` : ""}
+          ${addons.length ? `<div class="row"><span>Add-ons</span><b>${addons.join(" + ")}</b></div>` : ""}
           ${isSession ? `<div class="row" style="border-top:1px solid var(--line-d); padding-top:10px; margin-top:6px;"><span>${state.svc.deposit_cents ? "Deposit due now" : "Total due now"}${state.svc.weekend_price_cents != null && state.slot ? (isWeekendCT(state.slot) ? " (weekend rate)" : " (weekday rate)") : ""}</span><b>${money(amount)}</b></div>` :
           state.details.budget ? `<div class="row"><span>Budget</span><b>${esc(state.details.budget)}</b></div>` : ""}
         </div>
@@ -423,8 +422,6 @@
       const bkKey = `${state.svc.slug}|${state.slot}|${state.details.email}`;
       let bk = state.bkCache?.key === bkKey ? state.bkCache.bk : null;
       if (!bk) {
-        const addons = [state.details.addonLight && "Lighting kit", state.details.addonSmoke && "Smoke machine"].filter(Boolean);
-        const details = (addons.length ? `Add-ons requested: ${addons.join(", ")}\n\n` : "") + (state.details.notes || "");
         bk = await TM.rpc("bk_create_booking", {
           p_service: state.svc.slug,
           p_starts_at: state.slot,
@@ -432,7 +429,8 @@
           p_email: state.details.email,
           p_phone: state.details.phone || null,
           p_location: state.details.location || null,
-          p_details: details.trim() || null,
+          p_details: state.details.notes || null,
+          p_addons: state.details.addons?.length ? state.details.addons : null,
         });
         state.bkCache = { key: bkKey, bk };
       }
@@ -510,7 +508,12 @@
      ================================================================ */
   (async () => {
     try {
-      state.services = await TM.rpc("bk_public_services", {});
+      const [services, addons] = await Promise.all([
+        TM.rpc("bk_public_services", {}),
+        TM.rpc("bk_public_addons", {}).catch(() => []),
+      ]);
+      state.services = services;
+      state.addons = addons;
       const params = new URLSearchParams(location.search);
       const want = params.get("service");
       // web-design tier deep links carry the buyer's choice through the funnel
