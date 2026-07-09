@@ -98,6 +98,10 @@
     });
   });
 
+  /* ---------- hero reel: respect data-saver + reduced motion ---------- */
+  const hv = $("#heroVid");
+  if (hv && (navigator.connection?.saveData || reduced)) hv.remove();
+
   /* ---------- newsletter signup (footer) ---------- */
   const newsForm = $("#newsForm");
   if (newsForm && window.TM?.rpc) {
