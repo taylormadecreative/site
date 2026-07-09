@@ -38,6 +38,14 @@
   const fmtDur = (min) => min < 60 ? `${min} min`
     : min % 60 === 0 ? `${min / 60} ${min === 60 ? "hr" : "hrs"}`
     : `${Math.floor(min / 60)}h ${min % 60}m`;
+  const isWeekendCT = (iso) => ["Sat", "Sun"].includes(
+    new Intl.DateTimeFormat("en-US", { timeZone: TZ, weekday: "short" }).format(new Date(iso)));
+  // weekend-priced services (studio rental) charge by the day the slot lands on;
+  // the server recomputes this authoritatively in bk_create_booking
+  const amountFor = (svc, slotIso) => svc.deposit_cents ??
+    ((slotIso && svc.weekend_price_cents != null && isWeekendCT(slotIso))
+      ? svc.weekend_price_cents : svc.price_cents);
+  const isStudio = (svc) => (svc?.slug ?? "").startsWith("studio-");
   const isMobile = () => matchMedia("(max-width: 820px)").matches;
   const track = (name, params) => { try { window.gtag?.("event", name, params); } catch (_) { /* analytics never blocks booking */ } };
 
@@ -79,9 +87,11 @@
         <h3>${esc(s.name)}</h3>
         <p>${esc(s.tagline || "")}</p>
         <span class="price">${
-          s.kind === "session"
-            ? `<b>${money(s.deposit_cents ?? s.price_cents)}</b> · ${s.deposit_cents ? "deposit locks your date" : "flat, paid at booking"} · ${fmtDur(s.duration_min)}`
-            : `<b>Quoted per project</b> · reply within 1 business day`
+          s.kind !== "session"
+            ? `<b>Quoted per project</b> · reply within 1 business day`
+            : s.weekend_price_cents != null && !s.deposit_cents
+              ? `<b>${money(s.price_cents)}</b> weekday · ${money(s.weekend_price_cents)} weekend · ${fmtDur(s.duration_min)}`
+              : `<b>${money(s.deposit_cents ?? s.price_cents)}</b> · ${s.deposit_cents ? "deposit locks your date" : "flat, paid at booking"} · ${fmtDur(s.duration_min)}`
         }</span>
       </button>`;
     host.innerHTML = `
@@ -298,6 +308,18 @@
             </select></div>`}
           <div class="bk-field"><label for="fNotes">${isSession ? "Anything I should know? (optional)" : "Tell me about the project *"}</label>
             <textarea id="fNotes" name="notes" rows="4" maxlength="3000" ${isSession ? "" : "required"} placeholder="${isSession ? "Looks you want, references, questions…" : "What are we making? Goals, timeline, references…"}">${esc(d.notes)}</textarea></div>
+          ${isStudio(state.svc) ? `
+          <div class="bk-field"><label>Add-ons (no charge now — confirmed with you before your booking)</label>
+            <label style="display:flex;gap:10px;align-items:flex-start;font-size:14.5px;color:var(--paper);cursor:pointer;margin-bottom:8px;">
+              <input type="checkbox" name="addonLight" ${d.addonLight ? "checked" : ""} style="margin-top:3px;accent-color:var(--gold);">
+              <span>Lighting kit rental</span>
+            </label>
+            <label style="display:flex;gap:10px;align-items:flex-start;font-size:14.5px;color:var(--paper);cursor:pointer;">
+              <input type="checkbox" name="addonSmoke" ${d.addonSmoke ? "checked" : ""} style="margin-top:3px;accent-color:var(--gold);">
+              <span>Smoke machine</span>
+            </label>
+            <p class="bk-note" style="margin-top:8px;">Bring your own cameras and gear — there are none on site.</p>
+          </div>` : ""}
           <label style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--smoke);cursor:pointer;">
             <input type="checkbox" name="subscribe" ${d.subscribe ? "checked" : ""} style="margin-top:3px;accent-color:var(--gold);">
             <span>Keep me in the loop — occasional studio news, new work, and open dates. No spam, unsubscribe anytime.</span>
@@ -321,6 +343,8 @@
         budget: isSession ? state.details.budget : f.budget.value,
         notes: f.notes.value,
         subscribe: f.subscribe.checked,
+        addonLight: f.addonLight ? f.addonLight.checked : state.details.addonLight,
+        addonSmoke: f.addonSmoke ? f.addonSmoke.checked : state.details.addonSmoke,
       };
     });
     f.addEventListener("submit", (e) => {
@@ -337,6 +361,8 @@
         budget: isSession ? "" : f.budget.value,
         notes: f.notes.value.trim(),
         subscribe: f.subscribe.checked,
+        addonLight: f.addonLight ? f.addonLight.checked : false,
+        addonSmoke: f.addonSmoke ? f.addonSmoke.checked : false,
       };
       renderConfirm();
     });
@@ -357,7 +383,8 @@
   function renderConfirm() {
     setStep(4);
     const isSession = state.svc.kind === "session";
-    const amount = state.svc.deposit_cents ?? state.svc.price_cents;
+    const amount = amountFor(state.svc, state.slot);
+    const addons = [state.details.addonLight && "Lighting kit", state.details.addonSmoke && "Smoke machine"].filter(Boolean);
     host.innerHTML = `
       <section aria-label="Confirm">
         <div class="bk-summary" style="max-width:560px;">
@@ -367,7 +394,8 @@
           `<div class="row"><span>Date</span><b>Flexible — we'll schedule together</b></div>`}
           <div class="row"><span>Name</span><b>${esc(state.details.name)}</b></div>
           <div class="row"><span>Email</span><b>${esc(state.details.email)}</b></div>
-          ${isSession ? `<div class="row" style="border-top:1px solid var(--line-d); padding-top:10px; margin-top:6px;"><span>${state.svc.deposit_cents ? "Deposit due now" : "Total due now"}</span><b>${money(amount)}</b></div>` :
+          ${addons.length ? `<div class="row"><span>Add-ons</span><b>${addons.join(" + ")} (confirmed with you)</b></div>` : ""}
+          ${isSession ? `<div class="row" style="border-top:1px solid var(--line-d); padding-top:10px; margin-top:6px;"><span>${state.svc.deposit_cents ? "Deposit due now" : "Total due now"}${state.svc.weekend_price_cents != null && state.slot ? (isWeekendCT(state.slot) ? " (weekend rate)" : " (weekday rate)") : ""}</span><b>${money(amount)}</b></div>` :
           state.details.budget ? `<div class="row"><span>Budget</span><b>${esc(state.details.budget)}</b></div>` : ""}
         </div>
         <p class="bk-note" style="margin:16px 0 22px; max-width:56ch;">${isSession
@@ -395,6 +423,8 @@
       const bkKey = `${state.svc.slug}|${state.slot}|${state.details.email}`;
       let bk = state.bkCache?.key === bkKey ? state.bkCache.bk : null;
       if (!bk) {
+        const addons = [state.details.addonLight && "Lighting kit", state.details.addonSmoke && "Smoke machine"].filter(Boolean);
+        const details = (addons.length ? `Add-ons requested: ${addons.join(", ")}\n\n` : "") + (state.details.notes || "");
         bk = await TM.rpc("bk_create_booking", {
           p_service: state.svc.slug,
           p_starts_at: state.slot,
@@ -402,7 +432,7 @@
           p_email: state.details.email,
           p_phone: state.details.phone || null,
           p_location: state.details.location || null,
-          p_details: state.details.notes || null,
+          p_details: details.trim() || null,
         });
         state.bkCache = { key: bkKey, bk };
       }
