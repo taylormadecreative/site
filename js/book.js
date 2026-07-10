@@ -512,7 +512,8 @@
         TM.rpc("bk_public_services", {}),
         TM.rpc("bk_public_addons", {}).catch(() => []),
       ]);
-      state.services = services;
+      // studio rentals moved to Jenel Studios (studio.taylormadecreative.net)
+      state.services = services.filter((s) => !s.slug.startsWith("studio-"));
       state.addons = addons;
       const params = new URLSearchParams(location.search);
       const want = params.get("service");
