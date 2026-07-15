@@ -1,0 +1,488 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>My Content Kit — Taylormade Creative</title>
+<meta name="description" content="Everything in Nelson Taylor's case that isn't the camera. Four pieces, about $500 total — the exact gear behind the reels.">
+<meta property="og:title" content="MY CONTENT KIT — Case No. 001">
+<meta property="og:description" content="Everything in my case that isn't the camera. Let me put you on.">
+<meta property="og:type" content="website">
+<meta property="og:url" content="https://www.taylormadecreative.net/kit/">
+<meta property="og:image" content="https://www.taylormadecreative.net/kit/img/eventbrite-cover.jpg">
+<meta property="og:image:width" content="1200">
+<meta property="og:image:height" content="600">
+<meta name="twitter:card" content="summary_large_image">
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Big+Shoulders+Stencil+Display:wght@800;900&family=Archivo:wght@400;600&family=Courier+Prime:wght@400;700&display=swap" rel="stylesheet">
+<style>
+:root{
+  --case:#0B0B0A;
+  --foam:#181713;
+  --well:#100F0C;
+  --gold:#C9A227;
+  --hot:#E8C34A;
+  --paper:#F4F1EA;
+  --stencil:#8B867A;
+  --stencil-d: 'Big Shoulders Stencil Display','Big Shoulders Stencil','Archivo Narrow',Impact,sans-serif;
+  --body:'Archivo',-apple-system,Helvetica,Arial,sans-serif;
+  --mono:'Courier Prime','Courier New',monospace;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+html{scroll-behavior:smooth}
+body{
+  background:var(--case);color:var(--paper);
+  font-family:var(--body);line-height:1.55;
+  -webkit-font-smoothing:antialiased;overflow-x:hidden;
+}
+/* film grain over everything */
+body::after{
+  content:"";position:fixed;inset:0;pointer-events:none;z-index:60;opacity:.05;
+  background-image:url('data:image/svg+xml;utf8,<svg xmlns="http://www.w3.org/2000/svg" width="140" height="140"><filter id="n"><feTurbulence type="fractalNoise" baseFrequency="0.9" numOctaves="2"/></filter><rect width="140" height="140" filter="url(%23n)" opacity="0.9"/></svg>');
+}
+a{color:inherit}
+.wrap{max-width:640px;margin:0 auto;padding:0 18px}
+:focus-visible{outline:2px solid var(--hot);outline-offset:3px}
+
+/* ---------- 1. LID / HERO ---------- */
+.lid{
+  min-height:100svh;position:relative;display:flex;flex-direction:column;
+  justify-content:center;align-items:center;text-align:center;
+  padding:56px 18px 110px;overflow:hidden;
+  background:
+    radial-gradient(120% 90% at 50% 0%, #14130f 0%, var(--case) 55%);
+}
+/* corner rivets */
+.rivet{position:absolute;width:14px;height:14px;border-radius:50%;
+  background:radial-gradient(circle at 35% 30%, #3c382c, #14120c 70%);
+  box-shadow:inset 0 1px 2px rgba(232,195,74,.35), 0 1px 2px #000;}
+.rivet.tl{top:16px;left:16px}.rivet.tr{top:16px;right:16px}
+.rivet.bl{bottom:16px;left:16px}.rivet.br{bottom:16px;right:16px}
+/* inner case edge */
+.lid::before{content:"";position:absolute;inset:8px;border:1px solid rgba(200,162,39,.25);border-radius:10px;pointer-events:none}
+.freight{
+  font-family:var(--mono);color:var(--stencil);
+  font-size:11px;letter-spacing:.28em;text-transform:uppercase;line-height:2;
+}
+.lid h1{
+  font-family:var(--stencil-d);font-weight:900;color:var(--gold);
+  font-size:clamp(60px, 17.5vw, 150px);line-height:.88;letter-spacing:.01em;
+  text-transform:uppercase;margin:18px 0 20px;
+}
+.js .lid h1{animation:stamp .5s cubic-bezier(.2,0,0,1) .35s both}
+@keyframes stamp{0%{opacity:0;transform:scale(1.12)}70%{opacity:1;transform:scale(.985)}100%{opacity:1;transform:scale(1)}}
+.lid .sub{max-width:34ch;color:var(--paper);font-size:16.5px;margin:0 auto}
+.lid .sub strong{color:var(--hot);font-weight:600}
+.case-strip{
+  margin-top:26px;font-family:var(--mono);font-size:12px;letter-spacing:.14em;
+  color:var(--stencil);text-transform:uppercase;
+  border-top:1px solid rgba(200,162,39,.35);border-bottom:1px solid rgba(200,162,39,.35);
+  padding:8px 14px;
+}
+/* lid seam + latches ON the seam */
+.seam{position:absolute;left:0;right:0;bottom:78px;height:0;border-top:1px solid rgba(200,162,39,.5)}
+.js .seam{animation:split .6s ease .9s both}
+@keyframes split{from{box-shadow:none}to{box-shadow:0 10px 22px -6px rgba(0,0,0,.9), 0 1px 0 rgba(232,195,74,.25)}}
+.latches{
+  position:absolute;left:0;right:0;bottom:78px;transform:translateY(-50%);
+  display:flex;justify-content:center;gap:150px;pointer-events:none;
+}
+.latch{width:44px;height:30px;border:2px solid var(--gold);border-radius:5px;position:relative;transform-origin:top center;background:var(--case)}
+.latch::after{content:"";position:absolute;left:50%;top:-2px;transform:translateX(-50%);
+  width:16px;height:14px;background:var(--gold);border-radius:0 0 4px 4px}
+.js .latch{animation:flick .28s cubic-bezier(.2,0,0,1) .55s both}
+.js .latch:nth-child(2){animation-delay:.75s}
+@keyframes flick{0%{transform:rotate(0)}55%{transform:rotate(-14deg)}100%{transform:rotate(-8deg)}}
+.scrollcue{
+  position:absolute;bottom:8px;left:50%;transform:translateX(-50%);
+  font-family:var(--mono);font-size:11px;letter-spacing:.34em;color:var(--gold);text-transform:uppercase;
+  display:flex;flex-direction:column;align-items:center;gap:6px;text-decoration:none;
+  padding:12px 16px;
+}
+.scrollcue svg{width:16px;height:10px}
+.js .scrollcue{animation:bob 2.4s ease-in-out 1.4s infinite}
+@keyframes bob{0%,100%{transform:translate(-50%,0)}50%{transform:translate(-50%,6px)}}
+
+/* ---------- 2. MANIFEST ---------- */
+.manifest{padding:54px 0 8px;scroll-margin-top:12px}
+.man-head{
+  font-family:var(--mono);font-size:12px;letter-spacing:.22em;text-transform:uppercase;
+  color:var(--stencil);text-align:center;margin-bottom:10px;
+}
+.man-head b{color:var(--gold);font-weight:700}
+.man-disclosure{
+  font-family:var(--mono);font-size:11px;letter-spacing:.06em;color:var(--stencil);
+  text-align:center;margin-bottom:16px;
+}
+.man-rows{border-top:1px solid var(--gold)}
+.man-row{
+  display:grid;grid-template-columns:34px 1fr auto;gap:10px;align-items:baseline;
+  padding:13px 4px;border-bottom:1px solid rgba(200,162,39,.45);
+  font-family:var(--mono);text-decoration:none;font-size:13.5px;
+}
+.man-row .no{color:var(--gold);font-weight:700}
+.man-row .item{color:var(--paper);letter-spacing:.02em}
+.man-row .item small{display:block;color:var(--stencil);font-size:11.5px;letter-spacing:.08em;text-transform:uppercase}
+.man-row .price{color:var(--hot);font-weight:700;white-space:nowrap}
+.man-row:active{background:rgba(200,162,39,.08)}
+.man-row.method .item{color:var(--hot)}
+
+/* ---------- 3. ITEMS — one foam slab, four wells ---------- */
+.items{padding:26px 0 10px}
+.slab{
+  background:var(--foam);border-radius:18px;padding:4px 12px 14px;
+  box-shadow:0 1px 0 rgba(232,195,74,.08), inset 0 1px 0 rgba(232,195,74,.05);
+}
+.cutout{
+  background:var(--well);border-radius:12px;position:relative;
+  margin:24px 0 18px;padding:24px 18px 22px;
+  box-shadow:inset 0 2px 14px rgba(0,0,0,.8), inset 0 -1px 3px rgba(0,0,0,.5);
+  scroll-margin-top:28px;
+}
+.itemtag{
+  position:absolute;top:-11px;left:16px;
+  font-family:var(--stencil-d);font-weight:800;font-size:15px;letter-spacing:.16em;
+  color:var(--case);background:var(--stencil);padding:2px 12px;border-radius:3px;text-transform:uppercase;
+}
+.figure{
+  display:flex;justify-content:center;align-items:center;
+  padding:16px 0 8px;position:relative;
+}
+.figure svg{width:min(75%,300px);height:auto;display:block}
+.js .figure svg{filter:brightness(.45) saturate(.6);transition:filter .3s ease}
+.js .lit .figure svg{filter:brightness(1) saturate(1)}
+.figure::after{ /* gold wash */
+  content:"";position:absolute;inset:0;border-radius:10px;opacity:0;
+  background:radial-gradient(70% 60% at 50% 30%, rgba(232,195,74,.16), transparent 75%);
+  transition:opacity .35s ease;pointer-events:none;
+}
+.lit .figure::after{opacity:1}
+.js .cutout .inner{transform:translateY(-6px);transition:transform .4s cubic-bezier(.2,0,0,1)}
+.js .cutout.lit .inner{transform:translateY(0)}
+.role{
+  font-family:var(--stencil-d);font-weight:800;text-transform:uppercase;
+  color:var(--gold);font-size:clamp(30px,8vw,44px);line-height:.95;letter-spacing:.015em;
+  margin:8px 0 4px;
+}
+.prodname{font-family:var(--mono);font-size:13px;letter-spacing:.12em;text-transform:uppercase;color:var(--stencil);margin-bottom:10px}
+.pitch{font-size:15.5px;color:var(--paper);max-width:44ch}
+.chiprow{display:flex;align-items:center;justify-content:space-between;gap:14px;margin-top:16px}
+.pricechip{
+  font-family:var(--mono);font-weight:700;font-size:15px;color:var(--case);
+  background:var(--gold);padding:5px 12px;border-radius:2px;
+  transform:rotate(-2.4deg);box-shadow:0 3px 8px rgba(0,0,0,.5);white-space:nowrap;
+}
+.cutout:nth-child(even) .pricechip{transform:rotate(2deg)}
+
+/* ---------- gaffer tape CTA ---------- */
+.tape{
+  display:flex;align-items:center;justify-content:center;gap:10px;
+  min-height:56px;width:100%;margin-top:16px;
+  background:linear-gradient(180deg, #f0cf66 0%, var(--hot) 38%, #d9ad33 100%);
+  color:#171204;text-decoration:none;
+  font-family:var(--mono);font-weight:700;font-size:16px;letter-spacing:.1em;text-transform:uppercase;
+  transform:rotate(-1.5deg);
+  clip-path:polygon(0.6% 8%, 2% 0%, 98.2% 3%, 99.6% 14%, 99% 88%, 97.6% 100%, 1.6% 97%, 0% 86%);
+  box-shadow:0 6px 14px rgba(0,0,0,.5);
+  transition:transform .12s cubic-bezier(.2,0,0,1), box-shadow .12s, filter .15s;
+  position:relative;
+}
+.tape:active{transform:rotate(0) scale(.97);box-shadow:0 1px 2px rgba(0,0,0,.4)}
+.tape.alt{transform:rotate(1deg)}
+.tape.alt:active{transform:rotate(0) scale(.97)}
+.tape.dark{background:linear-gradient(180deg,#1c1a14,#0B0B0A 60%);color:var(--hot);box-shadow:0 6px 14px rgba(0,0,0,.35)}
+@media (hover:hover){
+  .man-row:hover{background:rgba(200,162,39,.08)}
+  .tape:hover{filter:brightness(1.06)}
+}
+
+/* ---------- 4. TALLY ---------- */
+.tally{padding:44px 0 30px}
+.ledger{font-family:var(--mono);font-size:14px;border-top:1px dashed rgba(200,162,39,.6);padding-top:16px}
+.ledger .lrow{display:flex;justify-content:space-between;padding:5px 2px;color:var(--paper)}
+.ledger .lrow span:last-child{color:var(--stencil)}
+.ledger .total{
+  display:flex;justify-content:space-between;margin-top:10px;padding:12px 2px 0;
+  border-top:1px dashed rgba(200,162,39,.6);
+  font-weight:700;font-size:19px;color:var(--hot);
+}
+.kicker{
+  font-family:var(--stencil-d);font-weight:800;text-transform:uppercase;color:var(--gold);
+  font-size:clamp(26px,7vw,40px);line-height:1;letter-spacing:.02em;margin-top:22px;text-align:center;
+}
+
+/* ---------- 5. CALL SHEET ---------- */
+.callsheet{background:var(--paper);color:#111009;padding:52px 0 56px;position:relative;scroll-margin-top:0}
+.clapper{width:74px;height:14px;margin:0 auto 22px;background:#111009;position:relative;border-radius:2px}
+.clapper::before{
+  content:"";position:absolute;left:0;right:0;top:-10px;height:8px;background:#111009;border-radius:2px;
+  transform-origin:left bottom;transform:rotate(-14deg);
+  background-image:repeating-linear-gradient(45deg, #111009 0 8px, var(--hot) 8px 16px);
+}
+.cs-lit .clapper::before{animation:clap .18s ease-in .1s both}
+@keyframes clap{from{transform:rotate(-14deg)}to{transform:rotate(0)}}
+.cs-head{font-family:var(--mono);font-size:12.5px;letter-spacing:.2em;text-transform:uppercase;text-align:center;color:#3a3527;line-height:2.1}
+.cs-head b{color:#111009}
+.callsheet h2{
+  font-family:var(--stencil-d);font-weight:900;text-transform:uppercase;
+  font-size:clamp(34px,9vw,52px);line-height:.95;text-align:center;margin:20px auto 14px;
+}
+.callsheet .csbody{max-width:40ch;margin:0 auto 24px;text-align:center;font-size:15.5px;color:#33301f}
+.cs-rule{border:none;border-top:1px solid #111009;opacity:.25;margin:26px 0}
+
+/* ---------- 6. FOOTER ---------- */
+footer{padding:40px 0 56px;text-align:center}
+.ig{font-family:var(--mono);font-size:14px;letter-spacing:.12em;color:var(--hot);text-decoration:none;text-transform:uppercase;display:inline-block;padding:14px 12px}
+.disclosure{
+  font-family:var(--mono);font-size:11px;letter-spacing:.1em;color:var(--stencil);
+  text-transform:uppercase;line-height:1.9;margin-top:10px;
+}
+.shotin{font-family:var(--stencil-d);font-weight:800;letter-spacing:.1em;color:rgba(200,162,39,.5);font-size:14px;text-transform:uppercase;margin-top:24px}
+
+/* reveal helper */
+.js .reveal{opacity:0;transform:translateY(14px);transition:opacity .5s ease, transform .5s cubic-bezier(.2,0,0,1)}
+.js .reveal.lit{opacity:1;transform:none}
+
+@media (prefers-reduced-motion: reduce){
+  .js .latch,.js .lid h1,.js .seam,.js .scrollcue,.cs-lit .clapper::before{animation:none!important}
+  .js .reveal{transform:none;transition:opacity .3s}
+  .js .cutout .inner{transform:none;transition:none}
+  .js .figure svg{transition:none}
+  .tape{transition:none}
+  .tape:active{transform:rotate(-1.5deg);opacity:.85}
+  html{scroll-behavior:auto}
+}
+@media (min-width:700px){
+  .lid{max-width:700px;margin:0 auto;border-left:1px solid rgba(200,162,39,.18);border-right:1px solid rgba(200,162,39,.18)}
+  .lid h1{font-size:140px}
+  .tape{max-width:380px;margin-left:auto;margin-right:auto}
+}
+</style>
+</head>
+<body>
+
+<!-- 1. LID -->
+<header class="lid" id="top">
+  <span class="rivet tl"></span><span class="rivet tr"></span><span class="rivet bl"></span><span class="rivet br"></span>
+  <div class="freight">Taylormade Creative<br>Dallas TX — Handle With Intent</div>
+  <h1>My<br>Content<br>Kit</h1>
+  <p class="sub">Everything in my case that isn't the camera. You asked — so let me put you on. <strong>Four pieces, about $500 total.</strong></p>
+  <div class="case-strip">Case No. 001 — Contents: 4 items — Value ≈ $500</div>
+  <div class="seam" aria-hidden="true"></div>
+  <div class="latches" aria-hidden="true"><span class="latch"></span><span class="latch"></span></div>
+  <a class="scrollcue" href="#manifest" aria-label="Scroll to the equipment manifest">Open the case
+    <svg viewBox="0 0 16 10" fill="none" aria-hidden="true"><path d="M1 1l7 7 7-7" stroke="#C9A227" stroke-width="2"/></svg>
+  </a>
+</header>
+
+<!-- 2. MANIFEST -->
+<section class="manifest wrap" id="manifest" aria-label="Equipment manifest">
+  <div class="man-head">Equipment Manifest — <b>Verified on set</b> — Dallas, TX</div>
+  <div class="man-disclosure">Links pay me a small cut as an Amazon Associate — costs you nothing.</div>
+  <div class="man-rows">
+    <a class="man-row" href="#item1"><span class="no">01</span><span class="item">Amaran Pano 60c<small>The light — the whole look</small></span><span class="price">≈$165</span></a>
+    <a class="man-row" href="#item2"><span class="no">02</span><span class="item">Amaran Pano 120c<small>The big-room upgrade</small></span><span class="price">≈$289</span></a>
+    <a class="man-row" href="#item3"><span class="no">03</span><span class="item">Neewer 11&quot; Magic Arm<small>The angle machine</small></span><span class="price">≈$27</span></a>
+    <a class="man-row" href="#item4"><span class="no">04</span><span class="item">Neewer Super Clamp<small>Mounts anywhere</small></span><span class="price">≈$19</span></a>
+    <a class="man-row method" href="#callsheet"><span class="no">05</span><span class="item">The Method — how I use all of it<small>In person · seating is limited</small></span><span class="price">Jul 31</span></a>
+  </div>
+</section>
+
+<!-- 3. ITEMS -->
+<section class="items wrap">
+ <div class="slab">
+
+  <article class="cutout" id="item1">
+    <span class="itemtag">Item 01</span>
+    <div class="inner">
+      <div class="figure" aria-hidden="true">
+        <!-- Pano 60c: LED panel -->
+        <svg viewBox="0 0 300 200" fill="none" stroke="#C9A227" stroke-width="3">
+          <rect x="40" y="24" width="220" height="130" rx="10"/>
+          <g stroke="#E8C34A" stroke-width="2" opacity=".85">
+            <circle cx="70" cy="52" r="5"/><circle cx="100" cy="52" r="5"/><circle cx="130" cy="52" r="5"/><circle cx="160" cy="52" r="5"/><circle cx="190" cy="52" r="5"/><circle cx="220" cy="52" r="5"/>
+            <circle cx="70" cy="80" r="5"/><circle cx="100" cy="80" r="5"/><circle cx="130" cy="80" r="5"/><circle cx="160" cy="80" r="5"/><circle cx="190" cy="80" r="5"/><circle cx="220" cy="80" r="5"/>
+            <circle cx="70" cy="108" r="5"/><circle cx="100" cy="108" r="5"/><circle cx="130" cy="108" r="5"/><circle cx="160" cy="108" r="5"/><circle cx="190" cy="108" r="5"/><circle cx="220" cy="108" r="5"/>
+          </g>
+          <rect x="60" y="126" width="44" height="16" rx="3"/>
+          <path d="M150 154v18M132 190h36M150 172l-12 18M150 172l12 18"/>
+        </svg>
+      </div>
+      <h2 class="role">The Light — The Whole Look</h2>
+      <div class="prodname">Amaran Pano 60c · 60W RGBWW LED panel</div>
+      <p class="pitch">This is THE light. One panel and your apartment stops looking like an apartment. That glow you keep asking about in the DMs? This.</p>
+      <div class="chiprow"><span class="pricechip">≈ $165</span></div>
+      <a class="tape" href="https://www.amazon.com/s?k=amaran+pano+60c+kit&tag=taylormadec0f-20" target="_blank" rel="noopener sponsored">Get it on Amazon →</a>
+    </div>
+  </article>
+
+  <article class="cutout" id="item2">
+    <span class="itemtag">Item 02</span>
+    <div class="inner">
+      <div class="figure" aria-hidden="true">
+        <!-- Pano 120c: bigger panel + handle -->
+        <svg viewBox="0 0 300 200" fill="none" stroke="#C9A227" stroke-width="3">
+          <rect x="22" y="18" width="256" height="144" rx="10"/>
+          <g stroke="#E8C34A" stroke-width="2" opacity=".85">
+            <circle cx="54" cy="46" r="5"/><circle cx="86" cy="46" r="5"/><circle cx="118" cy="46" r="5"/><circle cx="150" cy="46" r="5"/><circle cx="182" cy="46" r="5"/><circle cx="214" cy="46" r="5"/><circle cx="246" cy="46" r="5"/>
+            <circle cx="54" cy="74" r="5"/><circle cx="86" cy="74" r="5"/><circle cx="118" cy="74" r="5"/><circle cx="150" cy="74" r="5"/><circle cx="182" cy="74" r="5"/><circle cx="214" cy="74" r="5"/><circle cx="246" cy="74" r="5"/>
+            <circle cx="54" cy="102" r="5"/><circle cx="86" cy="102" r="5"/><circle cx="118" cy="102" r="5"/><circle cx="150" cy="102" r="5"/><circle cx="182" cy="102" r="5"/><circle cx="214" cy="102" r="5"/><circle cx="246" cy="102" r="5"/>
+            <circle cx="54" cy="130" r="5"/><circle cx="86" cy="130" r="5"/><circle cx="118" cy="130" r="5"/><circle cx="150" cy="130" r="5"/><circle cx="182" cy="130" r="5"/><circle cx="214" cy="130" r="5"/><circle cx="246" cy="130" r="5"/>
+          </g>
+          <path d="M120 162v14h60v-14M150 176v14"/>
+        </svg>
+      </div>
+      <h2 class="role">The Big-Room Upgrade</h2>
+      <div class="prodname">Amaran Pano 120c · 120W RGBWW LED panel</div>
+      <p class="pitch">Same light, twice the muscle. When the room gets bigger, this is what keeps the look.</p>
+      <div class="chiprow"><span class="pricechip">≈ $289</span></div>
+      <a class="tape alt" href="https://www.amazon.com/s?k=amaran+pano+120c+kit&tag=taylormadec0f-20" target="_blank" rel="noopener sponsored">Get it on Amazon →</a>
+    </div>
+  </article>
+
+  <article class="cutout" id="item3">
+    <span class="itemtag">Item 03</span>
+    <div class="inner">
+      <div class="figure" aria-hidden="true">
+        <!-- Magic arm: clamp + twin-bar segments + center knob w/ lever + cold shoe -->
+        <svg viewBox="0 0 300 200" fill="none" stroke="#C9A227" stroke-width="3">
+          <!-- clamp jaw -->
+          <path d="M40 152c-14 0-24 10-24 22s10 22 24 22M40 152v44M40 152h18M40 196h18M58 144v60"/>
+          <!-- T-screw -->
+          <path d="M28 198v-14M18 198h20" stroke-width="2.5"/>
+          <!-- lower twin-bar segment -->
+          <path d="M62 166L128 112M70 174L136 120"/>
+          <!-- center knob + lever -->
+          <circle cx="146" cy="108" r="15" stroke="#E8C34A"/>
+          <path d="M156 120l16 22" stroke="#E8C34A" stroke-width="2.5"/>
+          <circle cx="174" cy="144" r="4" stroke="#E8C34A" stroke-width="2.5"/>
+          <!-- upper twin-bar segment -->
+          <path d="M158 96L224 50M166 104L232 58"/>
+          <!-- cold shoe head -->
+          <rect x="228" y="26" width="52" height="24" rx="4"/>
+          <path d="M236 38h36" stroke-width="2"/>
+        </svg>
+      </div>
+      <h2 class="role">The Angle Machine</h2>
+      <div class="prodname">Neewer 11&quot; Articulating Magic Arm Clamp</div>
+      <p class="pitch">Eleven inches of get-any-shot. Every weird angle in my reels starts here.</p>
+      <div class="chiprow"><span class="pricechip">≈ $27</span></div>
+      <a class="tape" href="https://www.amazon.com/s?k=neewer+11+inch+articulating+magic+arm+clamp&tag=taylormadec0f-20" target="_blank" rel="noopener sponsored">Get it on Amazon →</a>
+    </div>
+  </article>
+
+  <article class="cutout" id="item4">
+    <span class="itemtag">Item 04</span>
+    <div class="inner">
+      <div class="figure" aria-hidden="true">
+        <!-- Super clamp: C-jaw + T-screw + ballhead + portrait phone in cradle -->
+        <svg viewBox="0 0 300 200" fill="none" stroke="#C9A227" stroke-width="3">
+          <!-- C-jaw -->
+          <path d="M56 178c-18 0-30-12-30-27s12-27 30-27M56 124v54M56 124h24M56 178h24M80 116v70"/>
+          <!-- T-screw -->
+          <path d="M44 186v-16M32 186h24" stroke-width="2.5"/>
+          <!-- short arm to ballhead -->
+          <path d="M80 150h32"/>
+          <circle cx="126" cy="150" r="12" stroke="#E8C34A"/>
+          <!-- cradle stem -->
+          <path d="M136 142l30-34" stroke="#E8C34A" stroke-width="2.5"/>
+          <!-- portrait phone -->
+          <rect x="168" y="30" width="70" height="120" rx="12"/>
+          <circle cx="182" cy="46" r="5" stroke="#E8C34A" stroke-width="2.5"/>
+          <!-- cradle grips -->
+          <path d="M162 96h6M238 96h6" stroke-width="4"/>
+        </svg>
+      </div>
+      <h2 class="role">Mounts Anywhere</h2>
+      <div class="prodname">Neewer Super Clamp + Dual Ballhead</div>
+      <p class="pitch">Floor. Doorframe. Light stand. If it exists, your phone can shoot from it — for nineteen dollars.</p>
+      <div class="chiprow"><span class="pricechip">≈ $19</span></div>
+      <a class="tape alt" href="https://www.amazon.com/s?k=neewer+super+clamp+3+inch+dual+ballhead+magic+arm+phone&tag=taylormadec0f-20" target="_blank" rel="noopener sponsored">Get it on Amazon →</a>
+    </div>
+  </article>
+
+ </div>
+</section>
+
+<!-- 4. TALLY -->
+<section class="tally wrap reveal" id="tally" aria-label="Kit total">
+  <div class="ledger">
+    <div class="lrow"><span>01 · Pano 60c</span><span>$165</span></div>
+    <div class="lrow"><span>02 · Pano 120c</span><span>$289</span></div>
+    <div class="lrow"><span>03 · 11&quot; Magic Arm</span><span>$27</span></div>
+    <div class="lrow"><span>04 · Super Clamp</span><span>$19</span></div>
+    <div class="total"><span>Kit total</span><span>≈ $<span id="count">500</span></span></div>
+  </div>
+  <div class="kicker">A full studio for less<br>than one brand deal.</div>
+</section>
+
+<!-- 5. CALL SHEET -->
+<section class="callsheet" id="callsheet">
+  <div class="wrap">
+    <div class="clapper" aria-hidden="true"></div>
+    <div class="cs-head">
+      Call Sheet — <b>Content Creator Workshop</b><br>
+      Fri Jul 31 · 7:00–9:00 PM<br>
+      Loc: Private Studio, Dallas — <b>address on ticket</b>
+    </div>
+    <h2>The kit is what I use.<br>How I use it<br>is July 31st.</h2>
+    <p class="csbody">The case shows you what's inside. It doesn't show you where it goes, how it's set, or why my stuff looks like this. That part's in person — a night of hands-on shooting with a room full of DFW creators. Pull up.</p>
+    <a class="tape dark" href="https://www.eventbrite.com/e/content-creator-workshop-tickets-1993729668107" target="_blank" rel="noopener">Grab your ticket →</a>
+    <hr class="cs-rule">
+    <div class="cs-head">Seating is limited · Early bird pricing while it lasts</div>
+  </div>
+</section>
+
+<!-- 6. FOOTER -->
+<footer class="wrap">
+  <a class="ig" href="https://www.instagram.com/taylormade_creative" target="_blank" rel="noopener">@taylormade_creative</a>
+  <p class="disclosure">As an Amazon Associate I earn from qualifying purchases.<br>Prices are approximate and set by Amazon.</p>
+  <div class="shotin">Shot + built in Dallas</div>
+</footer>
+
+<script>
+document.body.classList.add('js');
+// enable :active states on iOS Safari
+document.addEventListener('touchstart', function(){}, {passive:true});
+
+var csEl = document.getElementById('callsheet');
+
+if ('IntersectionObserver' in window) {
+  var io = new IntersectionObserver(function(entries){
+    entries.forEach(function(e){
+      if(!e.isIntersecting) return;
+      e.target.classList.add('lit');
+      if(e.target.id === 'tally') startCount();
+      io.unobserve(e.target);
+    });
+  },{threshold:.35});
+  document.querySelectorAll('.cutout, .reveal').forEach(function(el){ io.observe(el); });
+
+  var io2 = new IntersectionObserver(function(es){
+    es.forEach(function(e){ if(e.isIntersecting){ csEl.classList.add('cs-lit'); io2.unobserve(csEl);} });
+  },{threshold:.3});
+  io2.observe(csEl);
+} else {
+  document.querySelectorAll('.cutout, .reveal').forEach(function(el){ el.classList.add('lit'); });
+  csEl.classList.add('cs-lit');
+}
+
+// tally count-up (markup ships 500; JS animates 0 -> 500)
+var counted = false;
+function startCount(){
+  if(counted) return; counted = true;
+  var el = document.getElementById('count'), target = 500, start = null;
+  if(matchMedia('(prefers-reduced-motion: reduce)').matches){ el.textContent = target; return; }
+  el.textContent = '0';
+  function step(ts){
+    if(!start) start = ts;
+    var p = Math.min((ts - start)/900, 1);
+    el.textContent = Math.round(target * (1 - Math.pow(1 - p, 3)));
+    if(p < 1) requestAnimationFrame(step);
+  }
+  requestAnimationFrame(step);
+}
+</script>
+</body>
+</html>
