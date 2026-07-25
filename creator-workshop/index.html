@@ -1,0 +1,906 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>Content Creator Workshop · Fri Aug 21 · Dallas | Taylormade Creative</title>
+<meta name="description" content="A two-hour hands-on workshop for DFW creators. Friday, August 21, 7 to 9 PM in a private Dallas studio. Hour one you watch it happen, hour two you shoot it yourself. Seating is limited.">
+<link rel="canonical" href="https://www.taylormadecreative.net/creator-workshop/">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns=%27http://www.w3.org/2000/svg%27 viewBox=%270 0 32 32%27%3E%3Crect width=%2732%27 height=%2732%27 fill=%27%23080405%27/%3E%3Ccircle cx=%2716%27 cy=%2716%27 r=%277%27 fill=%27%23ff2d2d%27/%3E%3Cpath d=%27M4 4h6M28 4h-6M4 28h6M28 28h-6M4 4v6M28 4v6M4 28v-6M28 28v-6%27 stroke=%27%23ffa51e%27 stroke-width=%272%27/%3E%3C/svg%3E">
+
+<meta property="og:type" content="website">
+<meta property="og:title" content="Content Creator Workshop · Friday, August 21 · Dallas">
+<meta property="og:description" content="It's not your camera. It's your light. Two hours, hands on, private Dallas studio. You leave with the footage on your phone.">
+<meta property="og:image" content="https://www.taylormadecreative.net/creator-workshop/img/og.jpg">
+<meta property="og:url" content="https://www.taylormadecreative.net/creator-workshop/">
+<meta name="twitter:card" content="summary_large_image">
+
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link href="https://fonts.googleapis.com/css2?family=Archivo:wdth,wght@62..125,400..900&family=Familjen+Grotesk:wght@400;500;600;700&family=Martian+Mono:wght@400;600&display=swap" rel="stylesheet">
+<link rel="preload" as="image" href="img/hero.jpg">
+
+<script async src="https://www.googletagmanager.com/gtag/js?id=G-PS0H5W3ZX7"></script>
+<script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+  gtag('config', 'G-PS0H5W3ZX7');
+</script>
+
+<script type="application/ld+json">
+{
+  "@context": "https://schema.org",
+  "@type": "Event",
+  "name": "Content Creator Workshop",
+  "startDate": "2026-08-21T19:00:00-05:00",
+  "endDate": "2026-08-21T21:00:00-05:00",
+  "eventStatus": "https://schema.org/EventScheduled",
+  "eventAttendanceMode": "https://schema.org/OfflineEventAttendanceMode",
+  "description": "A two-hour hands-on content workshop for Dallas Fort Worth creators. Hour one is live demos, hour two is a shoot-and-network rotation across two rooms. Seating is limited.",
+  "image": "https://www.taylormadecreative.net/creator-workshop/img/og.jpg",
+  "location": {
+    "@type": "Place",
+    "name": "Private studio, Downtown Dallas",
+    "address": { "@type": "PostalAddress", "addressLocality": "Dallas", "addressRegion": "TX", "addressCountry": "US" }
+  },
+  "organizer": { "@type": "Organization", "name": "Taylormade Creative", "url": "https://www.taylormadecreative.net/" },
+  "performer": { "@type": "Person", "name": "Nelson Taylor" },
+  "url": "https://www.taylormadecreative.net/creator-workshop/",
+  "offers": [
+    { "@type": "Offer", "name": "Early bird", "price": "35", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "validThrough": "2026-08-07T23:59:00-05:00", "url": "https://www.eventbrite.com/e/content-creator-workshop-tickets-1993729668107" },
+    { "@type": "Offer", "name": "Regular", "price": "45", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "validFrom": "2026-08-08T00:00:00-05:00", "url": "https://www.eventbrite.com/e/content-creator-workshop-tickets-1993729668107" },
+    { "@type": "Offer", "name": "Last call", "price": "55", "priceCurrency": "USD", "availability": "https://schema.org/InStock", "validFrom": "2026-08-20T00:00:00-05:00", "url": "https://www.eventbrite.com/e/content-creator-workshop-tickets-1993729668107" }
+  ]
+}
+</script>
+
+<style>
+/* ───────────── tokens ───────────── */
+:root{
+  --ink:#080405;
+  --pit:#150809;
+  --crimson:#25090a;
+  --ember:#b4231a;
+  --rec:#ff3b30;
+  --amber:#ffa51e;
+  --paper:#ffe9d9;
+  --dim:rgba(255,233,217,.68);
+  --faint:rgba(255,233,217,.6);
+  --hair:rgba(255,233,217,.13);
+  --btn-ink:#1a0500;
+
+  --display:"Archivo",system-ui,sans-serif;
+  --body:"Familjen Grotesk",system-ui,sans-serif;
+  --data:"Martian Mono",ui-monospace,monospace;
+
+  --out:cubic-bezier(.23,1,.32,1);
+  --pad:clamp(20px,5vw,68px);
+  --gut:min(1360px,100% - var(--pad)*2);
+  --chapter:clamp(84px,11vw,164px);
+  --edge:7px;
+  --band:34px;
+}
+@supports (color: oklch(0.5 0.1 30)){
+  :root{
+    --ink:oklch(.115 .018 20);
+    --pit:oklch(.17 .035 22);
+    --crimson:oklch(.205 .052 22);
+    --ember:oklch(.505 .175 29);
+    --amber:oklch(.795 .162 64);
+    --paper:oklch(.935 .033 52);
+    --dim:oklch(.935 .033 52 / .68);
+    --faint:oklch(.935 .033 52 / .6);
+    --hair:oklch(.935 .033 52 / .13);
+  }
+}
+
+*{box-sizing:border-box}
+html,body{overflow-x:clip}
+html{scroll-behavior:smooth;-webkit-text-size-adjust:100%;scroll-padding-top:calc(var(--band) + 64px)}
+body{
+  margin:0;padding-block:var(--band);background:var(--ink);color:var(--paper);
+  font-family:var(--body);font-size:clamp(16px,.55vw + 14.4px,18.5px);line-height:1.56;
+  -webkit-font-smoothing:antialiased;
+}
+img{max-width:100%;height:auto;display:block}
+a{color:inherit}
+:focus-visible{outline:3px solid var(--amber);outline-offset:3px}
+.wrap{width:var(--gut);margin-inline:auto}
+.skip{position:absolute;left:-9999px}
+.skip:focus{left:12px;top:12px;z-index:99;background:var(--amber);color:var(--btn-ink);padding:.7em 1.2em;font-family:var(--data);font-size:.7rem}
+
+.d{font-family:var(--display);font-weight:900;font-stretch:125%;text-transform:uppercase;line-height:.9;letter-spacing:-.028em;margin:0}
+.d-mid{font-family:var(--display);font-weight:900;font-stretch:112%;text-transform:uppercase;line-height:1.08;letter-spacing:-.008em}
+.mono{font-family:var(--data);font-weight:400;text-transform:uppercase;letter-spacing:.15em;font-size:.645rem;line-height:1.65}
+.amber{color:var(--amber)}
+
+/* ───────────── viewfinder chrome ───────────── */
+.vf{position:fixed;inset:0;z-index:40;pointer-events:none}
+.vf .bar{position:absolute;left:0;right:0;height:var(--band);background:var(--ink)}
+.vf .bar.top{top:0;box-shadow:0 1px 0 var(--hair)}
+.vf .bar.bot{bottom:0;box-shadow:0 -1px 0 var(--hair)}
+.vf b{position:absolute;width:26px;height:26px;border:1.5px solid var(--amber);opacity:.85}
+.vf .tl{top:var(--edge);left:var(--edge);border-right:0;border-bottom:0}
+.vf .tr{top:var(--edge);right:var(--edge);border-left:0;border-bottom:0}
+.vf .bl{bottom:var(--edge);left:var(--edge);border-right:0;border-top:0}
+.vf .br{bottom:var(--edge);right:var(--edge);border-left:0;border-top:0}
+
+.hud{
+  position:absolute;left:calc(var(--edge) + 34px);right:calc(var(--edge) + 34px);height:var(--band);
+  display:flex;justify-content:space-between;align-items:center;gap:16px;
+  font-family:var(--data);font-size:.58rem;letter-spacing:.16em;text-transform:uppercase;color:var(--faint);
+}
+.hud-top{top:0}
+.hud-bot{bottom:0}
+.hud span{white-space:nowrap}
+.rec{display:inline-flex;align-items:center;gap:.55em;color:var(--paper)}
+.rec i{width:8px;height:8px;border-radius:50%;background:var(--rec);animation:blink 1.6s steps(1,end) infinite}
+@keyframes blink{0%,55%{opacity:1}56%,100%{opacity:.15}}
+#tc{color:var(--paper)}
+#warn{color:var(--rec);opacity:0;transition:opacity 200ms ease}
+.lowlight #warn{opacity:1}
+
+.meter{display:inline-flex;gap:3px;align-items:flex-end;height:11px}
+.meter i{width:3px;height:100%;background:var(--hair);transform-origin:bottom}
+.meter i.on{background:var(--amber)}
+.meter i:nth-child(n+10).on{background:var(--rec)}
+
+/* autofocus box */
+.af{position:fixed;inset:0;z-index:41;pointer-events:none;opacity:0;transition:opacity 160ms ease}
+.af.on{opacity:1}
+.af i{position:absolute;top:0;left:0;width:17px;height:17px;border:1.5px solid var(--amber);transition:transform 200ms var(--out)}
+.af i:nth-child(1){border-right:0;border-bottom:0}
+.af i:nth-child(2){border-left:0;border-bottom:0}
+.af i:nth-child(3){border-right:0;border-top:0}
+.af i:nth-child(4){border-left:0;border-top:0}
+.af u{
+  position:absolute;top:0;left:0;text-decoration:none;
+  font-family:var(--data);font-size:.54rem;letter-spacing:.16em;color:var(--amber);
+  transition:transform 200ms var(--out);
+}
+
+/* grain */
+.grain{
+  position:fixed;inset:0;z-index:39;pointer-events:none;opacity:.055;
+  background-image:url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='180' height='180'%3E%3Cfilter id='n'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='3'/%3E%3C/filter%3E%3Crect width='180' height='180' filter='url(%23n)'/%3E%3C/svg%3E");
+}
+
+/* ───────────── nav ───────────── */
+.nav{position:sticky;top:var(--band);z-index:38;background:var(--ink);border-bottom:1px solid var(--hair)}
+.nav-in{width:var(--gut);margin-inline:auto;display:flex;align-items:center;justify-content:space-between;gap:16px;height:60px}
+.mark{font-family:var(--display);font-weight:900;font-stretch:112%;text-transform:uppercase;letter-spacing:.03em;font-size:.78rem;text-decoration:none;white-space:nowrap}
+.mark b{color:var(--amber)}
+.nav-right{display:flex;align-items:center;gap:20px}
+.nav-date{color:var(--faint);white-space:nowrap}
+.nav .btn{padding:.6em 1.1em;font-size:.67rem}
+
+/* ───────────── buttons ───────────── */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:.55em;text-decoration:none;
+  font-family:var(--data);font-weight:600;text-transform:uppercase;letter-spacing:.1em;font-size:.71rem;
+  padding:1.05em 1.7em;border:1px solid transparent;cursor:pointer;
+  transition:transform 160ms var(--out),box-shadow 200ms var(--out),background 200ms ease,color 200ms ease,border-color 200ms ease;
+}
+.btn-go{background:var(--amber);color:var(--btn-ink)}
+.btn-ghost{border-color:var(--hair);color:var(--paper);background:none}
+.btn:active{transform:scale(.972)}
+@media (hover:hover) and (pointer:fine){
+  .btn-go:hover{box-shadow:0 12px 40px -8px rgba(255,165,30,.42)}
+  .btn-ghost:hover{border-color:var(--amber);color:var(--amber)}
+}
+
+/* ───────────── hero ───────────── */
+.hero{position:relative;min-height:min(calc(94svh - var(--band)*2),830px);display:flex;align-items:flex-end;overflow:hidden;isolation:isolate}
+.plate{position:absolute;inset:0;z-index:-2;background:var(--pit)}
+.plate img{width:100%;height:100%;object-fit:cover;object-position:50% 42%}
+.plate .lit{position:absolute;inset:0;transition:opacity 520ms var(--out),filter 520ms var(--out)}
+.hero.off .plate .lit{opacity:0;filter:blur(7px)}
+.plate::after{
+  content:"";position:absolute;inset:0;
+  background:linear-gradient(to top,rgba(8,4,5,.95) 4%,rgba(8,4,5,.62) 34%,rgba(8,4,5,.2) 66%,rgba(8,4,5,.5));
+}
+.hero-in{position:relative;width:var(--gut);margin-inline:auto;padding:clamp(80px,11vw,140px) 0 clamp(30px,4vw,52px)}
+.eyebrow{display:flex;align-items:center;gap:.75em;color:var(--faint);margin:0 0 1.3em}
+.eyebrow i{width:30px;height:1px;background:var(--amber);display:block;flex:none}
+h1.hero-h{font-size:clamp(2.5rem,5.1vw,4.7rem)}
+h1.hero-h span{display:block}
+h1.hero-h .l1{color:var(--paper);opacity:.66;text-shadow:0 2px 30px rgba(8,4,5,.8);transition:opacity 520ms var(--out)}
+h1.hero-h .l2{color:var(--amber);text-shadow:0 0 60px rgba(255,165,30,.32);transition:color 520ms var(--out),text-shadow 520ms var(--out)}
+.hero.off h1.hero-h .l1{opacity:.3}
+.hero.off h1.hero-h .l2{color:#6b584a;text-shadow:none}
+.hero-bottom{display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:26px 40px;margin-top:clamp(24px,3vw,42px)}
+.hero-sub{max-width:44ch;margin:0;color:var(--dim);font-size:1.05rem}
+.hero-sub b{color:var(--paper);font-weight:600}
+.hero-cta{display:flex;flex-wrap:wrap;gap:12px;margin-top:1.6em}
+
+.lights{
+  display:inline-flex;align-items:center;gap:.75em;cursor:pointer;
+  background:rgba(8,4,5,.62);border:1px solid var(--hair);
+  padding:.5em 1em .5em .5em;color:var(--paper);
+  font-family:var(--data);font-weight:600;text-transform:uppercase;letter-spacing:.1em;font-size:.62rem;
+  transition:border-color 200ms ease,transform 160ms var(--out);
+}
+.lights:active{transform:scale(.97)}
+@media (hover:hover) and (pointer:fine){ .lights:hover{border-color:var(--amber)} }
+.led{width:26px;height:26px;border-radius:50%;flex:none;background:var(--amber);box-shadow:0 0 20px rgba(255,165,30,.72);transition:background 460ms var(--out),box-shadow 460ms var(--out)}
+.hero.off .led{background:#3b2117;box-shadow:none}
+
+/* ───────────── countdown ───────────── */
+.cdown{padding:clamp(34px,4.4vw,58px) 0;background:var(--crimson);border-bottom:1px solid var(--hair);position:relative;overflow:hidden}
+.cdown::before{content:"";position:absolute;inset:0;background:radial-gradient(60% 120% at 50% 0%,rgba(180,35,26,.36),transparent 70%)}
+.cd-in{position:relative;display:flex;flex-wrap:wrap;align-items:flex-end;justify-content:space-between;gap:20px 32px}
+.cd-lab{margin:0 0 .9em;color:var(--amber)}
+.cd{display:flex;align-items:baseline;gap:clamp(6px,1vw,14px)}
+.cd u{
+  display:block;text-decoration:none;font-family:var(--display);font-weight:900;font-stretch:125%;
+  font-size:clamp(2.4rem,6.4vw,4.9rem);line-height:.85;letter-spacing:-.035em;
+  font-variant-numeric:tabular-nums;font-feature-settings:"tnum";min-width:1.9ch;text-align:center;
+}
+.cd span{display:block;margin-top:.9em;font-family:var(--data);font-size:.56rem;letter-spacing:.2em;text-transform:uppercase;color:var(--faint);text-align:center}
+.cd i{font-family:var(--display);font-weight:900;font-size:clamp(1.6rem,4vw,3.2rem);color:var(--amber);line-height:1;transform:translateY(-.18em);font-style:normal}
+.cd .sec u{color:var(--amber)}
+.cd-side{max-width:30ch}
+.cd-side p{margin:0;color:var(--dim);font-size:.95rem}
+.cd-side .now{font-family:var(--data);text-transform:uppercase;letter-spacing:.14em;font-size:.62rem;color:var(--paper);margin-bottom:.8em;display:block}
+.cd-side .now b{color:var(--amber)}
+
+/* ───────────── call sheet ───────────── */
+.strip{border-bottom:1px solid var(--hair);background:var(--crimson)}
+.strip-in{width:var(--gut);margin-inline:auto;display:grid;grid-template-columns:repeat(4,1fr);gap:1px;background:var(--hair)}
+.cell{background:var(--ink);padding:clamp(18px,2.4vw,28px) clamp(13px,2vw,24px)}
+.cell dt{color:var(--faint);font-family:var(--data);text-transform:uppercase;letter-spacing:.15em;font-size:.58rem;margin-bottom:1em}
+.cell dd{margin:0;font-family:var(--display);font-weight:900;font-stretch:112%;text-transform:uppercase;font-size:clamp(1.05rem,1.8vw,1.5rem);line-height:1;letter-spacing:-.012em}
+.cell dd small{display:block;font-family:var(--body);font-weight:500;font-stretch:normal;text-transform:none;letter-spacing:0;font-size:.79rem;color:var(--faint);margin-top:.7em;line-height:1.42}
+
+/* ───────────── chapters ───────────── */
+section{padding:var(--chapter) 0}
+.slate{
+  display:inline-flex;align-items:stretch;margin:0 0 clamp(22px,2.6vw,34px);
+  font-family:var(--data);font-weight:600;text-transform:uppercase;letter-spacing:.16em;font-size:.58rem;
+  border:1px solid var(--hair);
+}
+.slate span{padding:.62em .95em}
+.slate span:first-child{background:var(--amber);color:var(--btn-ink)}
+.slate span+span{color:var(--faint);border-left:1px solid var(--hair)}
+.lead{max-width:21ch;font-size:clamp(2rem,4.9vw,3.7rem)}
+.lead-note{color:var(--dim);max-width:56ch;margin:1.3em 0 0}
+.head{margin-bottom:clamp(38px,4.6vw,66px)}
+
+#problem{background:var(--crimson)}
+.gripes{list-style:none;margin:0;padding:0;border-top:1px solid var(--hair)}
+.gripes li{
+  border-bottom:1px solid var(--hair);padding:clamp(20px,2.9vw,32px) 0;
+  font-family:var(--display);font-weight:900;font-stretch:112%;text-transform:uppercase;
+  font-size:clamp(1.15rem,2.9vw,2.2rem);line-height:1.06;letter-spacing:-.012em;transition:color 200ms ease;
+}
+@media (hover:hover) and (pointer:fine){ .gripes li:hover{color:var(--amber)} }
+.stmt{margin:clamp(44px,5vw,72px) 0 0;font-size:clamp(1.15rem,2.1vw,1.6rem);max-width:30ch;line-height:1.35;font-weight:500}
+.stmt .w{display:inline-block;transition:opacity 200ms linear}
+html.gsap .stmt .w{opacity:.19}
+.stmt .hot{color:var(--amber)}
+
+/* take home */
+.leave{display:grid;grid-template-columns:repeat(4,1fr);grid-auto-flow:dense;gap:1px;background:var(--hair);border:1px solid var(--hair)}
+.bit{background:var(--ink);padding:clamp(24px,2.9vw,42px);display:flex;flex-direction:column;justify-content:flex-end;min-height:clamp(180px,17vw,246px);transition:background 260ms ease}
+@media (hover:hover) and (pointer:fine){ .bit:hover{background:var(--pit)} }
+.bit h3{margin:0 0 .55em;font-size:clamp(1.05rem,1.5vw,1.3rem)}
+.bit p{margin:0;color:var(--dim);font-size:.95rem;max-width:38ch}
+.bit-a{grid-column:span 2;grid-row:span 2;position:relative;overflow:hidden;padding:0;min-height:clamp(300px,32vw,430px)}
+.bit-a img{position:absolute;inset:0;width:100%;height:100%;object-fit:cover;transition:transform 700ms var(--out)}
+@media (hover:hover) and (pointer:fine){ .bit-a:hover img{transform:scale(1.045)} }
+.bit-a .cap{position:relative;z-index:1;margin-top:auto;padding:clamp(24px,2.9vw,42px);background:linear-gradient(to top,rgba(8,4,5,.94) 34%,transparent)}
+.bit-a h3{font-size:clamp(1.3rem,2.3vw,2rem)}
+.bit-wide{grid-column:span 2}
+
+/* the room */
+#room{background:var(--crimson)}
+.pair{display:grid;grid-template-columns:1fr 1fr;gap:clamp(12px,1.6vw,22px)}
+.shot{margin:0;position:relative;overflow:hidden;background:var(--pit)}
+.shot img{width:100%;aspect-ratio:4/3;object-fit:cover;transition:transform 700ms var(--out)}
+@media (hover:hover) and (pointer:fine){ .shot:hover img{transform:scale(1.04)} }
+.shot figcaption{
+  position:absolute;left:0;bottom:0;display:flex;align-items:stretch;
+  font-family:var(--data);font-size:.55rem;letter-spacing:.16em;text-transform:uppercase;
+}
+.shot figcaption b{background:var(--amber);color:var(--btn-ink);padding:.55em .8em;font-weight:600}
+.shot figcaption span{background:rgba(8,4,5,.85);color:var(--paper);padding:.55em .85em}
+.room-note{margin:clamp(24px,3vw,38px) 0 0;color:var(--dim);max-width:60ch}
+.room-note b{color:var(--paper);font-weight:600}
+
+/* run of show */
+.run{list-style:none;margin:0;padding:0;max-width:940px}
+.run li{display:grid;grid-template-columns:6em 1fr;gap:clamp(16px,2.4vw,30px);padding:clamp(20px,2.5vw,30px) 0;border-bottom:1px solid var(--hair)}
+.run li:first-child{border-top:1px solid var(--hair)}
+.run time{font-family:var(--data);font-weight:600;font-size:.74rem;color:var(--amber);letter-spacing:.05em;padding-top:.45em}
+.run h3{margin:0 0 .45em;font-size:clamp(1.05rem,2vw,1.4rem)}
+.run p{margin:0;color:var(--dim);font-size:.96rem;max-width:56ch}
+
+/* who */
+.who{display:grid;grid-template-columns:repeat(auto-fit,minmax(232px,1fr));gap:clamp(24px,3vw,44px);border-top:1px solid var(--hair);padding-top:clamp(28px,3vw,44px)}
+.who h3{margin:0 0 .55em;font-size:1.02rem;color:var(--amber)}
+.who p{margin:0;color:var(--dim);font-size:.95rem;max-width:34ch}
+.straight{margin:clamp(38px,4vw,60px) 0 0;max-width:58ch;color:var(--dim);font-size:1.02rem}
+.straight b{color:var(--paper);font-weight:600}
+
+/* tickets */
+#tickets{background:var(--crimson)}
+.tiers{display:grid;grid-template-columns:repeat(auto-fit,minmax(236px,1fr));gap:13px;margin-bottom:clamp(30px,3.2vw,46px)}
+.tier{border:1px solid var(--hair);padding:clamp(24px,2.7vw,34px);background:rgba(8,4,5,.5);position:relative;transition:border-color 260ms ease,background 260ms ease}
+.tier .lbl{margin:0 0 1.6em;color:var(--faint)}
+.tier .price{margin:0;font-family:var(--display);font-weight:900;font-stretch:125%;font-size:clamp(2.5rem,5.2vw,3.5rem);line-height:.88;letter-spacing:-.035em}
+.tier .when{margin:.95em 0 0;color:var(--dim);font-size:.89rem}
+.tier[data-state="live"]{border-color:var(--amber);background:rgba(255,165,30,.06)}
+.tier[data-state="live"] .price{color:var(--amber)}
+.tier[data-state="past"]{opacity:.4}
+.tier[data-state="past"] .price{text-decoration:line-through;text-decoration-thickness:2px}
+.pill{position:absolute;top:-9px;left:clamp(24px,2.7vw,34px);background:var(--amber);color:var(--btn-ink);font-family:var(--data);font-weight:600;font-size:.55rem;letter-spacing:.15em;text-transform:uppercase;padding:.45em .72em;display:none}
+.tier[data-state="live"] .pill{display:block}
+.deadline{
+  margin:0 0 clamp(24px,2.6vw,34px);font-family:var(--data);font-weight:600;
+  text-transform:uppercase;letter-spacing:.14em;font-size:.66rem;line-height:1.7;color:var(--paper);
+}
+.deadline b{color:var(--amber);font-weight:600}
+.ticket-foot{display:flex;flex-wrap:wrap;align-items:center;gap:16px 28px}
+.ticket-foot p{margin:0;color:var(--dim);font-size:.89rem;max-width:36ch}
+
+/* host */
+.teach{display:grid;grid-template-columns:.82fr 1.18fr;gap:clamp(30px,5vw,72px);align-items:center}
+.por{overflow:hidden;background:var(--pit);position:relative}
+.por img{width:100%;aspect-ratio:3/4;object-fit:cover;object-position:50% 24%}
+.teach h2{font-size:clamp(1.9rem,4.3vw,3.2rem);margin:0 0 .55em}
+.teach p{color:var(--dim);max-width:52ch}
+.creds{list-style:none;margin:2.2em 0 0;padding:0;display:grid;gap:.85em}
+.creds li{display:grid;grid-template-columns:auto 1fr;gap:.95em;align-items:baseline;font-size:.96rem}
+.creds li::before{content:"";width:7px;height:7px;background:var(--amber);border-radius:50%;display:block;transform:translateY(-1px)}
+
+/* faq */
+.faq{border-top:1px solid var(--hair)}
+.faq details{border-bottom:1px solid var(--hair)}
+.faq summary{
+  cursor:pointer;list-style:none;padding:clamp(20px,2.5vw,30px) 0;
+  font-family:var(--display);font-weight:900;font-stretch:112%;text-transform:uppercase;
+  font-size:clamp(.98rem,1.85vw,1.24rem);line-height:1.15;
+  display:flex;justify-content:space-between;gap:22px;align-items:center;transition:color 200ms ease;
+}
+.faq summary::-webkit-details-marker{display:none}
+.faq summary::after{content:"+";color:var(--amber);font-family:var(--data);font-size:1.05rem;flex:none;transition:transform 220ms var(--out)}
+.faq details[open] summary::after{transform:rotate(45deg)}
+@media (hover:hover) and (pointer:fine){ .faq summary:hover{color:var(--amber)} }
+.faq p{margin:0 0 clamp(20px,2.5vw,30px);color:var(--dim);max-width:62ch;font-size:.98rem}
+.faq a{color:var(--amber)}
+
+/* closer */
+.closer{position:relative;text-align:center;padding-block:clamp(96px,14vw,200px);overflow:hidden}
+.closer::before{
+  content:"";position:absolute;inset:0;z-index:-1;
+  background:radial-gradient(72% 78% at 50% -8%,rgba(180,35,26,.34),transparent 72%);
+}
+.closer h2{font-size:clamp(2.4rem,7vw,5.4rem);margin:0 0 .45em}
+.closer p{color:var(--dim);max-width:42ch;margin:0 auto 2.2em}
+
+footer{border-top:1px solid var(--hair);padding:36px 0;color:var(--faint)}
+.foot-in{width:var(--gut);margin-inline:auto;display:flex;flex-wrap:wrap;gap:14px 28px;justify-content:space-between;align-items:center}
+footer a{text-decoration:none;transition:color 200ms ease}
+@media (hover:hover) and (pointer:fine){ footer a:hover{color:var(--amber)} }
+
+/* dock */
+.dock{
+  position:fixed;left:0;right:0;bottom:var(--band);z-index:42;display:none;
+  padding:10px max(12px,env(safe-area-inset-left)) calc(10px + env(safe-area-inset-bottom));
+  background:rgba(8,4,5,.94);backdrop-filter:blur(14px);border-top:1px solid var(--hair);
+  transform:translateY(115%);transition:transform 280ms var(--out);
+}
+.dock.up{transform:translateY(0)}
+.dock .btn{width:100%}
+
+/* entrance */
+.rv{opacity:0;transform:translateY(16px);transition:opacity 560ms var(--out),transform 560ms var(--out)}
+.rv.in{opacity:1;transform:translateY(0)}
+.lift{opacity:0;transform:translateY(12px);animation:lift 620ms var(--out) forwards}
+.eyebrow.lift{animation-delay:120ms}
+h1.lift{animation-delay:190ms}
+.hero-bottom.lift{animation-delay:290ms}
+@keyframes lift{to{opacity:1;transform:translateY(0)}}
+
+/* ───────────── responsive ───────────── */
+@media (max-width:1000px){
+  .pair{grid-template-columns:1fr}
+  .teach{grid-template-columns:1fr}
+  .por{max-width:430px}
+  .leave{grid-template-columns:repeat(2,1fr)}
+  .bit-a{grid-column:span 2;grid-row:span 1}
+}
+@media (max-width:680px){
+  .nav .btn,.nav-date{display:none}
+  .dock{display:block}
+  .hud{left:calc(var(--edge) + 30px);right:calc(var(--edge) + 30px);font-size:.52rem;letter-spacing:.1em}
+  .hud-top span.hide-s,.hud-bot span.hide-s{display:none}
+  .strip-in{grid-template-columns:1fr 1fr}
+  .run li{grid-template-columns:1fr;gap:.55em}
+  .run time{padding-top:0}
+  .leave{grid-template-columns:1fr}
+  .bit-a,.bit-wide{grid-column:span 1}
+  .hero{min-height:min(92svh,760px)}
+  footer{padding-bottom:calc(72px + var(--edge))}
+}
+@media (prefers-reduced-motion:reduce){
+  *,*::before,*::after{animation-duration:1ms !important;animation-delay:0ms !important;transition-duration:1ms !important;scroll-behavior:auto !important}
+  .rv,.lift{opacity:1;transform:none}
+  .rec i{animation:none}
+}
+</style>
+<noscript><style>
+  .rv,.lift{opacity:1 !important;transform:none !important;animation:none !important}
+  .hero.off .plate .lit{opacity:1;filter:none}
+  .hero.off h1.hero-h .l1{opacity:.5}
+  .hero.off h1.hero-h .l2{color:var(--amber)}
+  .hero.off .led{background:var(--amber)}
+  .lights,.af{display:none}
+</style></noscript>
+</head>
+<body>
+<a class="skip" href="#tickets">Skip to tickets</a>
+
+<div class="grain" aria-hidden="true"></div>
+<div class="vf" id="vf" aria-hidden="true">
+  <div class="bar top"></div><div class="bar bot"></div>
+  <b class="tl"></b><b class="tr"></b><b class="bl"></b><b class="br"></b>
+  <div class="hud hud-top">
+    <span class="rec"><i></i>REC <span id="tc">00:00:00:00</span></span>
+    <span class="hide-s">4K 60P</span>
+    <span><span id="expo">f1.8 · ISO 400</span> <span id="warn">· LOW LIGHT</span></span>
+  </div>
+  <div class="hud hud-bot">
+    <span class="meter" id="meter"></span>
+    <span class="hide-s" id="scene">SC 01 · The problem</span>
+    <span>AUG 21 · 19:00 CT</span>
+  </div>
+</div>
+<div class="af" id="af" aria-hidden="true"><i></i><i></i><i></i><i></i><u>AF</u></div>
+
+<nav class="nav">
+  <div class="nav-in">
+    <a class="mark" href="/">Taylormade <b>Creative</b></a>
+    <div class="nav-right">
+      <span class="mono nav-date">Fri Aug 21 · 7 PM · Dallas</span>
+      <a class="btn btn-go" href="https://www.eventbrite.com/e/content-creator-workshop-tickets-1993729668107" target="_blank" rel="noopener" data-cta="nav">Get a ticket</a>
+    </div>
+  </div>
+</nav>
+
+<header class="hero off" id="hero">
+  <div class="plate">
+    <img src="img/hero-flat.jpg" alt="" width="1536" height="1024" fetchpriority="high" decoding="async">
+    <img class="lit" src="img/hero.jpg" alt="Nelson Taylor setting a gelled light in a downtown Dallas loft studio at night." width="1536" height="1024" fetchpriority="high" decoding="async">
+  </div>
+  <div class="hero-in">
+    <p class="mono eyebrow lift"><i></i>Content Creator Workshop · Dallas</p>
+    <h1 class="d hero-h lift">
+      <span class="l1">It's not your camera.</span>
+      <span class="l2">It's your light.</span>
+    </h1>
+    <div class="hero-bottom lift">
+      <div>
+        <p class="hero-sub">Two hours, hands on, in a private Dallas studio. <b>Hour one you watch it happen. Hour two you shoot it yourself</b>, and you leave with the footage on your phone.</p>
+        <div class="hero-cta">
+          <a class="btn btn-go" href="https://www.eventbrite.com/e/content-creator-workshop-tickets-1993729668107" target="_blank" rel="noopener" data-cta="hero">Get a ticket, <span id="heroPrice">$35</span></a>
+          <a class="btn btn-ghost" href="#run">Run of show</a>
+        </div>
+      </div>
+      <button class="lights" id="lights" type="button" aria-pressed="true">
+        <span class="led" aria-hidden="true"></span>
+        <span id="lightsLabel">Kill the lights</span>
+      </button>
+    </div>
+  </div>
+</header>
+
+<section class="cdown" id="cdown">
+  <div class="wrap cd-in">
+    <div>
+      <p class="mono cd-lab">Doors open in</p>
+      <div class="cd">
+        <div><u id="cdD">00</u><span>Days</span></div><i>:</i>
+        <div><u id="cdH">00</u><span>Hrs</span></div><i>:</i>
+        <div><u id="cdM">00</u><span>Min</span></div><i>:</i>
+        <div class="sec"><u id="cdS">00</u><span>Sec</span></div>
+      </div>
+    </div>
+    <div class="cd-side">
+      <span class="now">Right now: <b id="nowPrice">$35</b> early bird</span>
+      <p id="nextChange">Price moves to $45 on Aug 8.</p>
+    </div>
+  </div>
+</section>
+
+<div class="strip">
+  <dl class="strip-in">
+    <div class="cell"><dt>Date</dt><dd>Fri Aug 21<small>2026</small></dd></div>
+    <div class="cell"><dt>Doors</dt><dd>7 to 9 PM<small>Central time</small></dd></div>
+    <div class="cell"><dt>Where</dt><dd>Dallas<small>Private studio. Address comes with your ticket.</small></dd></div>
+    <div class="cell"><dt>Price now</dt><dd id="priceCell">$35<small id="priceWindow">Early bird, through Aug 7</small></dd></div>
+  </dl>
+</div>
+
+<section id="problem">
+  <div class="wrap">
+    <div class="head rv">
+      <p class="slate"><span>SC 01</span><span>The problem</span></p>
+      <h2 class="d lead">Your content already deserves better</h2>
+    </div>
+    <ul class="gripes rv">
+      <li>It looks fine in the room and flat on the screen</li>
+      <li>After the sun goes down, everything turns to mush</li>
+      <li>People scroll off before you finish the first sentence</li>
+      <li>The audio gets you skipped before the shot ever does</li>
+      <li>One thirty second clip eats your whole evening</li>
+    </ul>
+    <p class="stmt" id="stmt">
+      <span class="w">None</span> <span class="w">of</span> <span class="w">that</span> <span class="w">is</span> <span class="w">a</span> <span class="w">camera</span> <span class="w">problem.</span>
+      <span class="w hot">It's</span> <span class="w hot">a</span> <span class="w hot">setup</span> <span class="w hot">problem,</span>
+      <span class="w">and</span> <span class="w">a</span> <span class="w">setup</span> <span class="w">can</span> <span class="w">be</span> <span class="w">taught</span> <span class="w">in</span> <span class="w">one</span> <span class="w">night.</span>
+    </p>
+  </div>
+</section>
+
+<section id="leave">
+  <div class="wrap">
+    <div class="head rv">
+      <p class="slate"><span>SC 02</span><span>What you take home</span></p>
+      <h2 class="d lead">Not notes. Footage</h2>
+      <p class="lead-note">Everything is taught on a phone. Bring a camera if you own one, but nothing here needs it.</p>
+    </div>
+    <div class="leave rv">
+      <article class="bit bit-a" data-af>
+        <img src="img/hands.jpg" alt="Hands adjusting a gelled light panel in a dark studio." loading="lazy" width="1024" height="1024" decoding="async">
+        <div class="cap">
+          <h3 class="d-mid">Video that reads like a set</h3>
+          <p>The look people assume costs a crew, built in front of you, in a room the size of yours.</p>
+        </div>
+      </article>
+      <article class="bit"><h3 class="d-mid">Night footage that holds</h3><p>Shoot after dark, away from a wall outlet, and still come back with something worth posting.</p></article>
+      <article class="bit"><h3 class="d-mid">Openings people stay for</h3><p>How the first two seconds get built on purpose instead of hoping the algorithm is generous.</p></article>
+      <article class="bit bit-wide"><h3 class="d-mid">Sound that keeps them watching</h3><p>Bad audio is the number one reason people leave a video. That gets fixed in front of you, on the spot.</p></article>
+      <article class="bit bit-wide"><h3 class="d-mid">A shorter shoot night</h3><p>The workflow that gets you from idea to posted without burning four hours on one clip.</p></article>
+      <article class="bit bit-wide"><h3 class="d-mid">DFW creators worth knowing</h3><p>Hour two is a room of people building the same thing. You shoot together. That is the point.</p></article>
+    </div>
+  </div>
+</section>
+
+<section id="room">
+  <div class="wrap">
+    <div class="head rv">
+      <p class="slate"><span>SC 03</span><span>The room</span></p>
+      <h2 class="d lead">A bare loft until somebody lights it</h2>
+      <p class="lead-note">Two rooms, hardwood, tall windows, downtown out the glass. Nothing about it is special until the lights go up. That is the whole lesson.</p>
+    </div>
+    <div class="pair rv">
+      <figure class="shot" data-af>
+        <img src="img/room-day.jpg" alt="The studio in daylight: empty hardwood floor, tall black-framed windows, downtown Dallas outside." loading="lazy" width="1100" height="1467" decoding="async">
+        <figcaption><b>Plate</b><span>The room as it sits</span></figcaption>
+      </figure>
+      <figure class="shot" data-af>
+        <img src="img/room.jpg" alt="The same room after dark, lit with a crimson panel and a warm softbox, a phone on a tripod facing an empty stool." loading="lazy" width="1536" height="1024" decoding="async">
+        <figcaption><b>Previs</b><span>Friday, 8 PM</span></figcaption>
+      </figure>
+    </div>
+    <p class="room-note rv"><b>Same floor. Same windows.</b> The only thing that changed is what is pointed at it, and that is a thing you can learn in one night and use forever.</p>
+  </div>
+</section>
+
+<section id="run">
+  <div class="wrap">
+    <div class="head rv">
+      <p class="slate"><span>SC 04</span><span>Run of show</span></p>
+      <h2 class="d lead">Two hours, two rooms, everybody shoots</h2>
+    </div>
+    <ol class="run rv">
+      <li data-af><time datetime="19:00">7:00 PM</time><div><h3 class="d-mid">Doors</h3><p>Walk in, grab a seat, meet the room. Come as you would show up on camera.</p></div></li>
+      <li data-af><time datetime="19:10">7:10 PM</time><div><h3 class="d-mid">Hour one, live demos</h3><p>I build the setups in front of you and say out loud why every choice gets made. Flat to finished, in real time, on a phone.</p></div></li>
+      <li data-af><time datetime="20:00">8:00 PM</time><div><h3 class="d-mid">Hour two, shoot and network</h3><p>You rotate through stations across two rooms: the front room, and a blacked out back room for the after dark setup. Everything is running. You are filming, not watching.</p></div></li>
+      <li data-af><time datetime="21:00">9:00 PM</time><div><h3 class="d-mid">Out</h3><p>You leave with footage on your phone and the numbers of the people you just shot with.</p></div></li>
+    </ol>
+    <figure class="shot rv" style="margin-top:clamp(28px,3.4vw,48px)" data-af>
+      <img src="img/creators.jpg" alt="Creators filming each other on phones in a lit loft studio at night." loading="lazy" width="1536" height="1024" decoding="async" style="aspect-ratio:16/10">
+      <figcaption><b>Previs</b><span>Hour two</span></figcaption>
+    </figure>
+  </div>
+</section>
+
+<section id="who">
+  <div class="wrap">
+    <div class="head rv">
+      <p class="slate"><span>SC 05</span><span>Who is in the room</span></p>
+      <h2 class="d lead">Built for people already posting</h2>
+    </div>
+    <div class="who rv">
+      <div><h3 class="d-mid">Creators and influencers</h3><p>You post consistently and you have hit the ceiling of what your phone does on auto.</p></div>
+      <div><h3 class="d-mid">Owners who shoot their own</h3><p>Nobody is filming your business but you, and it needs to look like somebody was hired.</p></div>
+      <div><h3 class="d-mid">Photographers adding video</h3><p>You can light a still. Moving pictures keep fighting you.</p></div>
+      <div><h3 class="d-mid">People who need the room</h3><p>Half of this is who you meet. Hour two exists so you leave with collaborators.</p></div>
+    </div>
+    <p class="straight rv"><b>Straight up:</b> if you already light multi camera sets for a living, this will be a refresher at best. The night is built for people doing it themselves.</p>
+  </div>
+</section>
+
+<section id="tickets">
+  <div class="wrap">
+    <div class="head rv">
+      <p class="slate"><span>SC 06</span><span>Tickets</span></p>
+      <h2 class="d lead">Three prices. One direction</h2>
+      <p class="lead-note">It opens at $35, becomes $45 on August 8, and finishes at $55 for the last 48 hours. Seating is limited by how many people can actually get their hands on a setup, so the window can close before the date does.</p>
+    </div>
+    <div class="tiers rv">
+      <article class="tier" data-tier="early" data-af>
+        <span class="pill">On sale now</span>
+        <p class="mono lbl">Early bird</p><p class="price">$35</p>
+        <p class="when">Through Aug 7, or sooner if it sells out.</p>
+      </article>
+      <article class="tier" data-tier="regular" data-af>
+        <span class="pill">On sale now</span>
+        <p class="mono lbl">Regular</p><p class="price">$45</p>
+        <p class="when">Aug 8 through Aug 19.</p>
+      </article>
+      <article class="tier" data-tier="last" data-af>
+        <span class="pill">On sale now</span>
+        <p class="mono lbl">Last call</p><p class="price">$55</p>
+        <p class="when">The final 48 hours, if seats are left.</p>
+      </article>
+    </div>
+    <p class="deadline rv" id="deadline">Early bird closes Aug 7.</p>
+    <div class="ticket-foot rv">
+      <a class="btn btn-go" href="https://www.eventbrite.com/e/content-creator-workshop-tickets-1993729668107" target="_blank" rel="noopener" data-cta="tickets">Get a ticket on Eventbrite</a>
+      <p>The studio address is sent in your confirmation email. It is never posted publicly.</p>
+    </div>
+  </div>
+</section>
+
+<section id="host">
+  <div class="wrap teach">
+    <div class="por rv" data-af><img src="img/nelson.jpg" alt="Nelson Taylor in his studio, lit red." loading="lazy" width="1100" height="1375" decoding="async"></div>
+    <div class="rv">
+      <p class="slate"><span>SC 07</span><span>Who is teaching</span></p>
+      <h2 class="d">Nelson Taylor</h2>
+      <p>I run Taylormade Creative out of Dallas. I shoot brand and commercial work here, I rent out the studio you will be standing in, and I light everything myself, including the videos I post on a phone.</p>
+      <p style="margin-top:1em">This night is the shortcut I wish somebody had handed me: the setups that carry the most weight, taught in the room where I actually use them.</p>
+      <ul class="creds">
+        <li>14 years in design and creative direction</li>
+        <li>Brand, commercial and portrait work across Dallas Fort Worth</li>
+        <li>Built and shipped an iOS app on the App Store, Run It UP! Dallas</li>
+        <li>Runs a private Dallas studio and teaches out of it</li>
+      </ul>
+    </div>
+  </div>
+</section>
+
+<section id="faq">
+  <div class="wrap">
+    <div class="head rv">
+      <p class="slate"><span>SC 08</span><span>Before you book</span></p>
+      <h2 class="d lead">The questions people ask</h2>
+    </div>
+    <div class="faq rv">
+      <details><summary>Do I need a camera or any gear?</summary><p>No. Bring your phone charged, and headphones if you use them. Everything is demonstrated on setups that are already running in the room.</p></details>
+      <details><summary>I am a beginner. Is this over my head?</summary><p>No. If you have posted a video before, you are ready. Hour two is hands on with somebody standing next to you.</p></details>
+      <details><summary>Where exactly is it?</summary><p>A private studio in Dallas. The exact address goes out in your ticket confirmation email. It is not listed publicly.</p></details>
+      <details><summary>What should I wear?</summary><p>Whatever you would actually wear on camera. You are going to be filmed, and you are keeping the footage.</p></details>
+      <details><summary>Will I leave with something usable?</summary><p>Yes. Hour two is you shooting on the setups. Whatever you capture is yours to post.</p></details>
+      <details><summary>Can I transfer or refund my ticket?</summary><p>Life happens. Email <a href="mailto:hello@taylormadecreative.net">hello@taylormadecreative.net</a> and we will sort it out. Tickets are managed through Eventbrite.</p></details>
+      <details><summary>Is there a group rate?</summary><p>Reach out before you book if you are bringing a team: <a href="mailto:hello@taylormadecreative.net">hello@taylormadecreative.net</a>.</p></details>
+    </div>
+  </div>
+</section>
+
+<section class="closer">
+  <div class="wrap">
+    <h2 class="d">Friday,<br><span class="amber">August 21</span></h2>
+    <p>Doors at 7. Seating is limited, and the price only goes up from here.</p>
+    <a class="btn btn-go" href="https://www.eventbrite.com/e/content-creator-workshop-tickets-1993729668107" target="_blank" rel="noopener" data-cta="closer">Get a ticket, <span class="closerPrice">$35</span></a>
+  </div>
+</section>
+
+<footer>
+  <div class="foot-in">
+    <p class="mono" style="margin:0">© <span id="yr">2026</span> Taylormade Creative · Dallas, TX</p>
+    <p class="mono" style="margin:0"><a href="/">taylormadecreative.net</a> · <a href="https://www.instagram.com/taylormade_creative/" target="_blank" rel="noopener">@taylormade_creative</a></p>
+  </div>
+</footer>
+
+<div class="dock" id="dock">
+  <a class="btn btn-go" href="https://www.eventbrite.com/e/content-creator-workshop-tickets-1993729668107" target="_blank" rel="noopener" data-cta="dock">Get a ticket, Fri Aug 21</a>
+</div>
+
+<script>
+(function(){
+  var hero   = document.getElementById('hero');
+  var lights = document.getElementById('lights');
+  var reduce = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+  var fine   = window.matchMedia('(hover: hover) and (pointer: fine)').matches;
+
+  /* the lights, and the camera reacting to them */
+  function paint(){
+    var off = hero.classList.contains('off');
+    document.getElementById('lightsLabel').textContent = off ? 'Hit the lights' : 'Kill the lights';
+    document.getElementById('expo').textContent = off ? 'f1.8 · ISO 6400' : 'f1.8 · ISO 400';
+    document.documentElement.classList.toggle('lowlight', off);
+    lights.setAttribute('aria-pressed', off ? 'false' : 'true');
+  }
+  lights.addEventListener('click', function(){ hero.classList.toggle('off'); paint(); });
+
+  if(reduce){ hero.classList.remove('off'); paint(); }
+  else {
+    var lit = new Image(), fired = false;
+    var go = function(){ if(fired) return; fired = true;
+      setTimeout(function(){ hero.classList.remove('off'); paint(); }, 460);
+    };
+    lit.addEventListener('load', go); lit.addEventListener('error', go);
+    lit.src = 'img/hero.jpg';
+    if(lit.complete) go();
+    setTimeout(go, 2400);
+  }
+  paint();
+
+  /* timecode, running since you got here */
+  var tc = document.getElementById('tc'), t0 = Date.now();
+  function pad(n){ return n < 10 ? '0' + n : '' + n; }
+  function stamp(){
+    var ms = Date.now() - t0;
+    tc.textContent = pad(Math.floor(ms/36e5)) + ':' + pad(Math.floor(ms/6e4)%60) + ':' +
+                     pad(Math.floor(ms/1000)%60) + ':' + pad(Math.floor(ms%1000/1000*24));
+  }
+  stamp(); setInterval(stamp, reduce ? 1000 : 110);
+
+  /* the bottom meter is how far down the page you are */
+  var meter = document.getElementById('meter'), bars = [];
+  for(var i = 0; i < 14; i++){ var b = document.createElement('i'); meter.appendChild(b); bars.push(b); }
+  var queued = false;
+  function level(){
+    queued = false;
+    var max = document.documentElement.scrollHeight - window.innerHeight;
+    var p = max > 0 ? Math.min(1, window.scrollY / max) : 0;
+    var lit = Math.round(p * bars.length);
+    for(var i = 0; i < bars.length; i++){
+      bars[i].classList.toggle('on', i < lit);
+      bars[i].style.height = (38 + (i / bars.length) * 62) + '%';
+    }
+  }
+  window.addEventListener('scroll', function(){
+    if(!queued){ queued = true; requestAnimationFrame(level); }
+  }, {passive:true});
+  level();
+
+  /* autofocus box snaps to whatever you point at */
+  if(fine && !reduce){
+    var af = document.getElementById('af');
+    var cs = af.querySelectorAll('i'), tag = af.querySelector('u');
+    var place = function(el){
+      var r = el.getBoundingClientRect(), s = 17, o = 6;
+      var pts = [[r.left - o, r.top - o],[r.right + o - s, r.top - o],
+                 [r.left - o, r.bottom + o - s],[r.right + o - s, r.bottom + o - s]];
+      for(var i = 0; i < 4; i++) cs[i].style.transform = 'translate3d(' + pts[i][0] + 'px,' + pts[i][1] + 'px,0)';
+      tag.style.transform = 'translate3d(' + (r.left - o) + 'px,' + (r.top - o - 15) + 'px,0)';
+      af.classList.add('on');
+    };
+    var current = null;
+    document.querySelectorAll('[data-af]').forEach(function(el){
+      el.addEventListener('pointerenter', function(){ current = el; place(el); });
+      el.addEventListener('pointerleave', function(){ current = null; af.classList.remove('on'); });
+    });
+    window.addEventListener('scroll', function(){ if(current) place(current); }, {passive:true});
+    window.addEventListener('resize', function(){ if(current) place(current); });
+  }
+
+  /* bottom readout names the scene you are standing in */
+  var scene = document.getElementById('scene');
+  var marks = Array.prototype.map.call(document.querySelectorAll('section[id] .slate'), function(s){
+    return { el:s.closest('section'), txt:s.children[0].textContent + ' · ' + s.children[1].textContent };
+  });
+  if(marks.length && 'IntersectionObserver' in window){
+    marks.forEach(function(m){
+      new IntersectionObserver(function(es){
+        if(es[0].isIntersecting) scene.textContent = m.txt;
+      }, { rootMargin:'-45% 0px -45% 0px' }).observe(m.el);
+    });
+  }
+
+  /* which tier is live */
+  var doors    = new Date('2026-08-21T19:00:00-05:00').getTime();
+  var earlyEnd = new Date('2026-08-08T00:00:00-05:00').getTime();
+  var regEnd   = new Date('2026-08-20T00:00:00-05:00').getTime();
+  var live  = Date.now() < earlyEnd ? 'early' : (Date.now() < regEnd ? 'regular' : 'last');
+  var order = ['early','regular','last'], price = { early:'$35', regular:'$45', last:'$55' };
+  Array.prototype.forEach.call(document.querySelectorAll('.tier'), function(t){
+    var i = order.indexOf(t.dataset.tier), j = order.indexOf(live);
+    t.dataset.state = i < j ? 'past' : (i === j ? 'live' : 'next');
+  });
+  document.getElementById('heroPrice').textContent = price[live];
+  document.getElementById('nowPrice').textContent = price[live];
+  Array.prototype.forEach.call(document.querySelectorAll('.closerPrice'), function(el){ el.textContent = price[live]; });
+
+  var tierName = { early:'early bird', regular:'regular', last:'last call' };
+  document.querySelector('.cd-side .now').innerHTML =
+    'Right now: <b>' + price[live] + '</b> ' + tierName[live];
+  document.getElementById('nextChange').textContent =
+    live === 'early' ? 'It becomes $45 on August 8, then $55 for the final 48 hours.'
+    : live === 'regular' ? 'Early bird is gone. It becomes $55 on August 20.'
+    : 'This is the last price before doors.';
+
+  /* countdown to doors, and to the next price */
+  var D = document.getElementById('cdD'), H = document.getElementById('cdH'),
+      M = document.getElementById('cdM'), S = document.getElementById('cdS');
+  var priceCell = document.getElementById('priceCell');
+  priceCell.firstChild.nodeValue = price[live];
+  document.getElementById('priceWindow').textContent =
+    live === 'early' ? 'Early bird, through Aug 7'
+    : live === 'regular' ? 'Regular, through Aug 19'
+    : 'Last call, final 48 hours';
+  var deadline = document.getElementById('deadline');
+  var nextAt = live === 'early' ? earlyEnd : (live === 'regular' ? regEnd : doors);
+  var nextTxt = live === 'early' ? '$45' : (live === 'regular' ? '$55' : 'doors');
+
+  function two(n){ return n < 10 ? '0' + n : '' + n; }
+  function span(ms){
+    return { d: Math.floor(ms/864e5), h: Math.floor(ms/36e5)%24, m: Math.floor(ms/6e4)%60, s: Math.floor(ms/1000)%60 };
+  }
+  function beat(){
+    var left = doors - Date.now();
+    if(left <= 0){
+      D.textContent = H.textContent = M.textContent = S.textContent = '00';
+      document.querySelector('.cd-lab').textContent = 'Doors are open';
+      deadline.textContent = 'Tonight. Doors at 7.';
+      return;
+    }
+    var t = span(left);
+    D.textContent = two(t.d); H.textContent = two(t.h); M.textContent = two(t.m); S.textContent = two(t.s);
+
+    var n = span(Math.max(0, nextAt - Date.now()));
+    deadline.innerHTML = nextTxt === 'doors'
+      ? 'Doors in <b>' + n.d + 'd ' + two(n.h) + 'h ' + two(n.m) + 'm</b>. This is the last price.'
+      : 'Price goes to <b>' + nextTxt + '</b> in <b>' + n.d + 'd ' + two(n.h) + 'h ' + two(n.m) + 'm</b>.';
+  }
+  beat(); setInterval(beat, 1000);
+
+  /* entrances */
+  if('IntersectionObserver' in window && !reduce){
+    var io = new IntersectionObserver(function(es){
+      es.forEach(function(e){ if(e.isIntersecting){ e.target.classList.add('in'); io.unobserve(e.target); } });
+    }, { rootMargin:'0px 0px -8% 0px', threshold:.05 });
+    Array.prototype.forEach.call(document.querySelectorAll('.rv'), function(el){ io.observe(el); });
+  } else {
+    Array.prototype.forEach.call(document.querySelectorAll('.rv'), function(el){ el.classList.add('in'); });
+  }
+
+  /* sticky ticket dock once the hero is gone */
+  var dock = document.getElementById('dock');
+  if('IntersectionObserver' in window){
+    new IntersectionObserver(function(es){ dock.classList.toggle('up', !es[0].isIntersecting); }, {threshold:0}).observe(hero);
+  }
+
+  Array.prototype.forEach.call(document.querySelectorAll('[data-cta]'), function(a){
+    a.addEventListener('click', function(){
+      if(window.gtag) gtag('event','select_promotion',{ promotion_name:'creator-workshop-aug21', creative_slot:a.dataset.cta });
+    });
+  });
+
+  document.getElementById('yr').textContent = new Date().getFullYear();
+
+  /* scrubbed statement reveal */
+  if(reduce) return;
+  function load(src, cb){ var s = document.createElement('script'); s.src = src; s.onload = cb; s.onerror = function(){}; document.head.appendChild(s); }
+  load('https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/gsap.min.js', function(){
+    load('https://cdn.jsdelivr.net/npm/gsap@3.12.5/dist/ScrollTrigger.min.js', function(){
+      if(!window.gsap || !window.ScrollTrigger) return;
+      gsap.registerPlugin(ScrollTrigger);
+      document.documentElement.classList.add('gsap');
+      gsap.to('#stmt .w', { opacity:1, ease:'none', stagger:.4,
+        scrollTrigger:{ trigger:'#stmt', start:'top 82%', end:'bottom 62%', scrub:.4 } });
+
+      gsap.to('.plate img', { scale:1.12, yPercent:5, ease:'none',
+        scrollTrigger:{ trigger:'#hero', start:'top top', end:'bottom top', scrub:.5 } });
+    });
+  });
+})();
+</script>
+</body>
+</html>
