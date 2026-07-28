@@ -74,6 +74,15 @@
       return;
     }
 
+    // Landing here with valid ?p=&t= (and not cancelled) means Stripe redirected
+    // back after checkout — a stronger signal than the webhook, which may never
+    // fire. Drop the resume offer now, or a client who has already paid returns
+    // to the landing page and is told to "finish paying".
+    try {
+      sessionStorage.removeItem("tm-headshots-resume");
+      sessionStorage.removeItem("tm-digitals-resume");
+    } catch (_) { /* storage blocked — nothing to clear */ }
+
     // the Stripe webhook usually lands within seconds — poll briefly
     let status = null;
     for (let i = 0; i < 10; i++) {
@@ -96,8 +105,8 @@
         ${b.location ? `<div class="row"><span>Location</span><b>${esc(b.location)}</b></div>` : ""}
       </div>` : ""}
       <p class="lede" style="color: var(--smoke); max-width: 56ch;">${paid
-        ? "A confirmation email is on its way, a prep email lands a few days before your shoot, and you’ll get a reminder the day before. Your client portal has everything else."
-        : "Your payment went through — the confirmation is processing and your email will arrive in the next few minutes. Your portal link below works right now."}</p>
+        ? "Your client portal below has everything — session details, and your gallery once it’s up. I’ll email your confirmation and the studio address too; if it hasn’t landed, check spam and then DM <a href=\"https://www.instagram.com/taylormade_creative/\" target=\"_blank\" rel=\"noopener\" style=\"color:var(--gold);text-decoration:underline;\">@taylormade_creative</a> and I’ll resend it."
+        : "Your payment went through and your portal link below works right now. I’ll come back to you by email with your confirmation and the studio address — if nothing has landed by tomorrow, check spam and then DM <a href=\"https://www.instagram.com/taylormade_creative/\" target=\"_blank\" rel=\"noopener\" style=\"color:var(--gold);text-decoration:underline;\">@taylormade_creative</a>."}</p>
       <div class="hero-ctas" style="margin-top: 26px;">
         <a class="btn btn-gold" href="${portal}">Open your client portal</a>
         <a class="btn btn-ghost" href="../">← Back to the studio</a>
