@@ -165,8 +165,25 @@ Deno.serve(async (req: Request) => {
   if (!key) return new Response("not configured", { status: 503 });
 
   const db = sb();
-  const whSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET") ||
-    await getConfig(db, "stripe_webhook_secret_bk");
+  // ROOT CAUSE OF THE 2026-07-08..19 OUTAGE, kept documented so it cannot repeat:
+  // a STRIPE_WEBHOOK_SECRET env var set 2026-07-02 — six days BEFORE bk-setup-webhook
+  // created the current endpoint — silently shadowed the correct value in bk_config,
+  // so every single delivery failed signature verification with a 400 and no payment
+  // was ever reconciled. Nothing surfaced it because the env var is invisible from
+  // the database side. Deleting the env var fixed it (2026-07-30).
+  // env still wins (deploy-time override is a legitimate escape hatch), but a
+  // DISAGREEMENT between the two is now loud instead of silent.
+  const envSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
+  const cfgSecret = await getConfig(db, "stripe_webhook_secret_bk");
+  if (envSecret && cfgSecret && envSecret !== cfgSecret) {
+    console.error(
+      "WEBHOOK SECRET CONFLICT — STRIPE_WEBHOOK_SECRET (env) does not match " +
+      "bk_config.stripe_webhook_secret_bk. env is winning. If deliveries are failing " +
+      "with 'invalid signature', the env var is almost certainly stale: delete it and " +
+      "let bk_config (which bk-setup-webhook keeps in sync) be the source of truth.",
+    );
+  }
+  const whSecret = envSecret || cfgSecret;
   if (!whSecret) return new Response("not configured", { status: 503 });
 
   const stripe = new Stripe(key);
