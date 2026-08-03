@@ -248,6 +248,34 @@ function renderNelsonAlert(ctx: Ctx): { subject: string; html: string } {
   } else if (type === "contract_signed") {
     subject = `✍️ Contract signed · ${pj?.title ?? ""}`;
     lead = `<b>${esc(String(pl.signer ?? "The client"))}</b> just signed <b>${esc(String(pl.title ?? "the agreement"))}</b> for ${esc(pj?.title ?? "a project")}. Name, timestamp, and device details are on record.`;
+  } else if (type === "payment_unreconciled") {
+    // raised by bk-stripe-webhook when money arrives that it cannot attach to a booking
+    const amt = typeof pl.amount_cents === "number" ? money(pl.amount_cents) : "a payment";
+    subject = `🚨 MONEY TAKEN, NOT BOOKED — ${amt}`;
+    lead = `<b>${esc(String(pl.subject ?? "A payment could not be reconciled"))}.</b><br><br>` +
+      `${esc(String(pl.detail ?? ""))}<br><br>` +
+      `Stripe session: <code>${esc(String(pl.session_id ?? "n/a"))}</code><br>` +
+      `Payment intent: <code>${esc(String(pl.payment_intent ?? "n/a"))}</code><br>` +
+      `Invoice id: <code>${esc(String(pl.invoice_id ?? "none"))}</code><br>` +
+      `Client email: ${esc(String(pl.customer_email ?? "unknown"))}<br><br>` +
+      `<b>The client has paid and is expecting a confirmation.</b> Reconcile this by hand in the admin dashboard, then email them.`;
+  } else if (type === "payment_stuck") {
+    // raised by the bk_alert_stuck_payments sweep — a hold expired without ever being paid
+    subject = `⚠️ Booking hold expired unpaid — ${String(pl.client_name ?? "a client")}`;
+    lead = `A booking for <b>${esc(String(pl.service_name ?? "a session"))}</b> on <b>${esc(String(pl.starts_at_ct ?? "an upcoming date"))}</b> ` +
+      `was held for <b>${esc(String(pl.client_name ?? "a client"))}</b> (${esc(String(pl.client_email ?? "no email"))}) and its 30-minute payment hold has now expired, ` +
+      `so the calendar slot has been released.<br><br>` +
+      `Usually this just means someone opened checkout and walked away — no action needed. ` +
+      `<b>But if Stripe shows a payment from them, the webhook did not land and you must reconcile it by hand before that slot gets resold.</b><br><br>` +
+      `Invoice id: <code>${esc(String(pl.invoice_id ?? "n/a"))}</code>`;
+  } else if (type === "payment_orphan") {
+    // the worse half of the sweep: money is in, no shoot on the calendar
+    subject = `🚨 PAID BUT NOT BOOKED — ${String(pl.client_name ?? "a client")}`;
+    lead = `<b>${esc(String(pl.client_name ?? "A client"))}</b> (${esc(String(pl.client_email ?? "no email"))}) has <b>paid</b> for ` +
+      `<b>${esc(String(pl.service_name ?? "a session"))}</b> on <b>${esc(String(pl.starts_at_ct ?? "an upcoming date"))}</b>, ` +
+      `but the booking never moved out of <code>pending_payment</code> and its hold has expired — so the slot is loose and may get resold.<br><br>` +
+      `<b>Fix this one first.</b> Confirm the booking in the admin dashboard, then email them the confirmation and the studio address.<br><br>` +
+      `Invoice id: <code>${esc(String(pl.invoice_id ?? "n/a"))}</code> (status: ${esc(String(pl.invoice_status ?? "unknown"))})`;
   } else if (type === "test") {
     subject = `✅ Booking email automation is live`;
     lead = `This is the end-to-end test of the new bk-mailer pipeline on taylormadecreative.net. Queue → Resend → inbox all working.`;
@@ -256,7 +284,8 @@ function renderNelsonAlert(ctx: Ctx): { subject: string; html: string } {
     lead = esc(JSON.stringify(pl));
   }
   const html = shell(subject,
-    h1(subject.replace(/^[^\w]*\s/, "")) + p(lead) +
+    // subject interpolates client-supplied names — escape before it becomes markup
+    h1(esc(subject.replace(/^[^\w]*\s/, ""))) + p(lead) +
     btn(`${PORTAL_BASE}/admin.html`, "OPEN ADMIN DASHBOARD"),
   );
   return { subject, html };

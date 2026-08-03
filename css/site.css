@@ -44,6 +44,11 @@ button { font: inherit; color: inherit; background: none; border: 0; cursor: poi
 ::selection { background: var(--gold); color: var(--ink); }
 
 :focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; border-radius: 2px; }
+/* --gold on warm paper is ~1.9:1 — an invisible focus ring on every paper act and
+   on the gold closing CTA. Swap to ink there, which reads on both. WCAG 2.4.11. */
+.on-paper :focus-visible,
+.band :focus-visible,
+.btn-gold:focus-visible { outline-color: var(--ink); }
 
 /* ---------- type utilities ---------- */
 .slate {                       /* the mono "production metadata" voice */
@@ -489,8 +494,14 @@ a.quote:hover { transform: translateY(-3px); border-color: var(--gold-deep); }
   background: linear-gradient(140deg, rgba(233,185,73,.1), transparent 55%);
   display: grid; gap: 6px; font-size: 15px;
 }
-.bk-summary .row { display: flex; justify-content: space-between; gap: 16px; }
-.bk-summary .row b { color: var(--gold); font-weight: 600; }
+.bk-summary .row { display: flex; justify-content: space-between; gap: 16px; align-items: baseline; }
+/* long emails have no break opportunities and default min-width:auto refuses
+   to shrink, so the value escapes the card on narrow phones — on the very
+   screen where the user is checking the address before paying */
+.bk-summary .row b {
+  color: var(--gold); font-weight: 600;
+  min-width: 0; text-align: right; overflow-wrap: anywhere;
+}
 .bk-err { color: #ffb3a0; font-size: 14.5px; }
 .bk-note { color: var(--smoke); font-size: 13.5px; }
 
