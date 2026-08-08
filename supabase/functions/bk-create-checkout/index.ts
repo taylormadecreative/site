@@ -3,12 +3,16 @@
 // token that gates the client portal). verify_jwt is disabled for that reason.
 // v8: optional return_url (whitelisted to Taylormade domains) so the new
 // www.taylormadecreative.net booking flow can land on its own success page.
-// v9 (2026-08-07): 24h J3PRODUCTIONS birthday sale — Stripe's "Add promotion
-// code" field is enabled ONLY for headshot/digitals session invoices and ONLY
-// until the sale window closes (2026-08-08 7:00pm CT), so the code can never
-// touch studio rentals or custom quotes, and checkout reverts to normal by
-// itself when the sale ends. The webhook (v9) reconciles discounted totals.
-// Deployed to Supabase project pgqdmnmessbbzyszjfvr.
+// v10 (2026-08-07): 24h J3PRODUCTIONS birthday sale. Stripe's hosted-checkout
+// promo ENTRY field is broken on this account (every valid live code returns
+// payment_pages_promotion_code_invalid — verified empirically across coupon
+// shapes and card-only sessions, while server-side `discounts` attach works),
+// so the code is collected on OUR booking form instead: the widget sends
+// promo_code, and when it normalizes to J3PRODUCTIONS for a headshot/digitals
+// session inside the sale window (ends 2026-08-08 7:00pm CT) the discount is
+// attached server-side. Attach failures fall back to a full-price session —
+// a promo hiccup must never cost a booking. The webhook (v9) reconciles
+// discounted totals. Deployed to Supabase project pgqdmnmessbbzyszjfvr.
 import Stripe from "npm:stripe@17";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
@@ -38,7 +42,7 @@ Deno.serve(async (req: Request) => {
   if (req.method === "OPTIONS") return new Response("ok", { headers: CORS });
   if (req.method !== "POST") return json({ error: "method_not_allowed" }, 405);
   try {
-    const { invoice_id, token, return_url } = await req.json();
+    const { invoice_id, token, return_url, promo_code } = await req.json();
     if (!invoice_id || !token) return json({ error: "bad_request" }, 400);
 
     const key = Deno.env.get("STRIPE_SECRET_KEY");
@@ -61,13 +65,43 @@ Deno.serve(async (req: Request) => {
 
     const stripe = new Stripe(key);
 
+    // the buyer's own name doesn't belong in the product string — prefer the
+    // invoice's first line item ("Digitals Session · Jul 10, 2026 2:00 PM")
+    const nLines = Array.isArray(inv.line_items) ? inv.line_items.length : 0;
+    const lineTitle =
+      ((nLines > 0 && inv.line_items[0]?.title) ||
+        `${inv.title} — ${inv.bk_projects.title ?? "Taylormade Creative"}`) +
+      (nLines > 1 ? ` (+${nLines - 1} add-on${nLines > 2 ? "s" : ""})` : "");
+
+    // 24h J3 birthday sale — window ends 2026-08-08 7:00pm America/Chicago
+    // (CDT, UTC-5) = epoch 1786233600. The promo id is the live Stripe
+    // promotion code J3PRODUCTIONS ($20 off coupon LQ62Ywk8).
+    const SALE_END_MS = 1786233600000;
+    const SALE_PROMO_ID = "promo_1U1xwpA2eIGiS0WsA6DLSmPA";
+    const codeGiven = typeof promo_code === "string"
+      ? promo_code.replace(/[^a-z0-9]/gi, "").toUpperCase()
+      : "";
+    const applySale =
+      codeGiven === "J3PRODUCTIONS" &&
+      Date.now() < SALE_END_MS &&
+      /headshot|digital/i.test(lineTitle);
+
     // Reuse an existing open session instead of minting a second payable one —
-    // closes the double-payment window between redirect and webhook.
+    // closes the double-payment window between redirect and webhook. Exception:
+    // if the buyer has now supplied the sale code but the open session was made
+    // WITHOUT the discount, expire it and mint a discounted replacement.
     if (inv.stripe_session_id) {
       try {
         const existing = await stripe.checkout.sessions.retrieve(inv.stripe_session_id);
         if (existing.payment_status === "paid") return json({ error: "already_paid" }, 409);
-        if (existing.status === "open" && existing.url) return json({ url: existing.url });
+        if (existing.status === "open" && existing.url) {
+          const hasDiscount = (existing.total_details?.amount_discount ?? 0) > 0;
+          if (applySale && !hasDiscount) {
+            await stripe.checkout.sessions.expire(existing.id).catch(() => {});
+          } else {
+            return json({ url: existing.url });
+          }
+        }
       } catch (_) { /* expired or invalid — fall through and create fresh */ }
     }
 
@@ -84,23 +118,8 @@ Deno.serve(async (req: Request) => {
       cancelUrl = `${return_url}${sep}cancelled=1`;
     }
 
-    // the buyer's own name doesn't belong in the product string — prefer the
-    // invoice's first line item ("Digitals Session · Jul 10, 2026 2:00 PM")
-    const nLines = Array.isArray(inv.line_items) ? inv.line_items.length : 0;
-    const lineTitle =
-      ((nLines > 0 && inv.line_items[0]?.title) ||
-        `${inv.title} — ${inv.bk_projects.title ?? "Taylormade Creative"}`) +
-      (nLines > 1 ? ` (+${nLines - 1} add-on${nLines > 2 ? "s" : ""})` : "");
-
-    // 24h J3 birthday sale window ends 2026-08-08T00:00:00Z + 24h — i.e.
-    // 2026-08-08 7:00pm America/Chicago (CDT, UTC-5) = epoch 1786233600.
-    const SALE_END_MS = 1786233600000;
-    const salePromo =
-      Date.now() < SALE_END_MS && /headshot|digital/i.test(lineTitle);
-
-    const session = await stripe.checkout.sessions.create({
+    const sessionParams: Stripe.Checkout.SessionCreateParams = {
       mode: "payment",
-      ...(salePromo ? { allow_promotion_codes: true } : {}),
       customer_email: inv.bk_projects.client_email,
       line_items: [
         {
@@ -115,7 +134,23 @@ Deno.serve(async (req: Request) => {
       metadata: { invoice_id: inv.id, project_id: inv.bk_projects.id },
       success_url: successUrl,
       cancel_url: cancelUrl,
-    });
+    };
+
+    let session: Stripe.Checkout.Session;
+    if (applySale) {
+      try {
+        session = await stripe.checkout.sessions.create({
+          ...sessionParams,
+          discounts: [{ promotion_code: SALE_PROMO_ID }],
+        });
+      } catch (promoErr) {
+        // never lose a booking to a promo problem — charge face value instead
+        console.error("sale discount attach failed — falling back to full price", promoErr);
+        session = await stripe.checkout.sessions.create(sessionParams);
+      }
+    } else {
+      session = await stripe.checkout.sessions.create(sessionParams);
+    }
 
     await sb.from("bk_invoices").update({ stripe_session_id: session.id }).eq("id", inv.id);
     return json({ url: session.url });

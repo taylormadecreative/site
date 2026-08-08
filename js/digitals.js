@@ -6,6 +6,15 @@
   const TM = window.TM;
   const SERVICE = "digitals";
   const TZ = "America/Chicago";
+
+  /* 24h J3 birthday sale — window + code mirror js/sale.js and
+     bk-create-checkout v10 (the server is authoritative; this is display) */
+  const SALE_START = 1786147200000, SALE_END = 1786233600000;
+  const SALE_CODE = "J3PRODUCTIONS", SALE_OFF_CENTS = 2000;
+  const saleNow = () =>
+    /[?&]sale=preview(&|$)/.test(location.search) ||
+    (Date.now() >= SALE_START && Date.now() < SALE_END);
+  const normCode = (s) => String(s || "").replace(/[^a-z0-9]/gi, "").toUpperCase();
   const host = document.getElementById("bkHost");
   const stepsBar = document.getElementById("bkSteps");
 
@@ -16,6 +25,7 @@
     day: null,        // selected CT day string
     slot: null,       // selected ISO start
     details: { name: "", email: "", phone: "", location: "", notes: "", subscribe: false },
+    promo: null,      // sale code; null = untouched (prefills during the sale window)
     submitting: false,
   };
 
@@ -99,14 +109,14 @@
   };
   const clearResume = () => { try { sessionStorage.removeItem(RESUME_KEY); } catch (_) {} };
 
-  async function resumeCheckout(bk, btn) {
+  async function resumeCheckout(bk, btn, promo) {
     btn.innerHTML = `<span class="spin"></span> Reopening secure payment…`;
     try {
       const successUrl = new URL(`../success/?p=${bk.project_id}&t=${bk.token}`, location.href).href;
       const res = await fetch(`${TM.FUNCTIONS_BASE}/bk-create-checkout`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ invoice_id: bk.invoice_id, token: bk.token, return_url: successUrl }),
+        body: JSON.stringify({ invoice_id: bk.invoice_id, token: bk.token, return_url: successUrl, promo_code: promo || "" }),
       });
       const data = await res.json();
       if (!res.ok || !data.url) throw new Error(data.error || "checkout_failed");
@@ -132,7 +142,7 @@
           <button class="btn btn-ghost" id="resumeDrop" style="padding:12px 22px;">Start over</button>
         </div>
       </div>`;
-    document.getElementById("resumeGo").addEventListener("click", (e) => resumeCheckout(r.bk, e.currentTarget));
+    document.getElementById("resumeGo").addEventListener("click", (e) => resumeCheckout(r.bk, e.currentTarget, r.promo));
     document.getElementById("resumeDrop").addEventListener("click", () => { clearResume(); drawResume(); });
     // if the payment actually went through, drop the offer quietly
     TM.rpc("bk_booking_status", { p_project: r.bk.project_id, p_token: r.bk.token })
@@ -349,6 +359,9 @@
   function renderConfirm() {
     setStep(3);
     const amount = state.svc.deposit_cents ?? state.svc.price_cents;
+    if (state.promo === null) state.promo = saleNow() ? SALE_CODE : "";
+    const saleOk = () => saleNow() && normCode(state.promo) === SALE_CODE;
+    const due = () => (saleOk() ? Math.max(0, amount - SALE_OFF_CENTS) : amount);
     host.innerHTML = `
       <section aria-label="Confirm and pay">
         <div class="bk-summary" data-lead role="group" aria-label="Booking summary" style="max-width:560px;">
@@ -357,18 +370,33 @@
           <div class="row"><span>Time</span><b>${fmtTime(state.slot)} CT · ${state.svc.duration_min} min</b></div>
           <div class="row"><span>Name</span><b>${esc(state.details.name)}</b></div>
           <div class="row"><span>Email</span><b>${esc(state.details.email)}</b></div>
-          <div class="row" style="border-top:1px solid var(--line-d); padding-top:10px; margin-top:6px;"><span>Total due now</span><b>${money(amount)}</b></div>
+          ${saleNow() ? `
+          <div class="row" style="align-items:center;"><span><label for="promoIn" style="cursor:pointer;">Promo code</label></span>
+            <b><input id="promoIn" value="${esc(state.promo)}" maxlength="40" autocomplete="off" autocapitalize="characters" spellcheck="false"
+              style="width:170px; background:transparent; border:1px solid var(--line-d); border-radius:6px; color:inherit; font:inherit; padding:7px 10px; letter-spacing:.04em;"></b></div>
+          <div class="row" id="promoRow" ${saleOk() ? "" : "hidden"}><span>J3 birthday sale</span><b style="color:var(--gold);">−${money(SALE_OFF_CENTS)}</b></div>` : ""}
+          <div class="row" style="border-top:1px solid var(--line-d); padding-top:10px; margin-top:6px;"><span>Total due now</span><b id="dueNow">${money(due())}</b></div>
         </div>
         <p class="bk-note" style="margin:16px 0 22px; max-width:56ch;">Secure payment by Stripe. The moment it clears you'll get a confirmation email — then a prep email with what to bring, and a reminder before your session.</p>
         <p class="bk-err" id="payErr" role="alert" hidden></p>
         <div style="display:flex; gap:12px; flex-wrap:wrap;">
-          <button class="btn btn-gold" id="goBtn">Pay ${money(amount)} &amp; lock it in</button>
+          <button class="btn btn-gold" id="goBtn">Pay <span id="goAmt">${money(due())}</span> &amp; lock it in</button>
           <button class="btn btn-ghost" id="backDet">← Edit details</button>
         </div>
       </section>`;
     focusLead();
     document.getElementById("backDet").addEventListener("click", renderDetails);
     document.getElementById("goBtn").addEventListener("click", paySession);
+    const promoIn = document.getElementById("promoIn");
+    if (promoIn) {
+      promoIn.addEventListener("input", () => {
+        state.promo = promoIn.value;
+        const row = document.getElementById("promoRow");
+        if (row) row.hidden = !saleOk();
+        document.getElementById("dueNow").textContent = money(due());
+        document.getElementById("goAmt").textContent = money(due());
+      });
+    }
   }
 
   async function paySession() {
@@ -394,7 +422,7 @@
           p_addons: null,
         });
         state.bkCache = { key: bkKey, bk };
-        try { sessionStorage.setItem(RESUME_KEY, JSON.stringify({ bk, ts: Date.now() })); } catch (_) {}
+        try { sessionStorage.setItem(RESUME_KEY, JSON.stringify({ bk, ts: Date.now(), promo: state.promo || "" })); } catch (_) {}
       }
       track("begin_checkout", { currency: "USD", value: bk.amount_cents / 100, service: SERVICE, source: "digitals_lp" });
       if (state.details.subscribe) {
@@ -404,7 +432,7 @@
       const res = await fetch(`${TM.FUNCTIONS_BASE}/bk-create-checkout`, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ invoice_id: bk.invoice_id, token: bk.token, return_url: successUrl }),
+        body: JSON.stringify({ invoice_id: bk.invoice_id, token: bk.token, return_url: successUrl, promo_code: state.promo || "" }),
       });
       const data = await res.json();
       if (!res.ok || !data.url) throw new Error(data.error || "checkout_failed");
