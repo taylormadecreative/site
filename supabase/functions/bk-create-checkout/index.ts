@@ -3,6 +3,11 @@
 // token that gates the client portal). verify_jwt is disabled for that reason.
 // v8: optional return_url (whitelisted to Taylormade domains) so the new
 // www.taylormadecreative.net booking flow can land on its own success page.
+// v9 (2026-08-07): 24h J3PRODUCTIONS birthday sale — Stripe's "Add promotion
+// code" field is enabled ONLY for headshot/digitals session invoices and ONLY
+// until the sale window closes (2026-08-08 7:00pm CT), so the code can never
+// touch studio rentals or custom quotes, and checkout reverts to normal by
+// itself when the sale ends. The webhook (v9) reconciles discounted totals.
 // Deployed to Supabase project pgqdmnmessbbzyszjfvr.
 import Stripe from "npm:stripe@17";
 import { createClient } from "npm:@supabase/supabase-js@2";
@@ -87,8 +92,15 @@ Deno.serve(async (req: Request) => {
         `${inv.title} — ${inv.bk_projects.title ?? "Taylormade Creative"}`) +
       (nLines > 1 ? ` (+${nLines - 1} add-on${nLines > 2 ? "s" : ""})` : "");
 
+    // 24h J3 birthday sale window ends 2026-08-08T00:00:00Z + 24h — i.e.
+    // 2026-08-08 7:00pm America/Chicago (CDT, UTC-5) = epoch 1786233600.
+    const SALE_END_MS = 1786233600000;
+    const salePromo =
+      Date.now() < SALE_END_MS && /headshot|digital/i.test(lineTitle);
+
     const session = await stripe.checkout.sessions.create({
       mode: "payment",
+      ...(salePromo ? { allow_promotion_codes: true } : {}),
       customer_email: inv.bk_projects.client_email,
       line_items: [
         {

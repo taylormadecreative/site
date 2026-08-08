@@ -17,6 +17,12 @@
 // (retrying cannot fix either condition) but a human is told within one cron
 // tick. Note this hardens the CONSEQUENCES of a missed payment; it does not fix
 // webhook DELIVERY, which is a Stripe-dashboard-side configuration question.
+//
+// v9 (2026-08-07) — promo-code aware. Checkout can now carry a Stripe promotion
+// code (first use: the 24h J3PRODUCTIONS birthday sale), so the amount check
+// accepts collected + total_details.amount_discount === invoice amount and the
+// payment_note records the discount. A shortfall that the discount does NOT
+// explain still alerts and leaves the invoice unpaid.
 import Stripe from "npm:stripe@17";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
@@ -105,13 +111,18 @@ async function markPaid(session: Stripe.Checkout.Session): Promise<boolean> {
   }
   if (inv.status === "paid") return true; // idempotent
 
-  if (session.amount_total != null && session.amount_total !== inv.amount_cents) {
+  // A Stripe promotion code (e.g. the J3PRODUCTIONS birthday sale) legitimately
+  // collects less than the invoice face value — the difference is reported in
+  // total_details.amount_discount, and collected + discount must still equal
+  // the invoice exactly. Anything else is a real mismatch.
+  const discount = session.total_details?.amount_discount ?? 0;
+  if (session.amount_total != null && session.amount_total + discount !== inv.amount_cents) {
     // Retrying can never reconcile a figure that will not change. The old
     // `return false` meant Stripe retried for ~3 days, nobody was told, and
     // repeated failures can get the endpoint auto-disabled — taking down
     // reconciliation for every OTHER booking too.
     await alertUnreconciled(db, "Amount mismatch — payment NOT applied", session,
-      `Stripe collected ${(session.amount_total / 100).toFixed(2)} but invoice ${invoiceId} is for ${(inv.amount_cents / 100).toFixed(2)}. The invoice was left unpaid on purpose. Check for a price change mid-checkout, then reconcile by hand.`);
+      `Stripe collected ${(session.amount_total / 100).toFixed(2)}${discount > 0 ? ` (after a ${(discount / 100).toFixed(2)} promo discount)` : ""} but invoice ${invoiceId} is for ${(inv.amount_cents / 100).toFixed(2)}. The invoice was left unpaid on purpose. Check for a price change mid-checkout, then reconcile by hand.`);
     return true;
   }
 
@@ -120,7 +131,13 @@ async function markPaid(session: Stripe.Checkout.Session): Promise<boolean> {
   // no error, and is lost forever.
   const { data: updated, error: updErr } = await db
     .from("bk_invoices")
-    .update({ status: "paid", paid_at: new Date().toISOString(), payment_note: "Paid via Stripe Checkout" })
+    .update({
+      status: "paid",
+      paid_at: new Date().toISOString(),
+      payment_note: discount > 0
+        ? `Paid via Stripe Checkout — promo code applied, $${(discount / 100).toFixed(2)} off (collected $${(((session.amount_total ?? inv.amount_cents - discount)) / 100).toFixed(2)})`
+        : "Paid via Stripe Checkout",
+    })
     .eq("id", invoiceId)
     .eq("status", "sent")
     .select("id");
