@@ -114,15 +114,22 @@ async function markPaid(session: Stripe.Checkout.Session): Promise<boolean> {
   // A Stripe promotion code (e.g. the J3PRODUCTIONS birthday sale) legitimately
   // collects less than the invoice face value — the difference is reported in
   // total_details.amount_discount, and collected + discount must still equal
-  // the invoice exactly. Anything else is a real mismatch.
+  // the invoice exactly. Because every checkout is a single ad-hoc line item,
+  // that equation holds for a discount of ANY size — so also whitelist the
+  // discount amount itself: only the sale's own $20 coupon is legitimate.
+  // Anything else means a code we never issued; leave unpaid and shout.
   const discount = session.total_details?.amount_discount ?? 0;
-  if (session.amount_total != null && session.amount_total + discount !== inv.amount_cents) {
+  const KNOWN_DISCOUNTS = [0, 2000];
+  if (
+    session.amount_total != null &&
+    (session.amount_total + discount !== inv.amount_cents || !KNOWN_DISCOUNTS.includes(discount))
+  ) {
     // Retrying can never reconcile a figure that will not change. The old
     // `return false` meant Stripe retried for ~3 days, nobody was told, and
     // repeated failures can get the endpoint auto-disabled — taking down
     // reconciliation for every OTHER booking too.
     await alertUnreconciled(db, "Amount mismatch — payment NOT applied", session,
-      `Stripe collected ${(session.amount_total / 100).toFixed(2)}${discount > 0 ? ` (after a ${(discount / 100).toFixed(2)} promo discount)` : ""} but invoice ${invoiceId} is for ${(inv.amount_cents / 100).toFixed(2)}. The invoice was left unpaid on purpose. Check for a price change mid-checkout, then reconcile by hand.`);
+      `Stripe collected ${(session.amount_total / 100).toFixed(2)}${discount > 0 ? ` (after a ${(discount / 100).toFixed(2)} promo discount)` : ""} but invoice ${invoiceId} is for ${(inv.amount_cents / 100).toFixed(2)}.${discount > 0 && !KNOWN_DISCOUNTS.includes(discount) ? " The discount size is NOT one we issued — check the account's promotion codes." : ""} The invoice was left unpaid on purpose. Check for a price change mid-checkout, then reconcile by hand.`);
     return true;
   }
 

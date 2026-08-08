@@ -1,14 +1,13 @@
 /* sale.js — 24-hour J3 Productions birthday sale (2026-08-07).
    Static-site time gate: the sale bar + booking hint ship in the page markup
    as [hidden] and this script reveals them only inside the sale window, so no
-   deploy has to happen at 7pm and the promo disappears by itself. Preview any
-   time with ?sale=preview. Window: 2026-08-07 7:00pm CT → 2026-08-08 7:00pm CT
+   deploy has to happen at 7pm and the promo disappears by itself.
+   Window: 2026-08-07 7:00pm CT → 2026-08-08 7:00pm CT
    (CDT is UTC-5, so 2026-08-08T00:00:00Z → 2026-08-09T00:00:00Z). */
 (function () {
   "use strict";
   var START = 1786147200000;
   var END = 1786233600000;
-  var preview = /[?&]sale=preview(&|$)/.test(location.search);
 
   function reveal(on) {
     ["saleBar", "saleHint"].forEach(function (id) {
@@ -29,7 +28,7 @@
   }
 
   var now = Date.now();
-  if (!preview && (now < START || now >= END)) return; // dormant — nothing shows
+  if (now < START || now >= END) return; // dormant — nothing shows
 
   reveal(true);
 
@@ -40,12 +39,9 @@
   function tick() {
     var left = END - Date.now();
     if (left <= 0) {
-      if (preview) left = 0; // keep the preview readable at 0h 00m 00s
-      else {
-        reveal(false); // sale just ended mid-visit — take it down live
-        if (timer) clearInterval(timer);
-        return;
-      }
+      reveal(false); // sale just ended mid-visit — take it down live
+      if (timer) clearInterval(timer);
+      return;
     }
     var h = Math.floor(left / 3600000);
     var m = Math.floor((left % 3600000) / 60000);

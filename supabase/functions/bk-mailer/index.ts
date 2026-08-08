@@ -345,8 +345,15 @@ Deno.serve(async (req: Request) => {
         booking = data as unknown as Ctx["booking"];
         const invId = (data as { invoice_id?: string } | null)?.invoice_id;
         if (invId && row.kind === "confirmation") {
-          const { data: inv } = await db.from("bk_invoices").select("amount_cents, status").eq("id", invId).maybeSingle();
-          if (inv?.status === "paid") amountCents = inv.amount_cents;
+          const { data: inv } = await db.from("bk_invoices").select("amount_cents, status, payment_note").eq("id", invId).maybeSingle();
+          if (inv?.status === "paid") {
+            amountCents = inv.amount_cents;
+            // promo-discounted checkouts (webhook v9, e.g. the J3 birthday sale)
+            // record the true charge in payment_note — the "Paid" figure must
+            // match the buyer's card statement, not the invoice face value
+            const collected = /\(collected \$([0-9,]+\.[0-9]{2})\)/.exec(inv.payment_note ?? "");
+            if (collected) amountCents = Math.round(parseFloat(collected[1].replace(/,/g, "")) * 100);
+          }
         }
       }
       const ctx: Ctx = { kind: row.kind, payload: row.payload ?? {}, project, booking };

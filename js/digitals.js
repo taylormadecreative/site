@@ -11,9 +11,7 @@
      bk-create-checkout v10 (the server is authoritative; this is display) */
   const SALE_START = 1786147200000, SALE_END = 1786233600000;
   const SALE_CODE = "J3PRODUCTIONS", SALE_OFF_CENTS = 2000;
-  const saleNow = () =>
-    /[?&]sale=preview(&|$)/.test(location.search) ||
-    (Date.now() >= SALE_START && Date.now() < SALE_END);
+  const saleNow = () => Date.now() >= SALE_START && Date.now() < SALE_END;
   const normCode = (s) => String(s || "").replace(/[^a-z0-9]/gi, "").toUpperCase();
   const host = document.getElementById("bkHost");
   const stepsBar = document.getElementById("bkSteps");
