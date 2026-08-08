@@ -15,6 +15,17 @@
       var el = document.getElementById(id);
       if (el) el.hidden = !on;
     });
+    // the site nav is position:fixed at top — pin the bar directly beneath it
+    // so the sale (and its countdown) stays on screen while scrolling
+    var bar = document.getElementById("saleBar");
+    if (bar && on) {
+      var place = function () {
+        var nav = document.querySelector(".nav");
+        bar.style.top = (nav ? nav.getBoundingClientRect().height : 0) + "px";
+      };
+      place();
+      addEventListener("resize", place);
+    }
   }
 
   var now = Date.now();
