@@ -529,6 +529,17 @@
         state.details.notes = tier[0];
         state.details.budget = tier[1];
       }
+      // social-media term deep links (HT proposal and future retainer pitches)
+      const SM_TIERS = {
+        presence: ["Tier interest: Presence, fall term Sept–Nov — $5,400", "$5,000+"],
+        "fall-term": ["Tier interest: The Fall Term, Sept–Nov — $10,500", "$5,000+"],
+        "full-term": ["Tier interest: Full Term, Sept–Nov — $19,500", "$5,000+"],
+      };
+      const smTier = SM_TIERS[params.get("tier")];
+      if (smTier && want === "social-media") {
+        state.details.notes = smTier[0];
+        state.details.budget = smTier[1];
+      }
       renderServices();
       if (want && state.services.some((s) => s.slug === want)) selectService(want);
       else if (location.hash === "#project") document.getElementById("project")?.scrollIntoView();
