@@ -4,6 +4,9 @@
 // Invoked by pg_cron every 10 minutes (pg_net) and ad hoc after checkout.
 // Auth: x-mailer-secret header must match bk_config key 'mailer_secret'.
 // Deployed to Supabase project pgqdmnmessbbzyszjfvr with verify_jwt=false.
+// 2026-09-23: deposit + auto-balance — confirmation shows the deposit and when
+// the balance is charged; new kinds balance_charged (receipt) and
+// balance_failed (pay link), Nelson alert type balance_failed.
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 const FROM = "Taylormade Creative <hello@taylormadecreative.net>";
@@ -101,9 +104,16 @@ type Ctx = {
   booking: {
     id: string; starts_at: string; duration_min: number; status: string;
     location: string | null;
+    balance_cents: number | null; balance_status: string | null;
     bk_services: { name: string; prep_notes: string | null } | null;
   } | null;
 };
+
+// the balance is charged 24h before the shoot — say which day
+function balanceDay(startsAt: string): string {
+  return new Intl.DateTimeFormat("en-US", { timeZone: TZ, weekday: "long", month: "long", day: "numeric" })
+    .format(new Date(new Date(startsAt).getTime() - 24 * 3600 * 1000));
+}
 
 function portalUrl(ctx: Ctx): string {
   return `${PORTAL_BASE}/portal.html?p=${ctx.project!.id}&t=${ctx.project!.access_token}`;
@@ -126,7 +136,10 @@ function renderConfirmation(ctx: Ctx, amountCents: number | null): { subject: st
       ["Time", fmtTime(b.starts_at)],
       ["Length", `${b.duration_min} minutes`],
       ["Location", b.location ? esc(b.location) : "We'll confirm the exact spot with you before the shoot"],
-      ...(amountCents ? [["Paid", money(amountCents)] as [string, string]] : []),
+      ...(amountCents ? [[b.balance_cents ? "Deposit paid" : "Paid", money(amountCents)] as [string, string]] : []),
+      ...(b.balance_cents && b.balance_status === "scheduled"
+        ? [["Balance", `${money(b.balance_cents)} — charged to the same card on ${balanceDay(b.starts_at)}`] as [string, string]]
+        : []),
     ]) +
     p(`<b>What happens next:</b> a few days before your shoot you'll get a prep email with exactly how to show up ready, and a reminder the day before.${
       ctx.project?.service === "photography"
@@ -184,6 +197,44 @@ function renderInquiryAck(ctx: Ctx): { subject: string; html: string } {
     ]) +
     p(`Everything about your project — messages, quotes, invoices, and final delivery — lives in your private client portal. Bookmark it:`) +
     btn(portalUrl(ctx), "OPEN YOUR CLIENT PORTAL"),
+  );
+  return { subject, html };
+}
+
+function renderBalanceCharged(ctx: Ctx, amountCents: number): { subject: string; html: string } {
+  const b = ctx.booking!;
+  const svc = b.bk_services?.name ?? "your session";
+  const subject = `Balance paid — see you ${fmtDate(b.starts_at).split(",")[0]} · Taylormade Creative`;
+  const html = shell(subject,
+    h1(`You're all paid up, ${firstName(ctx)}.`) +
+    p(`The remaining balance for your ${esc(svc.toLowerCase())} was charged to the card you booked with, as planned. Nothing else is owed.`) +
+    detailCard([
+      ["Charged", money(amountCents)],
+      ["Session", esc(svc)],
+      ["Date", fmtDate(b.starts_at)],
+      ["Time", fmtTime(b.starts_at)],
+    ]) +
+    p(`Your receipt is in your client portal any time you need it.`) +
+    btn(portalUrl(ctx), "OPEN YOUR CLIENT PORTAL"),
+  );
+  return { subject, html };
+}
+
+function renderBalanceFailed(ctx: Ctx, amountCents: number): { subject: string; html: string } {
+  const b = ctx.booking!;
+  const svc = b.bk_services?.name ?? "your session";
+  const subject = `Action needed: your balance of ${money(amountCents)} · Taylormade Creative`;
+  const html = shell(subject,
+    h1(`Quick fix before your shoot, ${firstName(ctx)}.`) +
+    p(`I tried to charge the remaining balance for your ${esc(svc.toLowerCase())} to the card you booked with, but it didn't go through. Your session is still on. Just pay the balance in your portal before the shoot. It takes a minute and you can use any card.`) +
+    detailCard([
+      ["Balance due", money(amountCents)],
+      ["Session", esc(svc)],
+      ["Date", fmtDate(b.starts_at)],
+      ["Time", fmtTime(b.starts_at)],
+    ]) +
+    btn(portalUrl(ctx), "PAY THE BALANCE IN YOUR PORTAL") +
+    p(`<span style="font-size:13px;color:#8a8a92;">Questions? Just reply to this email.</span>`),
   );
   return { subject, html };
 }
@@ -276,6 +327,19 @@ function renderNelsonAlert(ctx: Ctx): { subject: string; html: string } {
       `but the booking never moved out of <code>pending_payment</code> and its hold has expired — so the slot is loose and may get resold.<br><br>` +
       `<b>Fix this one first.</b> Confirm the booking in the admin dashboard, then email them the confirmation and the studio address.<br><br>` +
       `Invoice id: <code>${esc(String(pl.invoice_id ?? "n/a"))}</code> (status: ${esc(String(pl.invoice_status ?? "unknown"))})`;
+  } else if (type === "balance_failed") {
+    const amt = typeof pl.amount_cents === "number" ? money(pl.amount_cents) : "The balance";
+    subject = `⚠️ Balance auto-charge failed — ${amt} · ${pj?.client_name ?? ""}`;
+    lead = `The automatic balance charge for <b>${esc(String(pl.service_name ?? "a session"))}</b> on <b>${esc(String(pl.starts_at_ct ?? "an upcoming date"))}</b> ` +
+      `(${esc(who)}) did not go through: <i>${esc(String(pl.reason ?? "unknown"))}</i>.<br><br>` +
+      `The client was emailed a link to pay <b>${amt}</b> in their portal, and the invoice is open there now. ` +
+      `If it isn't paid by shoot time, collect it in person.`;
+  } else if (type === "balance_attention") {
+    const amt = typeof pl.amount_cents === "number" ? money(pl.amount_cents) : "The balance";
+    subject = `⚠️ Balance not auto-charged — ${amt} · ${pj?.client_name ?? ""}`;
+    lead = `The balance for <b>${esc(String(pl.service_name ?? "a session"))}</b> on <b>${esc(String(pl.starts_at_ct ?? "an upcoming date"))}</b> ` +
+      `(${esc(who)}) was <b>not</b> charged automatically: <i>${esc(String(pl.reason ?? "unknown"))}</i>.<br><br>` +
+      `The client was <b>not</b> emailed about it. Collect <b>${amt}</b> yourself: add a Balance invoice in the admin dashboard (it emails them a pay link), or take it at the shoot.`;
   } else if (type === "test") {
     subject = `✅ Booking email automation is live`;
     lead = `This is the end-to-end test of the new bk-mailer pipeline on taylormadecreative.net. Queue → Resend → inbox all working.`;
@@ -340,7 +404,7 @@ Deno.serve(async (req: Request) => {
       }
       if (row.booking_id) {
         const { data } = await db.from("bk_bookings")
-          .select("id, starts_at, duration_min, status, location, invoice_id, bk_services(name, prep_notes)")
+          .select("id, starts_at, duration_min, status, location, invoice_id, balance_cents, balance_status, bk_services(name, prep_notes)")
           .eq("id", row.booking_id).maybeSingle();
         booking = data as unknown as Ctx["booking"];
         const invId = (data as { invoice_id?: string } | null)?.invoice_id;
@@ -359,9 +423,9 @@ Deno.serve(async (req: Request) => {
       const ctx: Ctx = { kind: row.kind, payload: row.payload ?? {}, project, booking };
 
       // guards
-      const clientKinds = ["confirmation", "prep", "reminder", "inquiry_ack"];
+      const clientKinds = ["confirmation", "prep", "reminder", "inquiry_ack", "balance_charged", "balance_failed"];
       if (clientKinds.includes(row.kind) && !project) throw new Error("missing project");
-      if (["confirmation", "prep", "reminder"].includes(row.kind)) {
+      if (["confirmation", "prep", "reminder", "balance_charged", "balance_failed"].includes(row.kind)) {
         if (!booking) throw new Error("missing booking");
         if (booking.status !== "confirmed" && booking.status !== "completed") {
           await db.from("bk_email_queue").update({
@@ -411,6 +475,22 @@ Deno.serve(async (req: Request) => {
             skipped++; continue;
           }
           rendered = renderContractSent(ctx, c.title); to = project.client_email; break;
+        }
+        case "balance_charged":
+        case "balance_failed": {
+          const amt = Number((row.payload as Record<string, unknown>)?.amount_cents ?? 0);
+          const invId = String((row.payload as Record<string, unknown>)?.invoice_id ?? "");
+          const { data: bInv } = await db.from("bk_invoices").select("status").eq("id", invId).maybeSingle();
+          // a "please pay" email for a balance that got paid in the meantime helps nobody
+          if (row.kind === "balance_failed" && bInv?.status !== "sent") {
+            await db.from("bk_email_queue").update({
+              sent_at: new Date().toISOString(),
+              last_error: `skipped: balance invoice ${bInv?.status ?? "missing"}`,
+            }).eq("id", row.id);
+            skipped++; continue;
+          }
+          rendered = row.kind === "balance_charged" ? renderBalanceCharged(ctx, amt) : renderBalanceFailed(ctx, amt);
+          to = project!.client_email; break;
         }
         case "nelson_alert": rendered = renderNelsonAlert(ctx); to = NELSON; break;
         default: throw new Error(`unknown kind ${row.kind}`);

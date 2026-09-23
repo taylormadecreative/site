@@ -266,7 +266,7 @@
     const on = state.pkg === svc.slug;
     return `<button type="button" class="pkg-opt${on ? " sel" : ""}" role="radio" aria-checked="${on}" data-pick-pkg="${svc.slug}">
       <span class="pkg-opt-name">${PKG_LABEL[svc.slug] || esc(svc.name)}</span>
-      <span class="pkg-opt-meta">${money(svc.price_cents)} · ${svc.duration_min} min</span>
+      <span class="pkg-opt-meta">${money(svc.price_cents)} · ${svc.duration_min} min${svc.deposit_cents != null ? ` · ${money(svc.deposit_cents)} deposit` : ""}</span>
     </button>`;
   }
 
@@ -496,6 +496,10 @@
   function renderConfirm() {
     setStep(3);
     const amount = state.svc.deposit_cents ?? state.svc.price_cents;
+    const balance = state.svc.deposit_cents != null ? state.svc.price_cents - state.svc.deposit_cents : 0;
+    // the balance comes off the same card 24h before the shoot (bk-charge-balances)
+    const balanceDay = dtf({ weekday: "long", month: "long", day: "numeric" })
+      .format(new Date(new Date(state.slot).getTime() - 24 * 3600 * 1000));
     host.innerHTML = `
       <section aria-label="Confirm and pay">
         <div class="bk-summary" data-lead role="group" aria-label="Booking summary" style="max-width:560px;">
@@ -504,12 +508,15 @@
           <div class="row"><span>Time</span><b>${fmtTime(state.slot)} CT · ${state.svc.duration_min} min</b></div>
           <div class="row"><span>Name</span><b>${esc(state.details.name)}</b></div>
           <div class="row"><span>Email</span><b>${esc(state.details.email)}</b></div>
-          <div class="row" style="border-top:1px solid var(--line-d); padding-top:10px; margin-top:6px;"><span>Total due now</span><b>${money(amount)}</b></div>
+          ${balance > 0 ? `<div class="row" style="border-top:1px solid var(--line-d); padding-top:10px; margin-top:6px;"><span>Session total</span><b>${money(state.svc.price_cents)}</b></div>` : ""}
+          <div class="row"${balance > 0 ? "" : ` style="border-top:1px solid var(--line-d); padding-top:10px; margin-top:6px;"`}><span>${balance > 0 ? "Deposit due now" : "Total due now"}</span><b>${money(amount)}</b></div>
+          ${balance > 0 ? `<div class="row"><span>Balance</span><b>${money(balance)} on ${balanceDay}</b></div>` : ""}
         </div>
+        ${balance > 0 ? `<p class="bk-note" style="margin:16px 0 0; max-width:56ch;">Your deposit holds the date. The remaining <b style="color:var(--paper);">${money(balance)}</b> is charged automatically to the same card on <b style="color:var(--paper);">${balanceDay}</b>, the day before your shoot. Nothing else to remember.</p>` : ""}
         <p class="bk-note" style="margin:16px 0 22px; max-width:56ch;">Secure payment by Stripe. Once it clears I'll email your confirmation, the studio address, and what to bring — well before shoot day. Nothing in your inbox? Check spam, then DM <a href="https://www.instagram.com/taylormade_creative/" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:underline;">@taylormade_creative</a> and I'll resend it.</p>
         <p class="bk-err" id="payErr" role="alert" hidden></p>
         <div style="display:flex; gap:12px; flex-wrap:wrap;">
-          <button class="btn btn-gold" id="goBtn">Pay ${money(amount)} &amp; lock it in</button>
+          <button class="btn btn-gold" id="goBtn">Pay ${money(amount)}${balance > 0 ? " deposit" : ""} &amp; lock it in</button>
           <button class="btn btn-ghost" id="backDet">← Edit details</button>
         </div>
       </section>`;

@@ -12,7 +12,13 @@
 // session inside the sale window (ends 2026-08-08 7:00pm CT) the discount is
 // attached server-side. Attach failures fall back to a full-price session —
 // a promo hiccup must never cost a booking. The webhook (v9) reconciles
-// discounted totals. Deployed to Supabase project pgqdmnmessbbzyszjfvr.
+// discounted totals.
+// v11 (2026-09-23): deposit + auto-balance. When the invoice is a booking
+// DEPOSIT whose booking carries a balance (bk_bookings.balance_cents), the
+// card is saved for off-session use (setup_future_usage) and the Stripe page
+// states the balance amount and the date it will be charged. bk-charge-balances
+// charges that saved card the day before the shoot.
+// Deployed to Supabase project pgqdmnmessbbzyszjfvr.
 import Stripe from "npm:stripe@17";
 import { createClient } from "npm:@supabase/supabase-js@2";
 
@@ -65,6 +71,25 @@ Deno.serve(async (req: Request) => {
 
     const stripe = new Stripe(key);
 
+    // deposit with an auto-charged balance? then the card has to be saved
+    let balance: { cents: number; chargeOn: string } | null = null;
+    if (inv.kind === "deposit") {
+      const { data: bkRow } = await sb
+        .from("bk_bookings")
+        .select("starts_at, balance_cents, balance_status")
+        .eq("invoice_id", inv.id)
+        .maybeSingle();
+      if (bkRow?.balance_cents && bkRow.balance_status === "scheduled") {
+        const chargeAt = new Date(new Date(bkRow.starts_at).getTime() - 24 * 3600 * 1000);
+        balance = {
+          cents: bkRow.balance_cents,
+          chargeOn: new Intl.DateTimeFormat("en-US", {
+            timeZone: "America/Chicago", weekday: "long", month: "long", day: "numeric",
+          }).format(chargeAt),
+        };
+      }
+    }
+
     // the buyer's own name doesn't belong in the product string — prefer the
     // invoice's first line item ("Digitals Session · Jul 10, 2026 2:00 PM")
     const nLines = Array.isArray(inv.line_items) ? inv.line_items.length : 0;
@@ -96,7 +121,9 @@ Deno.serve(async (req: Request) => {
         if (existing.payment_status === "paid") return json({ error: "already_paid" }, 409);
         if (existing.status === "open" && existing.url) {
           const hasDiscount = (existing.total_details?.amount_discount ?? 0) > 0;
-          if (applySale && !hasDiscount) {
+          // a session minted before v11 would not save the card — replace it
+          const savesCard = existing.customer_creation === "always";
+          if ((applySale && !hasDiscount) || (balance && !savesCard)) {
             await stripe.checkout.sessions.expire(existing.id).catch(() => {});
           } else {
             return json({ url: existing.url });
@@ -135,6 +162,24 @@ Deno.serve(async (req: Request) => {
       success_url: successUrl,
       cancel_url: cancelUrl,
     };
+    if (balance) {
+      const bal = "$" + (balance.cents / 100).toLocaleString("en-US", {
+        minimumFractionDigits: balance.cents % 100 ? 2 : 0, maximumFractionDigits: 2,
+      });
+      sessionParams.customer_creation = "always";
+      // cards only: a bank debit would settle days later, and an off-session
+      // balance on it comes back "processing" instead of paid
+      sessionParams.payment_method_types = ["card"];
+      sessionParams.payment_intent_data = {
+        setup_future_usage: "off_session",
+        metadata: { invoice_id: inv.id, project_id: inv.bk_projects.id },
+      };
+      sessionParams.custom_text = {
+        submit: {
+          message: `This is your deposit. By paying, you authorize Taylormade Creative to charge the remaining ${bal} to this same card on ${balance.chargeOn}, the day before your shoot.`,
+        },
+      };
+    }
 
     let session: Stripe.Checkout.Session;
     if (applySale) {

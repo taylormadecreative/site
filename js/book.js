@@ -107,6 +107,12 @@
   }
 
   function selectService(slug) {
+    // birthday shoots book on their own page, which explains the deposit and
+    // the day-before balance charge (bk-charge-balances) before checkout
+    if (slug === "birthday-mini" || slug === "birthday-full") {
+      location.href = `../birthday/?package=${slug === "birthday-full" ? "full" : "mini"}#book`;
+      return;
+    }
     state.svc = state.services.find((s) => s.slug === slug);
     if (!state.svc) return;
     state.day = null; state.slot = null; state.flexible = false;
