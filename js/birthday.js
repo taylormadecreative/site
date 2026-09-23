@@ -498,8 +498,11 @@
     const amount = state.svc.deposit_cents ?? state.svc.price_cents;
     const balance = state.svc.deposit_cents != null ? state.svc.price_cents - state.svc.deposit_cents : 0;
     // the balance comes off the same card 24h before the shoot (bk-charge-balances)
-    const balanceDay = dtf({ weekday: "long", month: "long", day: "numeric" })
-      .format(new Date(new Date(state.slot).getTime() - 24 * 3600 * 1000));
+    // booked less than ~a day ahead, the "day before" moment has already
+    // passed, so the hourly job charges it right away — say so plainly
+    const chargeAt = new Date(state.slot).getTime() - 24 * 3600 * 1000;
+    const soon = chargeAt < Date.now() + 2 * 3600 * 1000;
+    const balanceDay = soon ? "within the hour" : "on " + dtf({ weekday: "long", month: "long", day: "numeric" }).format(new Date(chargeAt));
     host.innerHTML = `
       <section aria-label="Confirm and pay">
         <div class="bk-summary" data-lead role="group" aria-label="Booking summary" style="max-width:560px;">
@@ -510,9 +513,9 @@
           <div class="row"><span>Email</span><b>${esc(state.details.email)}</b></div>
           ${balance > 0 ? `<div class="row" style="border-top:1px solid var(--line-d); padding-top:10px; margin-top:6px;"><span>Session total</span><b>${money(state.svc.price_cents)}</b></div>` : ""}
           <div class="row"${balance > 0 ? "" : ` style="border-top:1px solid var(--line-d); padding-top:10px; margin-top:6px;"`}><span>${balance > 0 ? "Deposit due now" : "Total due now"}</span><b>${money(amount)}</b></div>
-          ${balance > 0 ? `<div class="row"><span>Balance</span><b>${money(balance)} on ${balanceDay}</b></div>` : ""}
+          ${balance > 0 ? `<div class="row"><span>Balance</span><b>${money(balance)} ${balanceDay}</b></div>` : ""}
         </div>
-        ${balance > 0 ? `<p class="bk-note" style="margin:16px 0 0; max-width:56ch;">Your deposit holds the date. The remaining <b style="color:var(--paper);">${money(balance)}</b> is charged automatically to the same card on <b style="color:var(--paper);">${balanceDay}</b>, the day before your shoot. Nothing else to remember.</p>` : ""}
+        ${balance > 0 ? `<p class="bk-note" style="margin:16px 0 0; max-width:56ch;">Your deposit holds the date. The remaining <b style="color:var(--paper);">${money(balance)}</b> is charged automatically to the same card <b style="color:var(--paper);">${balanceDay}</b>${soon ? ", since your shoot is less than a day away" : ", the day before your shoot"}. Nothing else to remember.</p>` : ""}
         <p class="bk-note" style="margin:16px 0 22px; max-width:56ch;">Secure payment by Stripe. Once it clears I'll email your confirmation, the studio address, and what to bring — well before shoot day. Nothing in your inbox? Check spam, then DM <a href="https://www.instagram.com/taylormade_creative/" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:underline;">@taylormade_creative</a> and I'll resend it.</p>
         <p class="bk-err" id="payErr" role="alert" hidden></p>
         <div style="display:flex; gap:12px; flex-wrap:wrap;">

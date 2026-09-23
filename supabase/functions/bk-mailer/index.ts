@@ -111,8 +111,10 @@ type Ctx = {
 
 // the balance is charged 24h before the shoot — say which day
 function balanceDay(startsAt: string): string {
-  return new Intl.DateTimeFormat("en-US", { timeZone: TZ, weekday: "long", month: "long", day: "numeric" })
-    .format(new Date(new Date(startsAt).getTime() - 24 * 3600 * 1000));
+  const at = new Date(startsAt).getTime() - 24 * 3600 * 1000;
+  if (at < Date.now() + 2 * 3600 * 1000) return "within the hour (your shoot is less than a day away)";
+  return "on " + new Intl.DateTimeFormat("en-US", { timeZone: TZ, weekday: "long", month: "long", day: "numeric" })
+    .format(new Date(at));
 }
 
 function portalUrl(ctx: Ctx): string {
@@ -138,7 +140,7 @@ function renderConfirmation(ctx: Ctx, amountCents: number | null): { subject: st
       ["Location", b.location ? esc(b.location) : "We'll confirm the exact spot with you before the shoot"],
       ...(amountCents ? [[b.balance_cents ? "Deposit paid" : "Paid", money(amountCents)] as [string, string]] : []),
       ...(b.balance_cents && b.balance_status === "scheduled"
-        ? [["Balance", `${money(b.balance_cents)} — charged to the same card on ${balanceDay(b.starts_at)}`] as [string, string]]
+        ? [["Balance", `${money(b.balance_cents)} — charged to the same card ${balanceDay(b.starts_at)}`] as [string, string]]
         : []),
     ]) +
     p(`<b>What happens next:</b> a few days before your shoot you'll get a prep email with exactly how to show up ready, and a reminder the day before.${

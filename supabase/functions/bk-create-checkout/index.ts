@@ -81,11 +81,14 @@ Deno.serve(async (req: Request) => {
         .maybeSingle();
       if (bkRow?.balance_cents && bkRow.balance_status === "scheduled") {
         const chargeAt = new Date(new Date(bkRow.starts_at).getTime() - 24 * 3600 * 1000);
+        // booked < ~a day out: the hourly job charges it right away
         balance = {
           cents: bkRow.balance_cents,
-          chargeOn: new Intl.DateTimeFormat("en-US", {
-            timeZone: "America/Chicago", weekday: "long", month: "long", day: "numeric",
-          }).format(chargeAt),
+          chargeOn: chargeAt.getTime() < Date.now() + 2 * 3600 * 1000
+            ? "within the hour, since your shoot is less than a day away"
+            : "on " + new Intl.DateTimeFormat("en-US", {
+                timeZone: "America/Chicago", weekday: "long", month: "long", day: "numeric",
+              }).format(chargeAt) + ", the day before your shoot",
         };
       }
     }
@@ -176,7 +179,7 @@ Deno.serve(async (req: Request) => {
       };
       sessionParams.custom_text = {
         submit: {
-          message: `This is your deposit. By paying, you authorize Taylormade Creative to charge the remaining ${bal} to this same card on ${balance.chargeOn}, the day before your shoot.`,
+          message: `This is your deposit. By paying, you authorize Taylormade Creative to charge the remaining ${bal} to this same card ${balance.chargeOn}.`,
         },
       };
     }
