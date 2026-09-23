@@ -92,7 +92,8 @@
             ? `<b>Quoted per project</b> · reply within 1 business day`
             : s.weekend_price_cents != null && !s.deposit_cents
               ? `<b>${money(s.price_cents)}</b> weekday · ${money(s.weekend_price_cents)} weekend · ${fmtDur(s.duration_min)}`
-              : `<b>${money(s.deposit_cents ?? s.price_cents)}</b> · ${s.deposit_cents ? "deposit locks your date" : "flat, paid at booking"} · ${fmtDur(s.duration_min)}`
+              // lead with the session price so a $150 shoot never reads as a $75 one
+              : `<b>${money(s.price_cents ?? s.deposit_cents)}</b> · ${s.deposit_cents ? `${money(s.deposit_cents)} deposit locks your date` : "flat, paid at booking"} · ${fmtDur(s.duration_min)}`
         }</span>
       </button>`;
     host.innerHTML = `

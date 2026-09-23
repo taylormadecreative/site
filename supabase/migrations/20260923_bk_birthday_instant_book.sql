@@ -3,8 +3,9 @@
 -- Offer (Nelson, 2026-09-23):
 --   Mini shoot  $150 · 30 min · 1 look       · 3 edited photos
 --   Full shoot  $350 · 60 min · 2+ looks     · 8 edited photos
--- deposit_cents NULL => bk_create_booking charges the full price at checkout,
--- exactly like digitals and headshots. legacy_service 'photography' so the
+-- deposit_cents NULL here => full price at checkout. SUPERSEDED the same day by
+-- 20260923_bk_balance_autocharge.sql: 50% deposit + balance auto-charged the
+-- day before the shoot. legacy_service 'photography' so the
 -- admin pipeline + proofing portal treat them as photo sessions.
 --
 -- Availability: 9am–9pm CT all 7 days, the same bk_service_hours override

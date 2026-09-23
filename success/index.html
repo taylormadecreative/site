@@ -81,6 +81,7 @@
     try {
       sessionStorage.removeItem("tm-headshots-resume");
       sessionStorage.removeItem("tm-digitals-resume");
+      sessionStorage.removeItem("tm-birthday-resume");
     } catch (_) { /* storage blocked — nothing to clear */ }
 
     // the Stripe webhook usually lands within seconds — poll briefly

@@ -613,7 +613,7 @@
       document.dispatchEvent(new CustomEvent("birthday:pkg", { detail: state.pkg }));
       renderCalendar();
     } catch (e) {
-      host.innerHTML = `<p class="bk-err">The booking calendar couldn't load (${esc(e.message)}). Refresh, book at <a href="../book/?service=birthday-mini" style="color:var(--gold);text-decoration:underline;">the booking page</a>, or DM <a href="https://www.instagram.com/taylormade_creative/" style="color:var(--gold);text-decoration:underline;">@taylormade_creative</a>.</p>`;
+      host.innerHTML = `<p class="bk-err">The booking calendar couldn't load (${esc(e.message)}). Refresh the page, or DM <a href="https://www.instagram.com/taylormade_creative/" style="color:var(--gold);text-decoration:underline;">@taylormade_creative</a>.</p>`;
     }
   })();
 })();
