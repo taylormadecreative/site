@@ -11,6 +11,7 @@
 // Calendar (gcal.ts) and pulls cancelled ones back off.
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { syncCalendar } from "./gcal.ts";
+import { replyBodyHtml } from "../_shared/inbox/reply_html.ts";
 
 const FROM = "Taylormade Creative <hello@taylormadecreative.net>";
 const NELSON = "taylormademd@gmail.com";
@@ -288,6 +289,17 @@ function renderNewMessage(ctx: Ctx): { subject: string; html: string } {
   return { subject, html };
 }
 
+// Nelson's reply from the Inbox app — the whole text, not a teaser
+function renderStudioReply(ctx: Ctx, body: string): { subject: string; html: string } {
+  const subject = `A note from Nelson at Taylormade Creative`;
+  const html = shell(subject,
+    `<div style="font-size:16px;line-height:1.7;color:#1a1a1e;margin:0 0 24px;">${replyBodyHtml(body)}</div>` +
+    p(`Just reply to this email, or keep the conversation in your portal.`) +
+    btn(portalUrl(ctx), "OPEN YOUR PORTAL"),
+  );
+  return { subject, html };
+}
+
 function renderNelsonAlert(ctx: Ctx): { subject: string; html: string } {
   const pl = ctx.payload ?? {};
   const pj = ctx.project;
@@ -467,6 +479,13 @@ Deno.serve(async (req: Request) => {
         case "new_message": {
           if (!project) throw new Error("missing project");
           rendered = renderNewMessage(ctx); to = project.client_email; break;
+        }
+        case "studio_reply": {
+          if (!project) throw new Error("missing project");
+          const msgId = String((row.payload as Record<string, unknown>)?.message_id ?? "");
+          const { data: msg } = await db.from("bk_messages").select("body").eq("id", msgId).maybeSingle();
+          if (!msg) throw new Error("missing message");
+          rendered = renderStudioReply(ctx, msg.body); to = project.client_email; break;
         }
         case "contract_sent": {
           if (!project) throw new Error("missing project");
