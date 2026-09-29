@@ -4,7 +4,7 @@ set -euo pipefail
 REF=pgqdmnmessbbzyszjfvr
 SITE=~/taylormade-site
 cd "$SITE"
-git checkout -q inbox-app
+[ "$(git rev-parse --abbrev-ref HEAD)" = inbox-app ] || { echo "Switch ~/taylormade-site to the inbox-app branch first (it is on $(git rev-parse --abbrev-ref HEAD))."; exit 1; }
 echo "== Inbox rollout on $(git rev-parse --abbrev-ref HEAD) @ $(git rev-parse --short HEAD)"
 
 RAW=$(security find-generic-password -l "Supabase CLI" -w)
