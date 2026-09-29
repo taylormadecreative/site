@@ -47,9 +47,13 @@ Deno.serve(async (req: Request) => {
   if (!pub || !priv) return json({ error: "vapid_not_configured" }, 500);
   webpush.setVapidDetails("mailto:hello@taylormadecreative.net", pub, priv);
 
-  const { data: subs } = await db.from("bk_push_subscriptions").select("id, endpoint, p256dh, auth");
-  let sent = 0, removed = 0, failed = 0;
+  // only phones of people who are STILL staff get client details
+  const { data: staff } = await db.from("profiles").select("id").in("role", ["admin", "employee"]);
+  const staffIds = new Set((staff ?? []).map((r) => r.id));
+  const { data: subs } = await db.from("bk_push_subscriptions").select("id, user_id, endpoint, p256dh, auth");
+  let sent = 0, removed = 0, failed = 0, skipped = 0;
   for (const s of subs ?? []) {
+    if (!staffIds.has(s.user_id)) { skipped++; continue; }
     try {
       await webpush.sendNotification(
         { endpoint: s.endpoint, keys: { p256dh: s.p256dh, auth: s.auth } },
@@ -69,5 +73,5 @@ Deno.serve(async (req: Request) => {
       }
     }
   }
-  return json({ sent, removed, failed });
+  return json({ sent, removed, failed, skipped });
 });

@@ -11,7 +11,7 @@
 // Calendar (gcal.ts) and pulls cancelled ones back off.
 import { createClient } from "npm:@supabase/supabase-js@2";
 import { syncCalendar } from "./gcal.ts";
-import { replyBodyHtml } from "../_shared/inbox/reply_html.ts";
+import { replyBodyHtml, studioReplySubject } from "../_shared/inbox/reply_html.ts";
 
 const FROM = "Taylormade Creative <hello@taylormadecreative.net>";
 const NELSON = "taylormademd@gmail.com";
@@ -55,7 +55,8 @@ function esc(s: string): string {
 }
 
 // ------------------------------------------------------------------ template shell
-function shell(heading: string, inner: string): string {
+// signed=false for Nelson's own Inbox replies, which already end "— Nelson"
+function shell(heading: string, inner: string, signed = true): string {
   return `<!doctype html><html><body style="margin:0;padding:0;background:#f5f3ee;">
 <div style="display:none;max-height:0;overflow:hidden;">${esc(heading)}</div>
 <table role="presentation" width="100%" cellpadding="0" cellspacing="0" style="background:#f5f3ee;padding:32px 12px;"><tr><td align="center">
@@ -70,7 +71,7 @@ function shell(heading: string, inner: string): string {
   <tr><td style="background:#0a0a0c;padding:22px 32px;font-family:Arial,Helvetica,sans-serif;">
     <p style="margin:0;font-size:12px;line-height:1.7;color:#8a8a92;">Taylormade Creative · Dallas–Fort Worth<br>
     Photo · Video · AI Content · Web · Social · Workshops<br>
-    Reply to this email any time — it comes straight to me. — Nelson</p>
+    Reply to this email any time — it comes straight to me.${signed ? " — Nelson" : ""}</p>
   </td></tr>
 </table></td></tr></table></body></html>`;
 }
@@ -291,12 +292,12 @@ function renderNewMessage(ctx: Ctx): { subject: string; html: string } {
 
 // Nelson's reply from the Inbox app — the whole text, not a teaser
 function renderStudioReply(ctx: Ctx, body: string): { subject: string; html: string } {
-  const subject = `A note from Nelson at Taylormade Creative`;
+  const subject = studioReplySubject(ctx.project?.title ?? null, ctx.project?.service ?? "other");
   const html = shell(subject,
     `<div style="font-size:16px;line-height:1.7;color:#1a1a1e;margin:0 0 24px;">${replyBodyHtml(body)}</div>` +
     p(`Just reply to this email, or keep the conversation in your portal.`) +
-    btn(portalUrl(ctx), "OPEN YOUR PORTAL"),
-  );
+    btn(portalUrl(ctx), "OPEN YOUR CLIENT PORTAL"),
+  false);
   return { subject, html };
 }
 

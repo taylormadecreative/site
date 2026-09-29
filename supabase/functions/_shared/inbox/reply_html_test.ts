@@ -10,3 +10,12 @@ Deno.test("escapes markup and keeps line breaks", () => {
 Deno.test("quotes are escaped", () => {
   assertEquals(replyBodyHtml(`"a" 'b'`), "&quot;a&quot; &#39;b&#39;");
 });
+
+import { studioReplySubject } from "./reply_html.ts";
+Deno.test("subject names the project so unrelated replies don't thread together", () => {
+  assertEquals(studioReplySubject("Jasmine Reed — Brand Content", "brand_content"), "Nelson at Taylormade · your brand content project");
+  assertEquals(studioReplySubject(null, "music_video"), "Nelson at Taylormade · your music video project");
+  assertEquals(studioReplySubject(null, "other"), "Nelson at Taylormade · your project");
+  assertEquals(studioReplySubject("Dee — Other", "other"), "Nelson at Taylormade · your project");
+  assertEquals(studioReplySubject("Marcus T — Headshots", "photography"), "Nelson at Taylormade · your headshots session");
+});
