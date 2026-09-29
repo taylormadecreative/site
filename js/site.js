@@ -61,19 +61,92 @@
   /* ---------- nav ---------- */
   const nav = $(".nav");
   const burger = $("#burger");
+  // one place opens/closes the full-screen menu: class, aria state, and the
+  // page behind it made inert so Tab can't wander under the overlay
+  const setMenu = (open) => {
+    if (!nav || !burger) return;
+    nav.classList.toggle("open", open);
+    burger.setAttribute("aria-expanded", String(open));
+    [...document.body.children].forEach((el) => { if (el !== nav) el.inert = open; });
+    if (!open) closeDrops();
+  };
   if (burger) {
     burger.setAttribute("aria-expanded", "false");
-    burger.addEventListener("click", () => {
-      const open = nav.classList.toggle("open");
-      burger.setAttribute("aria-expanded", String(open));
-    });
+    burger.addEventListener("click", () => setMenu(!nav.classList.contains("open")));
+    // widening past the burger breakpoint must never leave the page inert
+    matchMedia("(min-width: 1100px)").addEventListener("change", (e) => { if (e.matches) setMenu(false); });
   }
-  $$(".nav-links a").forEach((a) => a.addEventListener("click", () => nav.classList.remove("open")));
+  $$(".nav-links a").forEach((a) => a.addEventListener("click", () => setMenu(false)));
+
+  /* Photography dropdown: a disclosure button. Click/tap toggles everywhere;
+     a real mouse on the desktop bar also opens it on hover. */
+  const canHover = () => matchMedia("(hover: hover) and (pointer: fine) and (min-width: 1100px)").matches;
+  $$(".nav-drop").forEach((drop) => {
+    const btn = drop.querySelector(".nav-drop-btn");
+    const items = () => [...drop.querySelectorAll(".nav-drop-panel a")];
+    let leaveT, hoverOpenedAt = 0;
+    const setOpen = (open) => {
+      drop.classList.toggle("open", open);
+      btn.setAttribute("aria-expanded", String(open));
+    };
+    btn.addEventListener("click", () => {
+      // a mouse user who hovered it open and then clicks means "yes, this menu",
+      // not "close it again"
+      if (drop.classList.contains("open") && Date.now() - hoverOpenedAt < 1500) { hoverOpenedAt = 0; return; }
+      setOpen(!drop.classList.contains("open"));
+    });
+    drop.addEventListener("keydown", (e) => {
+      const list = items(), i = list.indexOf(document.activeElement);
+      if (e.key === "ArrowDown") {
+        e.preventDefault();
+        if (document.activeElement === btn) { setOpen(true); list[0]?.focus(); }
+        else if (i >= 0) list[(i + 1) % list.length].focus();
+      }
+      if (e.key === "ArrowUp" && i >= 0) { e.preventDefault(); i === 0 ? btn.focus() : list[i - 1].focus(); }
+    });
+    drop.addEventListener("mouseenter", () => {
+      if (!canHover()) return;
+      clearTimeout(leaveT);
+      if (!drop.classList.contains("open")) hoverOpenedAt = Date.now();
+      setOpen(true);
+    });
+    drop.addEventListener("mouseleave", () => { if (canHover()) leaveT = setTimeout(() => setOpen(false), 180); });
+    // in the desktop bar (mouse or touch), tabbing out of the menu closes it
+    drop.addEventListener("focusout", (e) => {
+      if (matchMedia("(min-width: 1100px)").matches && !drop.contains(e.relatedTarget)) setOpen(false);
+    });
+    document.addEventListener("click", (e) => { if (!drop.contains(e.target)) setOpen(false); });
+    drop.querySelectorAll(".nav-drop-panel a").forEach((a) => a.addEventListener("click", () => setOpen(false)));
+  });
+  const closeDrops = () => $$(".nav-drop.open").forEach((d) => {
+    d.classList.remove("open");
+    d.querySelector(".nav-drop-btn")?.setAttribute("aria-expanded", "false");
+  });
+  // Esc, wherever focus is: first closes an open Photography list (even one
+  // opened by hover), then the full-screen menu
+  document.addEventListener("keydown", (e) => {
+    if (e.key !== "Escape") return;
+    const open = $$(".nav-drop.open");
+    if (open.length) {
+      open.forEach((d) => {
+        const b = d.querySelector(".nav-drop-btn");
+        const hadFocus = d.contains(document.activeElement);
+        d.classList.remove("open");
+        b?.setAttribute("aria-expanded", "false");
+        if (hadFocus) b?.focus();
+      });
+      return;
+    }
+    if (nav?.classList.contains("open")) { setMenu(false); burger?.focus(); }
+  });
+
   let lastY = 0;
   addEventListener("scroll", () => {
     const y = scrollY;
     if (nav && !nav.classList.contains("open")) {
-      nav.classList.toggle("is-hidden", y > 140 && y > lastY);
+      const hide = y > 140 && y > lastY;
+      nav.classList.toggle("is-hidden", hide);
+      if (hide) closeDrops();   // never leave a panel floating under a hidden bar
     }
     lastY = y;
   }, { passive: true });
