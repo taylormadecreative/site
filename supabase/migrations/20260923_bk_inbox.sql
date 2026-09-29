@@ -2,9 +2,17 @@
 -- docs/superpowers/specs/2026-09-23-inbox-app-design.md). Applied by apply-inbox.sh.
 
 -- ---------------------------------------------------------------- columns
-alter table public.bk_projects add column if not exists inbox_handled_at timestamptz;
--- rollout: history is not "unanswered"; only events from now on need a reply
-update public.bk_projects set inbox_handled_at = now() where inbox_handled_at is null;
+-- rollout: history is not "unanswered"; only events from now on need a reply.
+-- A column default fills existing rows WITHOUT an UPDATE, so bk_projects_touch never fires
+-- (updated_at drives the admin sort and the 60-day rebook list), and a re-run never re-marks anything.
+do $$
+begin
+  if not exists (select 1 from information_schema.columns
+                 where table_schema = 'public' and table_name = 'bk_projects' and column_name = 'inbox_handled_at') then
+    alter table public.bk_projects add column inbox_handled_at timestamptz default now();
+    alter table public.bk_projects alter column inbox_handled_at drop default;
+  end if;
+end $$;
 
 alter table public.bk_messages add column if not exists emailed_direct boolean not null default false;
 alter table public.bk_messages add column if not exists client_key text;
@@ -73,6 +81,31 @@ begin
   end;
   return new;
 end $$;
+
+-- the payment safety net queues alerts with booking_id only; give them their project so they list + deep-link
+create or replace function public.bk_inbox_fill_project() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  if new.project_id is null and new.booking_id is not null then
+    select project_id into new.project_id from public.bk_bookings where id = new.booking_id;
+  end if;
+  return new;
+end $$;
+drop trigger if exists bk_inbox_fill_project on public.bk_email_queue;
+create trigger bk_inbox_fill_project before insert on public.bk_email_queue
+  for each row when (new.kind = 'nelson_alert' and new.project_id is null)
+  execute function public.bk_inbox_fill_project();
+
+-- any studio reply (Inbox or admin dashboard) counts as handled
+create or replace function public.bk_inbox_studio_replied() returns trigger
+language plpgsql security definer set search_path = public as $$
+begin
+  update public.bk_projects set inbox_handled_at = now() where id = new.project_id;
+  return new;
+end $$;
+drop trigger if exists bk_inbox_studio_msg on public.bk_messages;
+create trigger bk_inbox_studio_msg after insert on public.bk_messages
+  for each row when (new.sender = 'studio') execute function public.bk_inbox_studio_replied();
 
 drop trigger if exists bk_inbox_alert on public.bk_email_queue;
 create trigger bk_inbox_alert after insert on public.bk_email_queue
@@ -161,6 +194,9 @@ begin
   insert into public.bk_email_queue (project_id, kind, payload)
     values (p_project, 'studio_reply', jsonb_build_object('message_id', v_id));
   update public.bk_projects set inbox_handled_at = now() where id = p_project;
+  -- he has answered them: clear the admin dashboard's unread badge too
+  update public.bk_messages set read_at = now()
+   where project_id = p_project and sender = 'client' and read_at is null;
   begin
     perform net.http_post(
       url := 'https://pgqdmnmessbbzyszjfvr.supabase.co/functions/v1/bk-mailer',
@@ -211,7 +247,8 @@ end $$;
 revoke all on function public.bk_inbox_list(text, timestamptz), public.bk_inbox_item(uuid),
   public.bk_inbox_send(uuid, text, text), public.bk_inbox_mark(uuid, boolean),
   public.bk_inbox_subscribe(text, text, text, text), public.bk_inbox_unsubscribe(text),
-  public.bk_inbox_vapid_key(), public.bk_inbox_notify() from public, anon;
+  public.bk_inbox_vapid_key(), public.bk_inbox_notify(), public.bk_inbox_fill_project(),
+  public.bk_inbox_studio_replied() from public, anon;
 grant execute on function public.bk_inbox_list(text, timestamptz), public.bk_inbox_item(uuid),
   public.bk_inbox_send(uuid, text, text), public.bk_inbox_mark(uuid, boolean),
   public.bk_inbox_subscribe(text, text, text, text), public.bk_inbox_unsubscribe(text),

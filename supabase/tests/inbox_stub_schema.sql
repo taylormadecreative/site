@@ -15,11 +15,15 @@ create function public.bk_is_staff() returns boolean language sql stable securit
 
 create table public.bk_projects (
   id uuid primary key default gen_random_uuid(), created_at timestamptz not null default now(),
+  updated_at timestamptz not null default now(),
   access_token uuid not null default gen_random_uuid(),
   client_name text not null, client_email text not null, client_phone text, company text,
   service text not null check (service in ('music_video','brand_content','photography','event','other')),
   title text, event_date date, event_time text, location text, budget_range text, details text,
   referral_source text, status text not null default 'new');
+-- live has this BEFORE UPDATE touch trigger (booking_system_v1); the admin list sorts on updated_at
+create function public.bk_touch() returns trigger language plpgsql as $$ begin new.updated_at = now(); return new; end $$;
+create trigger bk_projects_touch before update on public.bk_projects for each row execute function public.bk_touch();
 create table public.bk_messages (
   id uuid primary key default gen_random_uuid(), created_at timestamptz not null default now(),
   project_id uuid not null references public.bk_projects(id) on delete cascade,
@@ -36,7 +40,7 @@ create table public.bk_bookings (
 create table public.bk_email_queue (
   id uuid primary key default gen_random_uuid(), created_at timestamptz not null default now(),
   project_id uuid references public.bk_projects(id) on delete cascade,
-  booking_id uuid, kind text not null, send_at timestamptz not null default now(),
+  booking_id uuid references public.bk_bookings(id) on delete cascade, kind text not null, send_at timestamptz not null default now(),
   sent_at timestamptz, attempts integer not null default 0, last_error text,
   payload jsonb not null default '{}'::jsonb);
 alter table public.bk_email_queue add constraint bk_email_queue_kind_check

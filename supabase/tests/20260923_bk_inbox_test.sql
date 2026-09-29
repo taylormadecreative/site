@@ -85,5 +85,39 @@ begin
   begin perform public.bk_inbox_list('all', null); raise exception 'TEST 9: non-staff read the list';
   exception when others then if sqlerrm not like '%forbidden%' then raise; end if; end;
 
+  -- 10. a booking-only alert (payment safety net inserts booking_id, no project_id) lands on its project
+  perform set_config('request.jwt.claims', json_build_object('sub', v_admin, 'role', 'authenticated')::text, true);
+  declare v_svc uuid; v_bk uuid; v_q uuid;
+  begin
+    insert into public.bk_services (slug, name, kind, price_cents) values ('inbox-test-svc', 'Inbox Test', 'session', 10000)
+      on conflict (slug) do update set name = excluded.name returning id into v_svc;
+    insert into public.bk_bookings (project_id, service_id, starts_at, duration_min, status)
+      values (v_new, v_svc, now() + interval '3 days', 30, 'pending_payment') returning id into v_bk;
+    perform public.bk_inbox_mark(v_new, true);
+    insert into public.bk_email_queue (booking_id, kind, payload)
+      values (v_bk, 'nelson_alert', '{"type":"payment_orphan"}') returning id into v_q;
+    if (select project_id from public.bk_email_queue where id = v_q) is distinct from v_new then
+      raise exception 'TEST 10: booking-only alert did not get its project';
+    end if;
+    if not exists (select 1 from jsonb_array_elements(public.bk_inbox_list('needs', null)) e
+                   where (e->>'id')::uuid = v_new) then  -- was marked handled just above; the alert re-opened it
+      raise exception 'TEST 10: booking-only alert missing from needs list';
+    end if;
+  end;
+
+  -- 11. a reply sent from admin (plain studio message) also counts as handled
+  perform public.bk_inbox_mark(v_new, false);
+  insert into public.bk_messages (project_id, sender, body) values (v_new, 'studio', 'Replied from admin');
+  if (select inbox_handled_at from public.bk_projects where id = v_new) is null then
+    raise exception 'TEST 11: admin reply did not mark handled';
+  end if;
+
+  -- 12. sending from the inbox marks the client's messages read (admin unread badge)
+  insert into public.bk_messages (project_id, sender, body) values (v_new, 'client', 'Unread question');
+  perform public.bk_inbox_send(v_new, 'Answer', 'key-dddddddd');
+  if exists (select 1 from public.bk_messages where project_id = v_new and sender = 'client' and read_at is null) then
+    raise exception 'TEST 12: client messages still unread after an inbox reply';
+  end if;
+
   raise notice 'INBOX SQL TESTS PASSED';
 end $$;

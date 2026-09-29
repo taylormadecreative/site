@@ -10,9 +10,20 @@ const run = async (label, sql) => {
   catch (e) { console.error(`FAIL in ${label}: ${e.message}`); process.exit(1); }
 };
 await run("stub schema", readFileSync(here + "inbox_stub_schema.sql", "utf8"));
+const fail = (m) => { console.error("FAIL: " + m); process.exit(1); };
 if (!process.argv.includes("--no-migration")) {
-  await run("migration", readFileSync(here + "../migrations/20260923_bk_inbox.sql", "utf8"));
-  await run("migration re-run (idempotent)", readFileSync(here + "../migrations/20260923_bk_inbox.sql", "utf8"));
+  const mig = readFileSync(here + "../migrations/20260923_bk_inbox.sql", "utf8");
+  await db.exec("alter table public.bk_projects disable trigger bk_projects_touch; update public.bk_projects set updated_at = now() - interval '45 days'; alter table public.bk_projects enable trigger bk_projects_touch;");
+  const before = (await db.query("select updated_at::text u from public.bk_projects order by created_at limit 1")).rows[0].u;
+  await run("migration", mig);
+  const after = (await db.query("select updated_at::text u from public.bk_projects order by created_at limit 1")).rows[0].u;
+  if (before !== after) fail(`migration touched updated_at on existing projects (${before} -> ${after})`);
+  // an inquiry that arrives between two applies must still need a reply after a re-run
+  await db.exec("select public.bk_submit_inquiry('Between Runs', 'between@example.com', 'other')");
+  await run("migration re-run (idempotent)", mig);
+  const still = (await db.query("select inbox_handled_at from public.bk_projects where client_email = 'between@example.com'")).rows[0];
+  if (still.inbox_handled_at !== null) fail("re-running the migration marked a new inquiry as handled");
+  await db.exec("delete from public.bk_projects where client_email = 'between@example.com'");
 }
 // the test ends with RAISE NOTICE; PGlite surfaces notices via onNotice on query
 await db.query("select 1", [], { onNotice: (n) => notices.push(n.message) });
