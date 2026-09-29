@@ -7,7 +7,10 @@
 // 2026-09-23: deposit + auto-balance — confirmation shows the deposit and when
 // the balance is charged; new kinds balance_charged (receipt) and
 // balance_failed (pay link), Nelson alert type balance_failed.
+// 2026-09-27: every drain also mirrors confirmed bookings onto Nelson's Google
+// Calendar (gcal.ts) and pulls cancelled ones back off.
 import { createClient } from "npm:@supabase/supabase-js@2";
+import { syncCalendar } from "./gcal.ts";
 
 const FROM = "Taylormade Creative <hello@taylormadecreative.net>";
 const NELSON = "taylormademd@gmail.com";
@@ -163,7 +166,7 @@ function renderPrep(ctx: Ctx): { subject: string; html: string } {
     h1(`Your shoot is coming up, ${firstName(ctx)}.`) +
     p(`${esc(svc)} · <b>${fmtDate(b.starts_at)} at ${fmtTime(b.starts_at)}</b>${b.location ? " · " + esc(b.location) : ""}`) +
     p(`<b>How to come prepared:</b>`) +
-    detailCard([["Prep", `<span style="font-weight:normal;line-height:1.7;">${esc(notes)}</span>`]]) +
+    detailCard([["Prep", `<span style="font-weight:normal;line-height:1.7;">${esc(notes).replace(/\n/g, "<br>")}</span>`]]) +
     p(`If anything changed — timing, looks, creative direction — hit reply or drop a message in your portal and we'll adjust.`) +
     btn(portalUrl(ctx), "MESSAGE ME IN THE PORTAL"),
   );
@@ -520,5 +523,15 @@ Deno.serve(async (req: Request) => {
     }
   }
 
-  return json({ processed: (due ?? []).length, sent, failed, skipped });
+  let calendar: unknown = null;
+  try {
+    calendar = await syncCalendar(db);
+  } catch (e) {
+    calendar = { error: String((e as Error).message ?? e).slice(0, 300) };
+  }
+  if (calendar && typeof calendar === "object" && ("error" in calendar || ((calendar as { errors?: string[] }).errors ?? []).length)) {
+    console.error("gcal sync", JSON.stringify(calendar));
+  }
+
+  return json({ processed: (due ?? []).length, sent, failed, skipped, calendar });
 });
