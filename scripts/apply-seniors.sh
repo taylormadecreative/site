@@ -126,11 +126,14 @@ echo "applied"
 
 echo "== 4/7 calendar: on-location events cover the drive"
 mkdir -p "$TMP/live" && (cd "$TMP/live" && supabase functions download bk-mailer --project-ref "$REF" >/dev/null 2>&1)
-SAME=1
+SAME=1; MINE=1
 for f in bk-mailer/index.ts bk-mailer/gcal.ts _shared/inbox/reply_html.ts; do
   git show "$MAILER_BASE:supabase/functions/$f" | diff -q - "$TMP/live/supabase/functions/$f" >/dev/null 2>&1 || SAME=0
+  diff -q "supabase/functions/$f" "$TMP/live/supabase/functions/$f" >/dev/null 2>&1 || MINE=0
 done
-if [ "$SAME" = 1 ]; then
+if [ "$MINE" = 1 ]; then
+  echo "already deployed (live bk-mailer matches this commit)"
+elif [ "$SAME" = 1 ]; then
   supabase functions deploy bk-mailer --project-ref "$REF" --no-verify-jwt
 else
   echo "SKIPPED: the live bk-mailer changed since $MAILER_BASE, not deploying over it. Bookings still block travel;"
@@ -140,7 +143,9 @@ fi
 echo "== 5/7 push the site, wait until it's live"
 git push origin main
 [ -d "$BOOK" ] && git -C "$BOOK" push origin HEAD:main
-live() { curl -fsS "$1?cb=$(date +%s)$RANDOM" 2>/dev/null | grep -q "$2"; }
+# read the whole page first: piping curl into grep -q under pipefail fails with
+# curl exit 23 whenever grep finds the text before curl finishes writing
+live() { local body; body=$(curl -fsS "$1?cb=$(date +%s)$RANDOM" 2>/dev/null) || return 1; [[ "$body" == *"$2"* ]]; }
 for i in $(seq 1 60); do
   if live https://www.taylormadecreative.net/js/book.js "senior-photos" \
      && live https://www.taylormadecreative.net/senior-photos/ "Senior year" \
