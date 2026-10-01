@@ -27,12 +27,16 @@ cd "$SITE"
 
 echo "== 0/7 preflight"
 [ "$(git rev-parse --abbrev-ref HEAD)" = main ] || { echo "~/taylormade-site must be on main."; exit 1; }
+git fetch -q origin main && git merge-base --is-ancestor origin/main main \
+  || { echo "The live site got a new push since this was prepared (origin/main moved). Nothing was changed — tell Claude."; exit 1; }
 git diff --quiet HEAD -- . ':(exclude)supabase/.temp' || { echo "~/taylormade-site has uncommitted changes — tell Claude."; exit 1; }
 [ -s assets/img/seniors/hero.jpg ] || { echo "No senior photos in the site yet (assets/img/seniors/hero.jpg) — not launching a page without them."; exit 1; }
 grep -q "senior-photos" js/book.js || { echo "js/book.js has no senior redirect — tell Claude."; exit 1; }
 if [ -d "$BOOK" ]; then
   git -C "$BOOK" diff --quiet HEAD || { echo "The book-site worktree has uncommitted changes — tell Claude."; exit 1; }
   ! grep -q SENIOR_PREVIEW "$BOOK/index.html" || { echo "The book site still has the SENIOR_PREVIEW placeholder — tell Claude."; exit 1; }
+  git -C "$BOOK" fetch -q origin main && git -C "$BOOK" merge-base --is-ancestor origin/main HEAD \
+    || { echo "book.taylormadecreative.net got a new push since this was prepared. Nothing was changed — tell Claude."; exit 1; }
 else
   echo "(book-site worktree missing — book.taylormadecreative.net will need its own push afterwards)"
 fi
