@@ -16,7 +16,7 @@
 set -euo pipefail
 REF=pgqdmnmessbbzyszjfvr
 SITE=~/taylormade-site
-BOOK=/private/tmp/claude-501/-Users-nelsontaylor/de8645c9-8fbe-406a-a7b2-a600292eef52/scratchpad/book-seniors
+BOOK=~/taylormade-book-seniors                             # worktree of ~/taylormade-book on branch seniors-listing
 MIG=supabase/migrations/20260930_bk_senior_sessions.sql
 LAUNCH=supabase/migrations/20260930b_bk_senior_launch.sql
 PUB_KEY=sb_publishable_fyYqa9QkEeA5LD_0hYLTTA_F8Gxw1oz   # the public key already shipped in js/config.js
