@@ -46,7 +46,7 @@ async function accessToken(sa: { client_email: string; private_key: string }): P
 }
 
 type Row = {
-  id: string; starts_at: string; duration_min: number; status: string;
+  id: string; starts_at: string; duration_min: number; travel_min: number | null; status: string;
   location: string | null; gcal_event_id: string | null;
   bk_services: { name: string } | null;
   bk_projects: { client_name: string; client_email: string; client_phone: string | null } | null;
@@ -57,7 +57,7 @@ export async function syncCalendar(db: SupabaseClient): Promise<{ added: number;
   const raw = Deno.env.get("GCAL_SA_KEY");
   if (!raw) return out;
   const calId = encodeURIComponent(Deno.env.get("GCAL_CALENDAR_ID") ?? "taylormademd@gmail.com");
-  const cols = "id, starts_at, duration_min, status, location, gcal_event_id, bk_services(name), bk_projects(client_name, client_email, client_phone)";
+  const cols = "id, starts_at, duration_min, travel_min, status, location, gcal_event_id, bk_services(name), bk_projects(client_name, client_email, client_phone)";
 
   const { data: toAdd } = await db.from("bk_bookings").select(cols)
     .eq("status", "confirmed").is("gcal_event_id", null)
@@ -74,19 +74,28 @@ export async function syncCalendar(db: SupabaseClient): Promise<{ added: number;
     const eventId = "tmbk" + b.id.replace(/-/g, "");
     const pj = b.bk_projects;
     const svc = b.bk_services?.name ?? "Session";
-    const end = new Date(new Date(b.starts_at).getTime() + b.duration_min * 60000).toISOString();
+    // on-location shoots: the event also covers the drive the booking engine
+    // keeps clear on each side (bk_bookings.travel_min), so the calendar shows
+    // when to leave, not just when the shoot starts
+    const travel = b.travel_min ?? 0;
+    const shootStart = new Date(b.starts_at);
+    const shootEnd = new Date(shootStart.getTime() + b.duration_min * 60000);
+    const start = new Date(shootStart.getTime() - travel * 60000).toISOString();
+    const end = new Date(shootEnd.getTime() + travel * 60000).toISOString();
+    const ct = (d: Date) => d.toLocaleTimeString("en-US", { timeZone: "America/Chicago", hour: "numeric", minute: "2-digit" });
     const r = await fetch(CAL_API + calId + "/events", {
       method: "POST", headers: auth,
       body: JSON.stringify({
         id: eventId,
-        summary: `${svc} — ${pj?.client_name ?? "Client"}`,
+        summary: `${travel ? "ON LOCATION · " : ""}${svc} — ${pj?.client_name ?? "Client"}`,
         location: b.location ?? undefined,
         description: [
+          ...(travel ? [`Shoot ${ct(shootStart)}–${ct(shootEnd)} CT on location. This block includes ${travel} min of drive time each way.`] : []),
           `${svc} (${b.duration_min} min) · booked + paid on book.taylormadecreative.net`,
           [pj?.client_name, pj?.client_email, pj?.client_phone].filter(Boolean).join(" · "),
           `Admin: ${ADMIN_URL}`,
         ].join("\n"),
-        start: { dateTime: b.starts_at, timeZone: "America/Chicago" },
+        start: { dateTime: start, timeZone: "America/Chicago" },
         end: { dateTime: end, timeZone: "America/Chicago" },
         visibility: "private",
         reminders: { useDefault: false, overrides: [{ method: "popup", minutes: 1440 }, { method: "popup", minutes: 60 }] },

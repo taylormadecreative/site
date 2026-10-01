@@ -114,6 +114,12 @@
       location.href = `../birthday/?package=${slug === "birthday-full" ? "full" : "mini"}#book`;
       return;
     }
+    // senior sessions book on their own page, which has the studio / on-location
+    // switch (bk_open_slots_where keeps travel time clear around location shoots)
+    if (slug === "senior-mini" || slug === "senior-full") {
+      location.href = `../senior-photos/?package=${slug === "senior-full" ? "full" : "mini"}#book`;
+      return;
+    }
     state.svc = state.services.find((s) => s.slug === slug);
     if (!state.svc) return;
     state.day = null; state.slot = null; state.flexible = false;
