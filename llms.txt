@@ -2,7 +2,7 @@
 
 > Taylormade Creative is a Dallas–Fort Worth (DFW) creative studio led by director and designer Nelson Taylor. It produces cinematic video, professional photography, AI content systems, custom websites, social media content, and live AI/creative workshops — all in-house, all bookable online with real calendar availability and secure Stripe payment.
 
-Key facts:
+Key facts (updated 2026-10-01):
 - Based in Dallas–Fort Worth, Texas; shoots on location everywhere.
 - Led by Nelson Taylor: 14 years of creative direction and graphic design; also shipped a native iOS app to the App Store.
 - Camera platform: Sony FX6 (cinema video) and Sony A7RV (stills).
@@ -28,7 +28,12 @@ Key facts:
 
 ## Booking
 - [Book a shoot](https://www.taylormadecreative.net/book/): live calendar, online payment, instant confirmation.
+- [Prices](https://www.taylormadecreative.net/pricing/): every posted price in one place, plus which work is quoted per project.
 - [FAQs](https://www.taylormadecreative.net/faqs/): turnaround, deposits, travel, delivery.
+
+## Guides
+- [What headshots cost in Dallas (2026)](https://www.taylormadecreative.net/headshots/cost/): a standard Dallas studio headshot session typically runs $150–$450 (Photography Shark, May 2026); Taylormade Creative's is $150 flat.
+- [What it costs to rent a photo studio in Dallas (2026)](https://studio.taylormadecreative.net/studio-rental-cost/): Dallas photo studios average about $90/hr (Peerspace) to $129/hr (Tagvenue); Jenel Studios is $60/hr weekdays, $75/hr weekends.
 
 ## Contact
 - Instagram: https://www.instagram.com/taylormade_creative/

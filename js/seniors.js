@@ -92,7 +92,7 @@
     // the steps bar is aria-hidden (decorative); announce the change separately
     const live = document.getElementById("bkLive");
     if (live) live.textContent = ["", "Step 1 of 3: pick a package, a place, and a time", "Step 2 of 3: your details", "Step 3 of 3: confirm and pay"][n] || "";
-    track("book_step", { step: n, service: state.pkg, where: state.where, source: "seniors_lp" });
+    track("book_step", { step: n, service: state.pkg, where: state.where, lp: "seniors" });
     if (n > 1) document.getElementById("book")?.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
   }
 
@@ -343,7 +343,7 @@
     state.slot = null; state.day = null;
     syncRadios("data-pick-pkg", slug);
     document.dispatchEvent(new CustomEvent("seniors:pkg", { detail: slug }));
-    track("select_package", { service: slug, source: "seniors_lp" });
+    track("select_package", { service: slug, lp: "seniors" });
     if (document.getElementById("cal")) goMonth(0);
     else renderCalendar();
   }
@@ -355,7 +355,7 @@
     state.where = w;
     state.slot = null; state.day = null;
     syncRadios("data-pick-where", w);
-    track("select_location", { where: w, service: state.pkg, source: "seniors_lp" });
+    track("select_location", { where: w, service: state.pkg, lp: "seniors" });
     if (document.getElementById("cal")) goMonth(0);
     else renderCalendar();
   }
@@ -367,8 +367,8 @@
     const pkg = state.services[el.dataset.pkg] ? el.dataset.pkg : state.pkg;
     const where = WHERE[el.dataset.where] ? el.dataset.where : state.where;
     if (pkg === state.pkg && where === state.where && document.getElementById("cal")) return;
-    if (pkg !== state.pkg) track("select_package", { service: pkg, source: "seniors_lp" });
-    if (where !== state.where) track("select_location", { where, service: pkg, source: "seniors_lp" });
+    if (pkg !== state.pkg) track("select_package", { service: pkg, lp: "seniors" });
+    if (where !== state.where) track("select_location", { where, service: pkg, lp: "seniors" });
     state.pkg = pkg; state.svc = state.services[pkg]; state.where = where;
     state.slot = null; state.day = null;
     syncRadios("data-pick-pkg", pkg);
@@ -647,7 +647,7 @@
         state.bkCache = { key: bkKey, bk };
         try { sessionStorage.setItem(RESUME_KEY, JSON.stringify({ bk, ts: Date.now() })); } catch (_) {}
       }
-      track("begin_checkout", { currency: "USD", value: bk.amount_cents / 100, service: state.pkg, where: state.where, source: "seniors_lp" });
+      track("begin_checkout", { currency: "USD", value: bk.amount_cents / 100, service: state.pkg, where: state.where, lp: "seniors" });
       if (state.details.subscribe) {
         TM.rpc("bk_subscribe", { p_email: state.details.email, p_name: state.details.name, p_source: "booking" }).catch(() => {});
       }

@@ -80,7 +80,7 @@
     // the steps bar is aria-hidden (decorative); announce the change separately
     const live = document.getElementById("bkLive");
     if (live) live.textContent = ["", "Step 1 of 3: pick a date and time", "Step 2 of 3: your details", "Step 3 of 3: confirm and pay"][n] || "";
-    track("book_step", { step: n, service: SERVICE, source: "headshots_lp" });
+    track("book_step", { step: n, service: SERVICE, lp: "headshots" });
     if (n > 1) document.getElementById("book")?.scrollIntoView({ behavior: scrollBehavior(), block: "start" });
   }
 
@@ -519,7 +519,7 @@
         state.bkCache = { key: bkKey, bk };
         try { sessionStorage.setItem(RESUME_KEY, JSON.stringify({ bk, ts: Date.now() })); } catch (_) {}
       }
-      track("begin_checkout", { currency: "USD", value: bk.amount_cents / 100, service: SERVICE, source: "headshots_lp" });
+      track("begin_checkout", { currency: "USD", value: bk.amount_cents / 100, service: SERVICE, lp: "headshots" });
       if (state.details.subscribe) {
         TM.rpc("bk_subscribe", { p_email: state.details.email, p_name: state.details.name, p_source: "booking" }).catch(() => {});
       }
