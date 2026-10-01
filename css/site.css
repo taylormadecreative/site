@@ -415,7 +415,7 @@ section { position: relative; }
 .film:hover .film-play svg { fill: var(--ink); }
 
 /* stills rail */
-.rail { display: flex; gap: 14px; overflow-x: auto; padding: 6px var(--pad) 22px; scroll-snap-type: x mandatory; scrollbar-width: thin; scrollbar-color: var(--gold) transparent; }
+.rail { display: flex; gap: 14px; overflow-x: auto; padding: 6px var(--pad) 22px; scroll-padding-inline: var(--pad); scroll-snap-type: x mandatory; scrollbar-width: thin; scrollbar-color: var(--gold) transparent; }
 .rail::-webkit-scrollbar { height: 4px; }
 .rail::-webkit-scrollbar-thumb { background: var(--gold); border-radius: 2px; }
 .rail img {
