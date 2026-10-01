@@ -67,7 +67,7 @@
     if (suppressPush) suppressPush = false;
     else if (n > cur) history.pushState({ step: n }, "");
     else if (n !== cur) history.replaceState({ step: n }, "");
-    track("book_step", { step: n, service: SERVICE, source: "digitals_lp" });
+    track("book_step", { step: n, service: SERVICE, lp: "digitals" });
     if (n > 1) document.getElementById("book")?.scrollIntoView({ behavior: "smooth", block: "start" });
   }
 
@@ -422,7 +422,7 @@
         state.bkCache = { key: bkKey, bk };
         try { sessionStorage.setItem(RESUME_KEY, JSON.stringify({ bk, ts: Date.now(), promo: state.promo || "" })); } catch (_) {}
       }
-      track("begin_checkout", { currency: "USD", value: bk.amount_cents / 100, service: SERVICE, source: "digitals_lp" });
+      track("begin_checkout", { currency: "USD", value: bk.amount_cents / 100, service: SERVICE, lp: "digitals" });
       if (state.details.subscribe) {
         TM.rpc("bk_subscribe", { p_email: state.details.email, p_name: state.details.name, p_source: "booking" }).catch(() => {});
       }
