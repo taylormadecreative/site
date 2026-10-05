@@ -107,8 +107,39 @@
       el.addEventListener("click", () => selectService(el.dataset.slug)));
   }
 
-  // team shoots run as long as the headcount needs, so no fixed length is shown
-  const durLabel = (svc) => (svc.slug === "corporate-headshots" ? "" : fmtDur(svc.duration_min));
+  // business shoots run as long as headcount and scope need, so no fixed length is shown
+  const BRIEF_SLUGS = ["corporate-headshots", "corporate-video", "content-day", "video-podcast"];
+
+  // quote briefs: start the notes with what a quote for that service needs.
+  // ?where= and ?type= from deep links sharpen the first line.
+  function briefFor(slug) {
+    const params = new URLSearchParams(location.search);
+    const where = params.get("where");
+    switch (slug) {
+      case "corporate-headshots":
+        return `${{
+          onsite: "Team headshots, on-site at our office.",
+          studio: "Team headshots, at your downtown Dallas studio.",
+        }[where] || "Team headshots (on-site at our office, or at your studio)."}\nHow many people:\nPreferred date(s):${where === "studio" ? "" : "\nOffice address:"}`;
+      case "corporate-video": {
+        const type = {
+          leadership: "a leadership or company message", training: "training and onboarding",
+          testimonials: "customer testimonials", explainers: "explainer and FAQ videos",
+          recruiting: "recruiting", social: "social clips",
+        }[params.get("type")];
+        return `Talking-head video${type ? ` for ${type}.` : ".\nWhat the videos are for:"}\nHow many people on camera:\nAt our office or your studio:\nPreferred date(s):`;
+      }
+      case "content-day":
+        return "Content day at our location.\nBusiness and address:\nWhat we want to film:\nPreferred date(s):";
+      case "video-podcast":
+        return "Video podcast in your studio.\nNew show or existing:\nHosts and guests per episode:\nHow many episodes:\nPreferred date(s):";
+      case "event-coverage":
+        return `${params.get("type") === "photo" ? "Event photography." : "Event coverage.\nPhotos, video, or both:"}\nEvent and date:\nLocation:\nHours of coverage:`;
+      default:
+        return "";
+    }
+  }
+  const durLabel = (svc) => (BRIEF_SLUGS.includes(svc.slug) ? "" : fmtDur(svc.duration_min));
 
   function selectService(slug) {
     // birthday shoots book on their own page, which explains the deposit and
@@ -125,8 +156,12 @@
     }
     state.svc = state.services.find((s) => s.slug === slug);
     if (!state.svc) return;
-    // switching away from team headshots drops the untouched team brief
-    if (slug !== "corporate-headshots" && state.corpNotes && state.details.notes === state.corpNotes) state.details.notes = "";
+    // switching to another service drops a deep-link brief nobody has edited
+    if (state.brief && slug !== state.brief.slug && state.details.notes === state.brief.notes) state.details.notes = "";
+    if (!state.details.notes.trim() && briefFor(slug)) {
+      state.brief = { slug, notes: briefFor(slug) };
+      state.details.notes = state.brief.notes;
+    }
     state.day = null; state.slot = null; state.flexible = false;
     state.month = null; state.slotsByDay = {};
     renderCalendar();
@@ -369,6 +404,8 @@
       if (!f.name.value.trim()) return showErr(err, "Your name is required.", f.name);
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return showErr(err, "Enter a valid email — your confirmation goes there.", f.email);
       if (!isSession && !f.notes.value.trim()) return showErr(err, "Tell me a little about the project.", f.notes);
+      if (!isSession && state.brief?.slug === state.svc.slug && f.notes.value.trim() === state.brief.notes.trim())
+        return showErr(err, "Fill in the brief so I can quote it.", f.notes);
       state.details = {
         name: f.name.value.trim(), email, phone: f.phone.value.trim(),
         location: isSession ? f.location.value.trim() : "",
@@ -558,13 +595,10 @@
         state.details.notes = smTier[0];
         state.details.budget = smTier[1];
       }
-      // corporate headshots deep links: start the brief with what a team quote needs
-      if (want === "corporate-headshots") {
-        const where = {
-          onsite: "Team headshots, on-site at our office.",
-          studio: "Team headshots, at your downtown Dallas studio.",
-        }[params.get("where")] || "Team headshots (on-site at our office, or at your studio).";
-        state.details.notes = state.corpNotes = `${where}\nHow many people:\nPreferred date(s):${params.get("where") === "studio" ? "" : "\nOffice address:"}`;
+      const brief = briefFor(want);
+      if (brief) {
+        state.brief = { slug: want, notes: brief };
+        state.details.notes = brief;
       }
       renderServices();
       if (want && state.services.some((s) => s.slug === want)) selectService(want);
