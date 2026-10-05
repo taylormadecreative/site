@@ -107,6 +107,9 @@
       el.addEventListener("click", () => selectService(el.dataset.slug)));
   }
 
+  // team shoots run as long as the headcount needs, so no fixed length is shown
+  const durLabel = (svc) => (svc.slug === "corporate-headshots" ? "" : fmtDur(svc.duration_min));
+
   function selectService(slug) {
     // birthday shoots book on their own page, which explains the deposit and
     // the day-before balance charge (bk-charge-balances) before checkout
@@ -122,6 +125,8 @@
     }
     state.svc = state.services.find((s) => s.slug === slug);
     if (!state.svc) return;
+    // switching away from team headshots drops the untouched team brief
+    if (slug !== "corporate-headshots" && state.corpNotes && state.details.notes === state.corpNotes) state.details.notes = "";
     state.day = null; state.slot = null; state.flexible = false;
     state.month = null; state.slotsByDay = {};
     renderCalendar();
@@ -151,7 +156,7 @@
     }
     host.innerHTML = `
       <section aria-label="Pick a date and time">
-        <p class="slate" style="margin-bottom:10px;">${esc(state.svc.name).toUpperCase()} · ${fmtDur(state.svc.duration_min).toUpperCase()}${state.svc.kind === "project" ? " · PREFERRED DATE (OPTIONAL)" : ""}</p>
+        <p class="slate" style="margin-bottom:10px;">${esc(state.svc.name).toUpperCase()}${durLabel(state.svc) ? ` · ${durLabel(state.svc).toUpperCase()}` : ""}${state.svc.kind === "project" ? " · PREFERRED DATE (OPTIONAL)" : ""}</p>
         <div class="cal-wrap">
           <div class="cal" id="cal"><div class="spin" style="margin: 40px auto;"></div></div>
           <div class="slots" id="slots">
@@ -402,7 +407,7 @@
         <div class="bk-summary" style="max-width:560px;">
           <div class="row"><span>Service</span><b>${esc(state.svc.name)}</b></div>
           ${state.slot ? `<div class="row"><span>Date</span><b>${fmtLong(state.slot)}</b></div>
-          <div class="row"><span>Time</span><b>${fmtTime(state.slot)} CT · ${fmtDur(state.svc.duration_min)}</b></div>` :
+          <div class="row"><span>Time</span><b>${fmtTime(state.slot)} CT${durLabel(state.svc) ? ` · ${durLabel(state.svc)}` : ""}</b></div>` :
           `<div class="row"><span>Date</span><b>Flexible — we'll schedule together</b></div>`}
           <div class="row"><span>Name</span><b>${esc(state.details.name)}</b></div>
           <div class="row"><span>Email</span><b>${esc(state.details.email)}</b></div>
@@ -552,6 +557,14 @@
       if (smTier && want === "social-media") {
         state.details.notes = smTier[0];
         state.details.budget = smTier[1];
+      }
+      // corporate headshots deep links: start the brief with what a team quote needs
+      if (want === "corporate-headshots") {
+        const where = {
+          onsite: "Team headshots, on-site at our office.",
+          studio: "Team headshots, at your downtown Dallas studio.",
+        }[params.get("where")] || "Team headshots (on-site at our office, or at your studio).";
+        state.details.notes = state.corpNotes = `${where}\nHow many people:\nPreferred date(s):${params.get("where") === "studio" ? "" : "\nOffice address:"}`;
       }
       renderServices();
       if (want && state.services.some((s) => s.slug === want)) selectService(want);
