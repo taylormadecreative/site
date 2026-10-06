@@ -21,7 +21,8 @@
   <link rel="stylesheet" href="../../css/site.css">
   <style>
     :root { --font-m: var(--font-b); }
-    .slate, .hero-hud { font-weight: 600; }
+    .slate, .hero-hud { font-weight: 600; letter-spacing: .12em; }
+    .faq .a a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
   </style>
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PS0H5W3ZX7"></script>
@@ -38,8 +39,7 @@
     "@type": "BreadcrumbList",
     "itemListElement": [
       { "@type": "ListItem", "position": 1, "name": "Taylormade Creative", "item": "https://www.taylormadecreative.net/" },
-      { "@type": "ListItem", "position": 2, "name": "Privacy", "item": "https://www.taylormadecreative.net/privacy/" },
-      { "@type": "ListItem", "position": 3, "name": "Taylormade Podcast", "item": "https://www.taylormadecreative.net/privacy/podcast/" }
+      { "@type": "ListItem", "position": 2, "name": "Taylormade Podcast privacy", "item": "https://www.taylormadecreative.net/privacy/podcast/" }
     ]
   }
   </script>
@@ -69,6 +69,7 @@
       <span class="h-line"><span>on your <span class="gold">Mac.</span></span></span>
     </h1>
     <p class="hero-sub lede">Taylormade Podcast is a Mac app for recording video podcasts, made by Taylormade Creative. This page explains, in plain language, what the app does and doesn't do with your data. The short version: there's no account and no tracking, and everything you record stays on your Mac.</p>
+    <p class="hero-sub" style="margin-top:14px;color:var(--smoke);font-size:14.5px;">This policy covers the app. This website itself counts visits with Google Analytics.</p>
   </header>
 
   <!-- the short version -->
@@ -84,7 +85,7 @@
           <summary>Does Taylormade Podcast collect any of my data?</summary>
           <p class="a">No. There's no account, no analytics, no advertising and no crash-reporting service in the app. Your videos, audio, transcripts and settings are saved only on your Mac. Taylormade Creative never receives them.</p>
         </details>
-        <details>
+        <details open>
           <summary>Does the app use the internet at all?</summary>
           <p class="a">Only in the few ways listed in the next section, and none of them send your recordings anywhere.</p>
         </details>
@@ -101,19 +102,19 @@
         <span class="slate">EVERY CONNECTION THE APP MAKES</span>
       </div>
       <div class="faq reveal">
-        <details>
+        <details open>
           <summary>Checking for a new beta</summary>
           <p class="a">When it opens (and when you choose Check for Updates), the app asks this website for the newest beta's version number. The request includes the app's own version. Like any web page, the site's hosting sees your internet address. Nothing else is sent.</p>
         </details>
-        <details>
+        <details open>
           <summary>iPhones on your Wi-Fi (Taylormade Camera)</summary>
           <p class="a">If you use iPhones running Taylormade Camera as cameras, the Mac finds them on your own Wi-Fi network. Each iPhone pairs once by scanning a code, and the connection between them is encrypted. Video goes straight from the iPhone to your Mac, not through the internet.</p>
         </details>
-        <details>
+        <details open>
           <summary>ChatGPT "Write it for me" (only if you turn it on)</summary>
           <p class="a">The teleprompter can ask ChatGPT to draft a script. This only works if you paste in your own OpenAI key. When you use it, the topic you typed is sent to OpenAI under your key, and OpenAI's own privacy policy applies. Nothing else from the app is sent. The key is saved in your Mac's keychain.</p>
         </details>
-        <details>
+        <details open>
           <summary>Sending beta feedback</summary>
           <p class="a">Help › Send Beta Feedback opens a new email in your own email app. It's filled in with the app version, your macOS version, your Mac model and what macOS reports about your connected cameras. You can read and change everything before you send it, and nothing is sent unless you press Send.</p>
         </details>
@@ -130,15 +131,15 @@
         <span class="slate slate--dim">PERMISSIONS · WHY EACH ONE EXISTS</span>
       </div>
       <div class="faq reveal">
-        <details>
+        <details open>
           <summary>Camera and microphone</summary>
           <p class="a">To show and record your podcast cameras and mics. Recordings are saved to the folder you choose on your Mac.</p>
         </details>
-        <details>
+        <details open>
           <summary>Speech recognition</summary>
           <p class="a">To write a transcript of your episode, which powers clip captions and suggested clips. It runs on your Mac with Apple's on-device speech recognition. Episode titles and show notes use Apple Intelligence on your Mac, when it's available.</p>
         </details>
-        <details>
+        <details open>
           <summary>Local network</summary>
           <p class="a">To find iPhones running Taylormade Camera on your Wi-Fi, as described above. Without it, everything else still works.</p>
         </details>
@@ -155,15 +156,15 @@
         <span class="slate">ON YOUR MAC · YOUR CONTROL</span>
       </div>
       <div class="faq reveal">
-        <details>
+        <details open>
           <summary>Where are my recordings stored?</summary>
           <p class="a">In your Movies folder (Movies › Taylormade Podcast) unless you pick another folder. If you turn on a backup copy, the app also copies each episode to the drive you choose.</p>
         </details>
-        <details>
+        <details open>
           <summary>How do I delete them?</summary>
           <p class="a">Delete an episode in the app (it moves to the Trash) or delete its folder in Finder. There's no other copy to ask about, because the app never sends one anywhere.</p>
         </details>
-        <details>
+        <details open>
           <summary>Guest agreements</summary>
           <p class="a">If you ask guests to sign the agreement in the app, the signed PDF is saved with that episode on your Mac.</p>
         </details>
@@ -180,15 +181,15 @@
         <span class="slate slate--dim">CHILDREN · CHANGES · CONTACT</span>
       </div>
       <div class="faq reveal">
-        <details>
+        <details open>
           <summary>Children's privacy</summary>
           <p class="a">Taylormade Podcast isn't directed at children and doesn't collect information from anyone.</p>
         </details>
-        <details>
+        <details open>
           <summary>Will this policy change?</summary>
           <p class="a">If it does, the date at the top of this page changes and the new version is posted here, at the same address.</p>
         </details>
-        <details>
+        <details open>
           <summary>How do I ask a question about this?</summary>
           <p class="a">Email <a href="mailto:taylormademd@gmail.com">taylormademd@gmail.com</a> or message <a href="https://www.instagram.com/taylormade_creative/" rel="noopener" target="_blank">@taylormade_creative</a> on Instagram.</p>
         </details>
