@@ -43,6 +43,8 @@
             border: 1px solid var(--line-d); box-shadow: 0 0 0 1px var(--line-d), 0 40px 120px -40px rgba(233,185,73,.18); }
     .on-paper .shot { border-color: var(--line-p); box-shadow: 0 30px 70px -30px rgba(0,0,0,.45); }
     .shot img { display: block; width: 100%; height: auto; }
+    a.shot { cursor: zoom-in; transition: transform .25s ease; }
+    a.shot:hover { transform: translateY(-3px); }
     .shot-cap { margin-top: 12px; color: var(--smoke); font-size: 14.5px; max-width: 70ch; }
     .on-paper .shot-cap { color: var(--ink-soft); }
     .hero-shot { margin-top: clamp(28px, 4vw, 48px); }
@@ -50,7 +52,7 @@
     .hero-trust a, .faq .a a, .gear-row a, .not-mac-box a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
     .hero-trust a, .gear-row a { color: var(--gold); }
     .screens { display: grid; gap: clamp(28px, 4vw, 48px); grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr)); }
-    #features .sheet-row { grid-template-columns: 64px 1fr; }
+    #features .sheet-row { grid-template-columns: 64px 1fr; align-items: baseline; }
     #features .sheet-row:hover { padding-left: 0; }
     #features .sheet-row:hover::before { width: 0; }
     .gear { display: grid; gap: 0; }
@@ -58,7 +60,22 @@
     .gear-row:first-child { border-top: 1px solid var(--line-d); }
     .gear-row h3 { font-size: 18px; }
     .gear-row p { color: var(--smoke); }
-    ol.steps { list-style: none; padding: 0; margin: 0; grid-template-columns: repeat(auto-fit, minmax(min(190px, 100%), 1fr)); }
+    ol.steps { list-style: none; padding: 0; margin: 0; grid-template-columns: 1fr; align-items: start; }
+    @media (min-width: 700px) { ol.steps { grid-template-columns: 1fr 1fr; } ol.steps .step:last-child { grid-column: 1 / -1; } }
+    @media (min-width: 1180px) { ol.steps { grid-template-columns: repeat(5, 1fr); } ol.steps .step:last-child { grid-column: auto; } }
+    .step p { overflow-wrap: anywhere; }
+    #download .step { background: var(--ink-2); border-color: var(--line-d); }
+    #download .step h3 { color: var(--paper); }
+    #download .step p { color: var(--smoke); }
+    #download .step::before { color: var(--gold); }
+    .js .reveal-d4 { transition-delay: .32s; }
+    .display, .band h2 { text-wrap: balance; }
+    p { text-wrap: pretty; }
+    .not-mac-only { display: none !important; }
+    .not-mac .not-mac-only { display: inline-flex !important; }
+    .not-mac a.dl { display: none; }
+    @media (min-width: 1100px) { #features .sheet-list { grid-template-columns: 1fr 1fr; column-gap: clamp(28px, 4vw, 56px); }
+      #features .sheet-row:nth-child(2) { border-top: 1px solid var(--line-p); } }
     .dl-box { display: flex; flex-wrap: wrap; gap: 18px 28px; align-items: center; margin-top: clamp(26px, 3.5vw, 40px); }
     .dl-meta { color: var(--smoke); font-size: 14.5px; line-height: 1.6; }
     .help { margin-top: clamp(36px, 5vw, 56px); }
@@ -73,11 +90,11 @@
     .skip:focus { left: 16px; }
     .dl-started { margin-top: 14px; padding: 12px 16px; border-left: 3px solid var(--gold); background: rgba(233,185,73,.08);
                   font-size: 15px; max-width: 620px; }
-    .dl-started[hidden] { display: none; }
+    .dl-started:empty { display: none; }
     @media (max-width: 720px) { .gear-row { grid-template-columns: 1fr; gap: 6px; } }
     @media (max-width: 520px) {
-      .hero-meta { display: grid; grid-template-columns: repeat(3, 1fr); gap: 12px; }
-      .hero-meta strong { font-size: 16px; }
+      .hero-meta { display: grid; grid-template-columns: 1fr; gap: 14px; }
+      .hero-meta span { display: block; margin-top: 4px; line-height: 1.4; }
     }
   </style>
 
@@ -141,7 +158,7 @@
       "name": "Do I need the Taylormade Camera iPhone app?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No. Any camera you can connect to a Mac works. The free Taylormade Camera app turns iPhones into wireless cameras that each keep a full-quality copy, and shows each person their own prompter."
+        "text": "No. Any camera you can connect to a Mac works. The free Taylormade Camera app (version 2.0, coming soon to the App Store) turns iPhones into wireless cameras that each keep a full-quality copy, and shows each person their own prompter."
       }
     },
     {
@@ -173,7 +190,7 @@
       "name": "How do I get updates?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "When a new beta is out, a gold Update button shows up at the top of the app. Quit the app, open the new download and drag it into Applications. Choose Replace when your Mac asks. Your recordings and settings stay put."
+        "text": "When a new beta is out, a gold Update button shows up at the top of the app. Click it to download the new beta, quit the app, then open the download and drag it into Applications. Choose Replace when your Mac asks. Your recordings and settings stay put."
       }
     },
     {
@@ -247,20 +264,20 @@
       <span class="h-line"><span>Your podcast studio,</span></span>
       <span class="h-line"><span>on <span class="gold">one Mac.</span></span></span>
     </h1>
-    <p class="hero-sub lede">Taylormade Podcast records up to four cameras and two mics at once and cuts to whoever is talking. When you stop, you get a video ready for YouTube, podcast audio, vertical clips of the moments you marked, and edit files. Free while it's in beta.</p>
+    <p class="hero-sub lede">Taylormade Podcast records up to four cameras and two mics at once and cuts to whoever is talking. When you stop, you get a video ready for YouTube, podcast audio, vertical clips of the moments you marked, and files you can open in Premiere Pro, Final Cut Pro or DaVinci Resolve. Free while it's in beta.</p>
+    <div class="not-mac-box" role="note">
+      <p><strong>Not on a Mac right now?</strong> Taylormade Podcast only runs on a Mac. Send yourself this page, or type taylormadecreative.net/podcast-app on your Mac.</p>
+      <div class="row">
+        <button class="btn btn-gold send-mac" type="button">Send this page to my Mac</button>
+        <a href="mailto:?subject=Taylormade%20Podcast%20for%20Mac&amp;body=https%3A%2F%2Fwww.taylormadecreative.net%2Fpodcast-app%2F">Email me the link</a>
+      </div>
+    </div>
     <div class="hero-ctas">
       <a class="btn btn-gold dl" href="https://github.com/taylormadecreative/taylormade-podcast-beta/releases/latest/download/TaylormadePodcast.dmg">Download for Mac</a>
       <a class="btn btn-ghost" href="https://apps.apple.com/us/app/taylormade-camera/id6789144751">Get Taylormade Camera for iPhone</a>
     </div>
-    <p class="dl-started" hidden aria-live="polite">Your download started. Next: open <strong>TaylormadePodcast.dmg</strong> from your Downloads and drag the app into Applications. <a href="#download">See the steps</a></p>
-    <p class="hero-trust">Free beta · No account · Notarized by Apple · Recordings stay on your Mac · <a href="#download">How to install</a></p>
-    <div class="not-mac-box" role="note">
-      <p><strong>On your phone?</strong> Taylormade Podcast runs on a Mac. Send this page to your Mac, or open taylormadecreative.net/podcast-app on it.</p>
-      <div class="row">
-        <button class="btn btn-gold" type="button" id="sendToMac">Send this page to my Mac</button>
-        <a href="mailto:?subject=Taylormade%20Podcast%20for%20Mac&amp;body=https%3A%2F%2Fwww.taylormadecreative.net%2Fpodcast-app%2F">Email me the link</a>
-      </div>
-    </div>
+    <p class="dl-started" role="status"></p>
+    <p class="hero-trust">No account · Checked by Apple for malware · Recordings stay on your Mac · <a href="#download">How to install</a></p>
     <figure style="margin:0;">
       <div class="hero-shot"><a class="shot" href="../assets/img/podcast-app/studio.jpg"><img src="../assets/img/podcast-app/studio.jpg" srcset="../assets/img/podcast-app/studio-sm.jpg 800w, ../assets/img/podcast-app/studio.jpg 1600w" sizes="(max-width: 1280px) 92vw, 1136px" width="1600" height="973" alt="The record screen: a big preview of the host's camera, four camera tiles, two mic meters, the Record button and a run sheet of topics"></a></div>
       <figcaption class="shot-cap">The record screen, in Practice mode: pretend cameras and voices, so you can learn the app before you plug anything in.</figcaption>
@@ -268,7 +285,7 @@
     <div class="hero-meta" style="margin-top: clamp(28px, 4vw, 44px);">
       <div><strong>Up to 4 cameras</strong><span>iPhones, cameras, webcams</span></div>
       <div><strong>2 mics</strong><span>Each saved on its own</span></div>
-      <div><strong>On your Mac</strong><span>Recordings stay there</span></div>
+      <div><strong>Practice mode</strong><span>Learn it with no gear</span></div>
     </div>
   </header>
 
@@ -283,7 +300,7 @@
       <div class="sheet-list">
         <div class="sheet-row reveal"><span class="sc">01</span><div><h3>Every angle, saved</h3><p>Each camera and each mic is saved as its own file, all starting at the same moment, plus one finished show that switches between them.</p></div></div>
         <div class="sheet-row reveal"><span class="sc">02</span><div><h3>It cuts for you</h3><p>Auto-switch follows whoever is talking. Press 1 to 4 to pick a camera yourself, or show everyone side by side.</p></div></div>
-        <div class="sheet-row reveal"><span class="sc">03</span><div><h3>Ready to post</h3><p>A video for YouTube with chapters from your run sheet, podcast audio set to the right volume, and vertical clips of the moments you marked.</p></div></div>
+        <div class="sheet-row reveal"><span class="sc">03</span><div><h3>Ready to post</h3><p>A video for YouTube with chapters from your list of topics, podcast audio set to the right volume, and vertical clips of the moments you marked.</p></div></div>
         <div class="sheet-row reveal"><span class="sc">04</span><div><h3>Edit files</h3><p>Open the episode in Premiere Pro, Final Cut Pro or DaVinci Resolve with every camera and mic already lined up.</p></div></div>
         <div class="sheet-row reveal"><span class="sc">05</span><div><h3>Run the show</h3><p>A run sheet of topics, a teleprompter, a cue card, and silent hand signals that pop up on your guest's iPhone.</p></div></div>
         <div class="sheet-row reveal"><span class="sc">06</span><div><h3>A safety net for sound</h3><p>If a wireless mic cuts out, the app finds the gap and fills it from the Mac's own mic, so the episode doesn't go silent.</p></div></div>
@@ -300,7 +317,7 @@
         <span class="slate">CAMERAS · MICS</span>
       </div>
       <div class="gear reveal">
-        <div class="gear-row"><h3>iPhones</h3><p>Best with the free <a href="https://apps.apple.com/us/app/taylormade-camera/id6789144751">Taylormade Camera</a> app: each iPhone joins over Wi-Fi, records its own full-quality copy, and shows that person their own prompter. Any iPhone also works through Continuity Camera.</p></div>
+        <div class="gear-row"><h3>iPhones</h3><p>Best with the free <a href="https://apps.apple.com/us/app/taylormade-camera/id6789144751">Taylormade Camera</a> app (version 2.0, coming soon to the App Store): each iPhone joins over Wi-Fi, records its own full-quality copy, and shows that person their own prompter. Any iPhone also works through Continuity Camera.</p></div>
         <div class="gear-row"><h3>Cameras</h3><p>Canon, Fujifilm, Nikon, Panasonic, Sony and more, over a USB cable (if the camera has a webcam setting) or HDMI through a capture card. Shooting log? The app turns it into normal color for the show and clips.</p></div>
         <div class="gear-row"><h3>Webcams</h3><p>Plug in and pick it. The MacBook camera works too.</p></div>
         <div class="gear-row"><h3>Mics</h3><p>Up to two USB mics or wireless mic receivers, one per person. The Mac's own mic records a spare in the background.</p></div>
@@ -313,8 +330,8 @@
     <div class="wrap">
       <div class="rule"></div>
       <div class="act-head reveal">
-        <h2 class="display">Set it up once. <span class="gold">See everything it made.</span></h2>
-        <span class="slate slate--dim">SETUP · EPISODES · CLICK TO ENLARGE</span>
+        <h2 class="display">Tell it who's where. <span class="gold">See everything it made.</span></h2>
+        <span class="slate slate--dim">SETUP · EPISODES</span>
       </div>
       <div class="screens">
         <figure class="reveal" style="margin:0;">
@@ -337,17 +354,19 @@
         <h2 class="display">Install the <span class="gold">beta</span></h2>
         <span class="slate">FREE · 5 STEPS</span>
       </div>
-      <ol class="steps">
+      <ol class="steps" role="list">
         <li class="step reveal"><h3>Download</h3><p>Click Download for Mac and open TaylormadePodcast.dmg from your Downloads.</p></li>
-        <li class="step reveal reveal-d1"><h3>Drag it in</h3><p>Drag Taylormade Podcast into your Applications folder, then open it from there.</p></li>
-        <li class="step reveal reveal-d2"><h3>Open it</h3><p>Your Mac asks if you're sure, because it came from the internet: click Open. Then allow the camera and microphone, and local network if you'll use iPhones as cameras.</p></li>
+        <li class="step reveal reveal-d1"><h3>Drag it in</h3><p>Drag Taylormade Podcast into your Applications folder.</p></li>
+        <li class="step reveal reveal-d2"><h3>Open it</h3><p>Open it from Applications. Your Mac asks if you're sure, because it came from the internet: click Open. Then allow the camera and microphone, local network if you'll use iPhones as cameras, and speech recognition (for transcripts) when it asks.</p></li>
         <li class="step reveal reveal-d3"><h3>Try it</h3><p>No gear handy? Turn on Practice mode and try everything with pretend cameras and voices.</p></li>
-        <li class="step reveal reveal-d3"><h3>Add an iPhone</h3><p>Optional. Install Taylormade Camera on the iPhone. On the Mac, open Setup and click Add an iPhone to show a code. On the iPhone, open Taylormade Camera, tap Podcast and scan it. You only pair once.</p></li>
+        <li class="step reveal reveal-d4"><h3>Add an iPhone</h3><p>Optional, with Taylormade Camera 2.0 (coming soon to the App Store) on the iPhone. On the Mac, open Setup and click Add an iPhone to show a code. On the iPhone, open Taylormade Camera, tap Podcast and scan it. You only pair once.</p></li>
       </ol>
       <div class="dl-box reveal">
         <a class="btn btn-gold dl" href="https://github.com/taylormadecreative/taylormade-podcast-beta/releases/latest/download/TaylormadePodcast.dmg">Download for Mac</a>
-        <p class="dl-meta"><span id="dlVersion">Latest beta</span> · macOS 15 or later · Apple silicon or Intel<br>Signed by Taylormade Creative and notarized by Apple (checked for malware).</p>
+        <button class="btn btn-gold send-mac not-mac-only" type="button">Send this page to my Mac</button>
+        <p class="dl-meta"><span id="dlVersion">Latest beta</span> · macOS 15 or later · Apple silicon or Intel<br>Signed with an Apple Developer ID and notarized by Apple (checked for malware).</p>
       </div>
+      <p class="dl-started" role="status"></p>
       <div class="help reveal">
         <h3>If something goes wrong</h3>
         <div class="faq">
@@ -356,8 +375,8 @@
           <p class="a">Open System Settings › Privacy &amp; Security, scroll down, and click Open Anyway next to Taylormade Podcast.</p>
         </details>
         <details>
-          <summary>I clicked Don't Allow for the camera, mic or local network</summary>
-          <p class="a">Open System Settings › Privacy &amp; Security, then Camera, Microphone or Local Network, and turn Taylormade Podcast on. Quit and reopen the app.</p>
+          <summary>I clicked Don't Allow for the camera, mic, local network or speech recognition</summary>
+          <p class="a">Open System Settings › Privacy &amp; Security, then Camera, Microphone, Local Network or Speech Recognition, and turn Taylormade Podcast on. Quit and reopen the app.</p>
         </details>
         <details>
           <summary>My camera doesn't show up</summary>
@@ -365,7 +384,7 @@
         </details>
         <details>
           <summary>It can't find my iPhones</summary>
-          <p class="a">Put the Mac and the iPhones on the same Wi-Fi (not a guest network), and make sure Local Network is allowed for both apps.</p>
+          <p class="a">Put the Mac and the iPhones on the same Wi-Fi (not a guest network). On the Mac, allow Local Network for Taylormade Podcast (System Settings › Privacy &amp; Security › Local Network). On the iPhone, open Settings › Taylormade Camera and turn on Local Network.</p>
         </details>
         </div>
       </div>
@@ -391,7 +410,7 @@
         </details>
         <details>
           <summary>Do I need the Taylormade Camera iPhone app?</summary>
-          <p class="a">No. Any camera you can connect to a Mac works. The free <a href="https://apps.apple.com/us/app/taylormade-camera/id6789144751">Taylormade Camera</a> app turns iPhones into wireless cameras that each keep a full-quality copy, and shows each person their own prompter.</p>
+          <p class="a">No. Any camera you can connect to a Mac works. The free <a href="https://apps.apple.com/us/app/taylormade-camera/id6789144751">Taylormade Camera</a> app (version 2.0, coming soon to the App Store) turns iPhones into wireless cameras that each keep a full-quality copy, and shows each person their own prompter.</p>
         </details>
         <details>
           <summary>What Mac do I need?</summary>
@@ -407,14 +426,14 @@
         </details>
         <details>
           <summary>How do I get updates?</summary>
-          <p class="a">When a new beta is out, a gold Update button shows up at the top of the app. Quit the app, open the new download and drag it into Applications. Choose Replace when your Mac asks. Your recordings and settings stay put.</p>
+          <p class="a">When a new beta is out, a gold Update button shows up at the top of the app. Click it to download the new beta, quit the app, then open the download and drag it into Applications. Choose Replace when your Mac asks. Your recordings and settings stay put.</p>
         </details>
         <details>
           <summary>Is there a Windows version?</summary>
           <p class="a">No. Taylormade Podcast is a Mac app.</p>
         </details>
       </div>
-      <p class="shot-cap" style="margin-top: 24px;">Your recordings stay on your Mac. The <a href="../privacy/podcast/" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">privacy page</a> lists everything the app does and doesn't do.</p>
+      <p class="shot-cap" style="margin-top: 24px;">The <a href="../privacy/podcast/" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">privacy page</a> lists everything the app does and doesn't do.</p>
     </div>
   </section>
 
@@ -422,9 +441,11 @@
     <div class="wrap">
       <div>
         <h2>Free while it's in beta.</h2>
-        <p>Record your next episode on the cameras you already have, and tell me what to fix.</p>
+        <p>I'm Nelson Taylor at Taylormade Creative. Record your next episode on the cameras you already have, and tell me what to fix.</p>
+        <p class="dl-started" role="status"></p>
       </div>
       <a class="btn dl" href="https://github.com/taylormadecreative/taylormade-podcast-beta/releases/latest/download/TaylormadePodcast.dmg">Download for Mac</a>
+      <button class="btn send-mac not-mac-only" type="button">Send this page to my Mac</button>
     </div>
   </section>
   </main>
@@ -474,9 +495,8 @@
       a.addEventListener("click", function () {
         if (window.gtag) gtag("event", "file_download", { file_extension: "dmg", file_name: "TaylormadePodcast.dmg", link_url: a.href });
         // Say what happens next, right where they clicked (the download itself starts in the background).
-        if (document.documentElement.classList.contains("not-mac")) return;
-        var note = document.querySelector(".dl-started");
-        if (note) { note.hidden = false; }
+        var note = a.closest("header, section").querySelector(".dl-started");
+        if (note) note.innerHTML = 'Your download should start now (if your browser asks, click Allow). Next: open <strong>TaylormadePodcast.dmg</strong> from your Downloads and drag the app into Applications. <a href="#download">See the steps</a>';
       });
     });
     fetch("latest.json", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
@@ -484,11 +504,12 @@
       var el = document.getElementById("dlVersion");
       if (el) el.textContent = "Beta " + j.version + " (build " + j.build + ")" + (j.size ? " · " + j.size : "");
     }).catch(function () {});
-    var send = document.getElementById("sendToMac");
-    if (send) send.addEventListener("click", function () {
-      var url = "https://www.taylormadecreative.net/podcast-app/";
-      if (navigator.share) { navigator.share({ title: "Taylormade Podcast for Mac", url: url }).catch(function () {}); }
-      else { location.href = "mailto:?subject=Taylormade%20Podcast%20for%20Mac&body=" + encodeURIComponent(url); }
+    document.querySelectorAll(".send-mac").forEach(function (b) {
+      b.addEventListener("click", function () {
+        var url = "https://www.taylormadecreative.net/podcast-app/";
+        if (navigator.share) { navigator.share({ title: "Taylormade Podcast for Mac", url: url }).catch(function () {}); }
+        else { location.href = "mailto:?subject=Taylormade%20Podcast%20for%20Mac&body=" + encodeURIComponent(url); }
+      });
     });
   </script>
 </body>

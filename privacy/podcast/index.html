@@ -23,6 +23,9 @@
     :root { --font-m: var(--font-b); }
     .slate, .hero-hud { font-weight: 600; letter-spacing: .12em; }
     .faq .a a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
+    .skip { position: absolute; left: -9999px; top: 12px; z-index: 1000; background: var(--gold); color: var(--ink); padding: 10px 16px; border-radius: 8px; font-weight: 700; }
+    .skip:focus { left: 16px; }
+    .display { text-wrap: balance; } p { text-wrap: pretty; }
   </style>
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PS0H5W3ZX7"></script>
@@ -45,6 +48,7 @@
   </script>
 </head>
 <body>
+  <a class="skip" href="#main">Skip to content</a>
   <nav class="nav" aria-label="Main">
     <a class="nav-logo" href="../../">TAYLORMADE<span class="slash">/</span>CREATIVE<span class="tag">DFW</span></a>
     <button class="nav-burger" aria-label="Menu" id="burger"><span></span><span></span></button>
@@ -57,6 +61,7 @@
     </div>
   </nav>
 
+  <main id="main">
   <!-- hero -->
   <header class="hero wrap" style="min-height: 52svh;">
     <p class="hero-hud">
@@ -196,6 +201,8 @@
       </div>
     </div>
   </section>
+
+  </main>
 
   <footer class="footer">
     <div class="wrap">
