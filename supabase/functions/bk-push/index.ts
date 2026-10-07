@@ -29,6 +29,16 @@ Deno.serve(async (req: Request) => {
     const { data: m } = await db.from("bk_messages").select("body, project_id").eq("id", body.id).maybeSingle();
     if (!m) return json({ error: "not_found" }, 404);
     ev = { source: "message", type: "message", payload: { body: m.body }, projectId: m.project_id };
+  } else if (body.source === "outreach") {
+    const { data: o } = await db.from("bk_outreach_events").select("kind, detail, pitch_id").eq("id", body.id).maybeSingle();
+    if (!o) return json({ error: "not_found" }, 404);
+    let org: string | null = null;
+    if (o.pitch_id) {
+      const { data: p } = await db.from("bk_outreach_pitches").select("prospect:bk_outreach_prospects(org)")
+        .eq("id", o.pitch_id).maybeSingle();
+      org = (p as { prospect?: { org?: string } } | null)?.prospect?.org ?? null;
+    }
+    ev = { source: "outreach", type: String(o.kind), payload: { ...((o.detail ?? {}) as Record<string, unknown>), org, pitch_id: o.pitch_id }, projectId: null };
   } else if (body.source === "test") {
     ev = { source: "test", type: "test", payload: {}, projectId: null };
   } else {
