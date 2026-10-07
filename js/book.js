@@ -117,6 +117,7 @@
     const where = params.get("where");
     switch (slug) {
       case "corporate-headshots":
+        if (where === "event") return "Headshot booth at our event.\nEvent, date, and venue:\nExpected number of people:\nHours:";
         return `${{
           onsite: "Team headshots, on-site at our office.",
           studio: "Team headshots, at your downtown Dallas studio.",
