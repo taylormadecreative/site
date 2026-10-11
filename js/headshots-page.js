@@ -10,7 +10,7 @@
    prefers-reduced-motion before it moves anything. */
 (() => {
   const BASE = "../assets/img/headshots/";
-  const N = 12;
+  const N = 19;
   const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
 
   const pad = (n) => String(n).padStart(2, "0");
@@ -22,22 +22,22 @@
      so the halfway point lands exactly on the seam and the loop is
      invisible. One set therefore has to be at least as wide as the
      viewport, or a bald patch appears at the seam. Both rows draw from
-     the same 12 files in different orders, so the browser downloads 12
-     images and reuses them 48 times from cache.
+     the same 19 files in different orders, so the browser downloads 19
+     images and reuses them from cache.
      ================================================================ */
   function buildWall() {
     const rows = document.querySelectorAll("[data-wall]");
     if (!rows.length) return;
 
     // Two different orders so the rows never read as the same strip.
-    // Both rows carry all twelve: one set at ~166px each is ~2000px, which
-    // clears a 1920px viewport so the seam never shows a bald patch.
-    // Two subjects appear twice in the set (hs-01/hs-05 and hs-07/hs-11).
-    // Each order places its pair six slots apart, measured around the loop,
-    // so the same face never turns up twice in one eyeful.
+    // Both rows carry all nineteen: one set at ~166px each is ~3150px, which
+    // clears any viewport so the seam never shows a bald patch.
+    // Five subjects appear twice in the set (hs-01/05, hs-07/11, hs-13/14,
+    // hs-15/16, hs-17/18). Each order keeps a pair at least six slots apart,
+    // measured around the loop, so the same face never turns up twice in one eyeful.
     const orders = {
-      a: [0, 7, 2, 6, 11, 1, 4, 9, 3, 10, 5, 8],
-      b: [6, 3, 9, 0, 5, 11, 10, 2, 7, 4, 1, 8],
+      a: [12, 14, 11, 7, 6, 18, 0, 5, 16, 15, 1, 2, 10, 13, 8, 9, 3, 17, 4],
+      b: [8, 9, 16, 15, 18, 1, 6, 4, 5, 13, 11, 17, 14, 7, 2, 3, 12, 10, 0],
     };
 
     rows.forEach((track) => {
@@ -64,8 +64,9 @@
     const counter = document.getElementById("pickCounter");
     if (!grid || !counter) return;
 
-    // the full set, reordered so the demo doesn't mirror the band above
-    const ids = [2, 6, 9, 1, 11, 4, 7, 12, 3, 10, 5, 8].map((i) => pad(i));
+    // eighteen of the set (three rows of six), reordered so the demo doesn't
+    // mirror the band above and the same person never touches, at 6 or 3 across
+    const ids = [13, 12, 9, 11, 15, 5, 6, 17, 10, 19, 2, 7, 8, 3, 1, 18, 4, 16].map((i) => pad(i));
     const chosen = [];
 
     grid.innerHTML = ids

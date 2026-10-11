@@ -134,6 +134,10 @@
         return "Content day at our location.\nBusiness and address:\nWhat we want to film:\nPreferred date(s):";
       case "video-podcast":
         return "Video podcast in your studio.\nNew show or existing:\nHosts and guests per episode:\nHow many episodes:\nPreferred date(s):";
+      case "product-photography":
+        return "Product photography.\nProducts and how many:\nLooks (clean white, styled, dark, close-up, in hand):\nWhere the photos will live:\nPreferred date(s):";
+      case "branding-photoshoot":
+        return "Branding photoshoot.\nYour business and what you do:\nWhere the photos will live (website, socials, press):\nStudio, your business, or on location:\nPreferred date(s):";
       case "event-coverage":
         return `${params.get("type") === "photo" ? "Event photography." : "Event coverage.\nPhotos, video, or both:"}\nEvent and date:\nLocation:\nHours of coverage:`;
       default:
