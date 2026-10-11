@@ -369,6 +369,25 @@ html:has(dialog[open]) { overflow: hidden; }
 .sw:active { transform: scale(.94); }
 .shade-name { font-size: 14.5px; color: var(--smoke); min-width: 9ch; }
 
+/* ================= featured campaign (product page) ================= */
+.feature-grid { display: grid; gap: clamp(26px, 4vw, 60px); align-items: center; }
+@media (min-width: 960px) { .feature-grid { grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); } }
+.feature-copy h2 { font-size: clamp(28px, 3.6vw, 50px); margin-top: 14px; }
+.feature-copy p:not(.lbl) { margin: 18px 0 28px; color: var(--smoke); max-width: 44ch; }
+.feature-media { display: grid; grid-template-columns: 1.3fr 1fr; gap: clamp(8px, 1.2vw, 14px); }
+.feature-media .shot { margin: 0; }
+.feature-media .feat-main { grid-row: span 2; }
+.feature-media .shot img { width: 100%; object-fit: cover; }
+.feature-media .feat-main img { height: 100%; }
+.feature-media .shot:not(.feat-main) img { aspect-ratio: 4 / 5; }
+
+/* ================= look galleries ================= */
+.lookgrid { columns: 2; column-gap: clamp(8px, 1.2vw, 14px); }
+@media (min-width: 720px) { .lookgrid { columns: 3; } }
+.look-media--shade .row3 { grid-column: 1 / -1; }
+.cluster--four { grid-template-columns: repeat(2, minmax(0, 1fr)); align-items: start; }
+@media (min-width: 720px) { .cluster--four { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
+
 /* ================= proof strip ================= */
 .proof { border-top: 1px solid var(--line-d); border-bottom: 1px solid var(--line-d); background: var(--ink-2); }
 .proof-in { display: flex; flex-wrap: wrap; align-items: baseline; gap: 10px clamp(24px, 4vw, 56px); padding-top: 22px; padding-bottom: 22px; }

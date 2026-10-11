@@ -145,7 +145,7 @@
     const status = $("[data-wall-status]", root);
     const LIMIT = Number(root.dataset.limit) || 20;
     const grid = $(".masonry", root);
-    let cat = "all", open = false;
+    let cat = "all", shown = LIMIT;   // "Show more" adds one more page each time
 
     // Each photo drops into the shortest column, in page order. Earlier photos
     // never move when more are added, and reading/tab order runs across rows.
@@ -184,7 +184,7 @@
       const visible = [];
       shots.forEach((s) => {
         const match = cat === "all" || s.dataset.cat === cat;
-        const show = match && (cat !== "all" || open || seen < LIMIT);
+        const show = match && (cat !== "all" || seen < shown);
         if (match) seen++;
         const was = !s.hidden;
         s.hidden = !show;
@@ -192,7 +192,7 @@
         s.dataset.over = match && !show ? "1" : "";
         if (show && (!was || animate === "all")) visible.push(s);
       });
-      if (more) more.hidden = !(cat === "all" && !open && shots.length > LIMIT);
+      if (more) more.hidden = !(cat === "all" && shown < shots.length);
       chips.forEach((c) => c.setAttribute("aria-pressed", String(c.dataset.cat === cat)));
       layout();
       if (status) {
@@ -215,7 +215,7 @@
       apply("all");
     }));
     if (moreBtn) moreBtn.addEventListener("click", () => {
-      open = true;
+      shown += LIMIT;
       const firstNew = shots.find((s) => s.hidden);
       apply(true);
       firstNew?.focus({ preventScroll: true });
