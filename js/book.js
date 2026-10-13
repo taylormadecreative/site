@@ -140,6 +140,10 @@
       case "branding-photoshoot":
         if (params.get("type") === "beauty") return "Beauty shoot.\nBrand or med spa:\nWhat we are shooting (skin, hair, makeup, product in hand, provider portraits):\nWhere the photos will live:\nPreferred date(s):";
         return "Branding photoshoot.\nYour business and what you do:\nWhere the photos will live (website, socials, press):\nStudio, your business, or on location:\nPreferred date(s):";
+      case "web-design":
+        // app projects ride the web-design lane (no separate service row); ?type=app opens the app brief
+        if (params.get("type") === "app") return "App project.\nWhat the app should do and who it's for:\niPhone, Apple Watch, Mac (or Android too):\nDo people sign in or pay in the app:\nLaunch date:";
+        return "";
       case "event-coverage":
         return `${params.get("type") === "photo" ? "Event photography." : "Event coverage.\nPhotos, video, or both:"}\nEvent and date:\nLocation:\nHours of coverage:`;
       default:
@@ -542,7 +546,7 @@
         p_details: notes,
         p_source: "website",
       });
-      track("generate_lead", { service: state.svc.slug });
+      track("generate_lead", { service: state.svc.slug, project_type: new URLSearchParams(location.search).get("type") || "none" });
       if (state.details.subscribe) {
         TM.rpc("bk_subscribe", { p_email: state.details.email, p_name: state.details.name, p_source: "inquiry" }).catch(() => {});
       }

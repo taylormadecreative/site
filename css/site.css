@@ -210,6 +210,11 @@ section { position: relative; }
 @media (max-width: 359px) {
   .nav:has(.nav-cta) .nav-logo { font-size: 11.5px; }
 }
+/* very small phones: the logo shrinks so the menu button never clips */
+@media (max-width: 380px) {
+  .nav-logo .tag { display: none; }
+  .nav-logo { font-size: 13px; }
+}
 .nav-burger span { width: 24px; height: 2px; background: var(--paper); transition: transform .3s, opacity .3s; }
 
 /* burger below 1100px: with Photography in the bar, the full menu needs ~1080px */
