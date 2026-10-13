@@ -376,8 +376,13 @@ html:not(.js) .mq__g { animation: none; flex-wrap: wrap; }
   .hm-ch__in { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); align-items: center; gap: clamp(44px, 5vw, 104px); }
 }
 /* card stacking: only when the script has measured the cards (desktop, tall enough) */
-.hm-deck.is-stack .hm-ch { position: sticky; top: var(--top, 0px); min-height: 100svh; display: flex; align-items: center; box-shadow: 0 -30px 70px -24px rgba(0, 0, 0, .5); }
+.hm-deck.is-stack .hm-ch { position: sticky; top: var(--top, 0px); min-height: 100svh; display: flex; flex-direction: column; justify-content: center; box-shadow: 0 -30px 70px -24px rgba(0, 0, 0, .5); }
 .hm-deck.is-stack .hm-ch__in { width: 100%; padding-top: calc(var(--nav-h) + 28px); padding-bottom: 56px; }
+/* the video card: the featured film, then every film in one row beneath it */
+#ch-video .hm-ch__in { padding-bottom: clamp(28px, 3.4vw, 52px); }
+.hm-deck.is-stack #ch-video .hm-ch__in { padding-bottom: 28px; }
+.hm-shelf--ch { padding-bottom: clamp(48px, 6vw, 96px); }
+.hm-shelf--ch .hm-shelf__bar { margin-bottom: 0; }
 
 .hm-ch__h { margin: 0; }
 .hm-ch__k {
@@ -716,14 +721,21 @@ html.hm-locked { overflow: hidden; }
    CORPORATE · on location across North Texas
    ============================================================ */
 .hm-local { padding: clamp(96px, 12vw, 184px) 0; background: var(--paper); color: var(--ink); }
-.hm-local__top { display: grid; gap: 28px; }
-@media (min-width: 1000px) { .hm-local__top { grid-template-columns: minmax(0, 6fr) minmax(0, 5fr); gap: 80px; align-items: end; } }
-.hm-local .hm-answer { margin-top: 0; color: var(--mute-on-paper); }
+.hm-local__top { display: grid; gap: 40px; }
+@media (min-width: 1000px) { .hm-local__top { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(48px, 6vw, 112px); align-items: center; } }
+.hm-local .hm-answer { margin-top: 28px; color: var(--mute-on-paper); }
+.hm-local__lead { margin: 0; width: 100%; max-width: 460px; }
+@media (min-width: 1000px) { .hm-local__lead { justify-self: end; } }
+.hm-local__lead img { display: block; width: 100%; height: auto; aspect-ratio: 2 / 3; object-fit: cover; border-radius: 6px; background: var(--paper-3); box-shadow: 0 40px 80px -44px rgba(8, 8, 10, .45); }
 .hm-h2--kick .hm-ch__k { color: var(--gold-ink); line-height: 1.3; }
-.hm-faces { list-style: none; margin: clamp(40px, 5vw, 72px) 0 0; padding: 0; display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 10px; }
-@media (min-width: 700px) { .hm-faces { grid-template-columns: repeat(5, minmax(0, 1fr)); gap: 12px; } }
-@media (max-width: 699px) { .hm-faces li:nth-child(n+4) { display: none; } }
-.hm-faces img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; border-radius: 4px; background: var(--paper-3); }
+.hm-faces { margin-top: clamp(56px, 7vw, 104px); }
+.hm-faces__bar { display: flex; align-items: center; justify-content: space-between; gap: 16px; margin-bottom: 12px; }
+.hm-faces__h { font-weight: 600; font-size: 13px; letter-spacing: .08em; text-transform: uppercase; color: var(--gold-ink); }
+.hm-local .hm-mq-toggle { color: var(--mute-on-paper); }
+@media (hover: hover) and (pointer: fine) { .hm-local .hm-mq-toggle:hover { color: var(--ink); } }
+.hm-faces__row { --gap: 12px; --duration: 55s; }
+.hm-faces__row li { flex: none; width: clamp(150px, 15vw, 236px); }
+.hm-faces__row img { display: block; width: 100%; height: auto; aspect-ratio: 4 / 5; object-fit: cover; border-radius: 4px; background: var(--paper-3); }
 .hm-local .hm-acts { margin-top: 26px; }
 .hm-cities {
   list-style: none; margin: clamp(40px, 5vw, 72px) 0 0; padding: 28px 0 0; border-top: 1px solid var(--hair-paper);

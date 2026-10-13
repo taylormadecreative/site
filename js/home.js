@@ -67,8 +67,9 @@
     btn.addEventListener("click", () => {
       const stop = !row.classList.contains("is-stopped");
       row.classList.toggle("is-stopped", stop);
+      const what = btn.dataset.mqName || "client names";
       btn.textContent = stop ? "Play" : "Pause";
-      btn.setAttribute("aria-label", stop ? "Play the moving client names" : "Pause the moving client names");
+      btn.setAttribute("aria-label", `${stop ? "Play" : "Pause"} the moving ${what}`);
     });
   });
 
@@ -584,6 +585,15 @@
         else if (r2.bottom > innerHeight) jump(scrollY + r2.bottom - innerHeight + 32);
       });
     });
+  });
+  // "Work" links land where the film row (bottom of the sticky video card) is fully in view, before the next card covers it
+  document.addEventListener("click", (e) => {
+    const a = e.target.closest('a[href="#films"]');
+    const st = coveredAt.get($("#ch-video"));
+    if (!a || !st || !deck?.classList.contains("is-stack") || e.button || e.metaKey || e.ctrlKey) return;
+    e.preventDefault();
+    window.scrollTo({ top: Math.max(0, st.start - 2), behavior: reduced ? "auto" : "smooth" });
+    history.replaceState(history.state, "", "#films");
   });
   const stackOn = () => {
     if (!deck || reduced || !window.gsap || !window.ScrollTrigger) return;
