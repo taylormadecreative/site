@@ -118,10 +118,10 @@ body.hm { background: var(--ink); color: var(--paper); font-family: var(--body);
 @keyframes hm-rise { from { opacity: 0; transform: translateY(.18em); filter: blur(10px); } to { opacity: 1; transform: none; filter: blur(0); } }
 
 /* the hero plays on first paint, pure CSS: words rise, then kicker, copy, buttons and stage blur-fade in */
-.hm-mast .w > span { animation: hm-mask .8s var(--ease-out) both; animation-delay: calc(var(--i) * 70ms + 60ms); }
+.hm-mast .w > span { animation: hm-mask .8s var(--ease-out) both; animation-delay: calc(var(--i) * 70ms + 900ms); }
 @keyframes hm-mask { from { transform: translateY(105%); } to { transform: none; } }
 @keyframes hm-up { from { opacity: 0; transform: translateY(6px); } to { opacity: 1; transform: none; } }
-[data-load] { animation: hm-fade .6s var(--ease-out) both; animation-delay: calc(520ms + var(--i, 0) * 90ms); }
+[data-load] { animation: hm-fade .6s var(--ease-out) both; animation-delay: calc(1250ms + var(--i, 0) * 90ms); }
 @keyframes hm-fade-o { from { opacity: 0; } to { opacity: 1; } }
 @keyframes hm-fade { from { opacity: 0; transform: translateY(6px); filter: blur(6px); } to { opacity: 1; transform: none; filter: blur(0); } }
 
@@ -158,9 +158,12 @@ body.hm { background: var(--ink); color: var(--paper); font-family: var(--body);
 .mu-scroll { transform: translate3d(0, var(--y, 0px), 0); transition: transform var(--dur, .9s) var(--ease-io); will-change: transform; }
 
 /* ============================================================
-   HERO · the line on the left, featured films playing on the right
+   HERO · the line on the left, the highlight reel on the right.
+   It opens on a gold shutter; on desktop the reel first fills the
+   screen and settles into place as you scroll (see the inline pin script).
    ============================================================ */
-.hm-hero {
+.hm-hero { position: relative; }
+.hm-hero__pin {
   position: relative; min-height: 100svh; display: grid; grid-template-rows: 1fr auto;
   padding-top: calc(var(--nav-h) + clamp(28px, 5vh, 64px));
 }
@@ -188,8 +191,8 @@ body.hm { background: var(--ink); color: var(--paper); font-family: var(--body);
 .hm-bb { position: relative; min-width: 0; }
 .hm-bb__screen { position: relative; aspect-ratio: 16 / 9; overflow: hidden; background: var(--ink-2); isolation: isolate; cursor: pointer; -webkit-tap-highlight-color: transparent; }
 @media (min-width: 1000px) {
-  /* the screen runs off the right edge of the page and feathers into the ink on its left */
-  .hm-bb__screen {
+  /* the hero reel runs off the right edge of the page */
+  .hm-hero .hm-bb__screen {
     margin-right: calc(-1 * (var(--g) + max(0px, (100vw - var(--max-w)) / 2)));
     border-radius: 12px 0 0 12px;
   }
@@ -230,6 +233,56 @@ body.hm { background: var(--ink); color: var(--paper); font-family: var(--body);
 @media (hover: hover) and (pointer: fine) { .hm-play:hover { background: var(--gold); } }
 
 .hm-bb__ctrl { flex-basis: 100%; display: flex; align-items: center; gap: 4px; }
+.hm-bb--reel .hm-bb__ctrl { flex-basis: auto; margin-left: auto; }
+.hm-ch .hm-bb__screen { border-radius: 12px; }
+
+/* the gold shutter: a hairline draws across the middle of the frame, then the frame opens on the reel */
+.hm-shutter { position: absolute; inset: 0; z-index: 4; pointer-events: none; display: none; }
+.js .hm-shutter { display: block; }
+.hm-shutter i { position: absolute; left: 0; right: 0; height: 50%; background: var(--ink); }
+.hm-shutter i:first-child { top: 0; box-shadow: inset 0 -1px 0 var(--gold); animation: hm-shut-up 1.05s cubic-bezier(.77, 0, .175, 1) .7s both; }
+.hm-shutter i:last-child { bottom: 0; box-shadow: inset 0 1px 0 var(--gold); animation: hm-shut-down 1.05s cubic-bezier(.77, 0, .175, 1) .7s both; }
+.hm-shutter::before {
+  content: ""; position: absolute; z-index: 1; left: 0; right: 0; top: 50%; height: 2px; margin-top: -1px; background: var(--gold);
+  transform: scaleX(0); animation: hm-line .65s cubic-bezier(.23, 1, .32, 1) .05s both, hm-line-out .35s ease .78s both;
+}
+@keyframes hm-line { to { transform: scaleX(1); } }
+@keyframes hm-line-out { to { opacity: 0; } }
+@keyframes hm-shut-up { to { transform: translateY(-101%); } }
+@keyframes hm-shut-down { to { transform: translateY(101%); } }
+.js .hm-hero .hm-bb__slide.is-on { animation: hm-reel-in 2s cubic-bezier(.23, 1, .32, 1) .7s both; }
+.js .hm-hero .hm-bb__bar { animation: hm-up .6s var(--ease-out) 1.45s both; }
+.hm-hero.is-pin .hm-bb__bar { animation: none; }
+@keyframes hm-reel-in { from { transform: scale(1.14); filter: brightness(.55); } to { transform: none; filter: none; } }
+
+/* desktop pin: the reel fills the screen under the nav, then shrinks into place beside the line */
+.hm-hero.is-pin { height: calc(100svh + 85vh); }
+.hm-hero.is-pin .hm-hero__pin { position: sticky; top: 0; height: 100svh; min-height: 0; }
+.hm-hero.is-pin .hm-bb__screen { z-index: 6; border-radius: 0; transform-origin: 50% 50%; will-change: transform, clip-path; }
+/* the line comes in only once the reel has cleared its column */
+.hm-hero.is-pin .hm-kick { animation: none; opacity: clamp(0, (var(--p, 0) - .58) * 5, 1); }
+.hm-hero.is-pin .hm-mast .w > span { animation: none; transform: translateY(calc((1 - clamp(0, (var(--p, 0) - .56 - var(--i) * .035) * 5, 1)) * 105%)); }
+.hm-hero.is-pin .hm-lede { animation: none; opacity: clamp(0, (var(--p, 0) - .72) * 5, 1); transform: translateY(calc((1 - clamp(0, (var(--p, 0) - .72) * 5, 1)) * 14px)); }
+.hm-hero.is-pin .hm-hero__copy > .hm-acts { animation: none; opacity: clamp(0, (var(--p, 0) - .78) * 5, 1); }
+.hm-hero.is-pin .hm-bb__bar { opacity: clamp(0, (var(--p, 0) - .82) * 6, 1); }
+.hm-hero.is-pin .hm-svc { opacity: clamp(0, (var(--p, 0) - .84) * 6, 1); }
+.hm-hero.is-pin.is-early .hm-hero__copy > .hm-acts, .hm-hero.is-pin.is-early .hm-bb__bar, .hm-hero.is-pin.is-early .hm-svc { pointer-events: none; }
+body.hm-pinning .nav.is-hidden { transform: none; }
+
+/* the ink strip under the full-screen reel: what this is, a scroll cue, the pause (never on the footage) */
+.hm-cue { display: none; }
+.hm-hero.is-pin .hm-cue {
+  position: absolute; left: 0; right: 0; bottom: 0; z-index: 7; height: 56px; display: flex; align-items: center; gap: 24px;
+  padding: 0 calc(max(0px, (100% - var(--max-w)) / 2) + var(--g));
+  opacity: clamp(0, 1 - var(--p, 0) * 6, 1);
+}
+.hm-hero.is-pin:not(.is-start) .hm-cue { pointer-events: none; }
+.hm .hm-cue__line { flex: 1 1 auto; min-width: 0; font-weight: 600; font-size: 14px; color: var(--soft-on-ink); white-space: nowrap; text-wrap: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.hm-cue__scroll { display: inline-flex; align-items: center; gap: 10px; font-weight: 600; font-size: 12px; letter-spacing: .14em; text-transform: uppercase; color: var(--gold); }
+.hm-cue__scroll i { position: relative; width: 1px; height: 22px; overflow: hidden; background: rgba(233, 185, 73, .25); }
+.hm-cue__scroll i::after { content: ""; position: absolute; left: 0; right: 0; top: 0; height: 50%; background: var(--gold); animation: hm-cue 1.8s cubic-bezier(.77, 0, .175, 1) 2s infinite; transform: translateY(-100%); }
+@keyframes hm-cue { 0% { transform: translateY(-100%); } 60%, 100% { transform: translateY(200%); } }
+.js .hm-hero.is-pin .hm-cue { animation: hm-up .6s var(--ease-out) 1.5s backwards; }
 .hm-bb__pills { display: flex; align-items: center; margin-left: -6px; }
 .hm-pill { display: grid; align-items: center; width: 46px; height: 44px; padding: 0 6px; -webkit-tap-highlight-color: transparent; }
 .hm-pill i { position: relative; display: block; height: 3px; border-radius: 2px; overflow: hidden; background: rgba(245, 242, 234, .42); transition: background-color .2s ease; }
@@ -645,6 +698,8 @@ html.hm-locked { overflow: hidden; }
   .hm-ready [data-fade]:not(.is-in) { transform: none; filter: none; }
   .hm-ready [data-words] .w, .hm-ready [data-words].is-in .w, .hm-mast .w > span { animation: none; opacity: 1; }
   .hm-bb__info.is-swap { animation: none; }
+  .js .hm-shutter { display: none; }
+  .js .hm-hero .hm-bb__slide.is-on, .js .hm-hero .hm-bb__bar { animation: none; }
   [data-load] { animation: hm-fade-o .4s ease both; }
   .mq__g { animation: none; flex-wrap: wrap; row-gap: 12px; }
   .mq [data-dup] { display: none; }
@@ -682,10 +737,10 @@ html.hm-locked { overflow: hidden; }
 
 /* phones: the film plays first, edge to edge under the nav, then the line, the buttons, the four services */
 @media (max-width: 999px) {
-  .hm-hero { display: flex; flex-direction: column; min-height: 0; padding-top: var(--nav-h); }
-  .hm-hero__grid, .hm-hero__copy { display: contents; }
-  .hm-bb { order: 1; }
-  .hm-bb__bar { padding: 0 var(--g); }
+  .hm-hero { display: flex; flex-direction: column; padding-top: var(--nav-h); }
+  .hm-hero__pin, .hm-hero__grid, .hm-hero__copy { display: contents; }
+  .hm-hero .hm-bb { order: 1; }
+  .hm-hero .hm-bb__bar { padding: 0 var(--g); }
   .hm-h1 { order: 2; margin: 26px var(--g) 0; }
   .hm-hero__copy > .hm-acts { order: 3; margin: 22px var(--g) 0; }
   .hm-svc { order: 4; }
@@ -712,7 +767,7 @@ html.hm-locked { overflow: hidden; }
 
 /* laptops with short screens: the line, the playing film and the four services fit the first screen */
 @media (min-width: 1000px) and (max-height: 920px) {
-  .hm-hero { padding-top: calc(var(--nav-h) + 2.5vh); }
+  .hm-hero__pin { padding-top: calc(var(--nav-h) + 2.5vh); }
   .hm-hero__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
   .hm-mast { font-size: clamp(66px, min(6.2vw, 11vh), 104px); }
   .hm-kick { margin-bottom: 14px; }

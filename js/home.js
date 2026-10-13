@@ -242,7 +242,7 @@
       pauseBtn.setAttribute("aria-label", paused ? "Play the featured films" : "Pause the featured films");
     };
     const stop = (why) => { if (stopH.has(why)) return; freeze(); stopH.add(why); const v = vid(cur); if (v && !v.paused) v.pause(); };
-    const resume = (why) => { if (!stopH.delete(why)) return; t0 = performance.now(); if (!stopH.size) { startCurrent(); runTick(); } };
+    const resume = (why) => { if (!stopH.delete(why)) return; t0 = performance.now(); if (!stopH.size) { startCurrent(); runTick(); warm((cur + 1) % slides.length); } };
     const rot = (why, on) => { freeze(); on ? rotH.add(why) : rotH.delete(why); t0 = performance.now(); };
     bbHold.add = stop; bbHold.del = resume;
 
@@ -294,8 +294,51 @@
     setPausedUI();
     if (reduced) bb.classList.add("is-picked");
     // start after the page has painted, so the poster is the first (and largest) paint
-    const begin = () => { startCurrent(); runTick(); warm(1); };
+    const begin = () => { startCurrent(); runTick(); };
     if (document.readyState === "complete") begin(); else addEventListener("load", begin, { once: true });
+  }
+
+  /* ---------- HERO REEL · the highlight reel loops muted; the shutter opens on it ---------- */
+  const reelBox = $("#reel");
+  if (reelBox) {
+    const v = $("video", reelBox), slide = $(".hm-bb__slide", reelBox), rs = $(".hm-bb__screen", reelBox);
+    const btns = $$("[data-reel-pause]"), open = $("a[data-film]", reelBox);
+    const shutter = $(".hm-shutter", reelBox);
+    const ICON_PLAY = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5.5v13l10.5-6.5z"/></svg>';
+    const ICON_PAUSE = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>';
+    let held = !canAuto(), seen = true, theater = false;
+    const fast = () => !navigator.connection?.effectiveType || navigator.connection.effectiveType === "4g";
+    const dpr = devicePixelRatio || 1;
+    const pick = () => {
+      // phones: sharper on retina when the connection can carry it; desktop: sized for the full-screen first frame when pinned
+      if (small.matches) return (dpr >= 2 && fast() && !saveData && v.dataset.md) || v.dataset.sm;
+      const w = $("#top")?.classList.contains("is-pin") ? innerWidth : rs.clientWidth;
+      return (w * dpr > 1500 && fast() && v.dataset.xl) || v.dataset.lg;
+    };
+    const play = () => {
+      if (held || !seen || theater || document.hidden) return;
+      if (!v.getAttribute("src")) { v.src = pick(); v.load(); }
+      v.play().catch(() => {});
+    };
+    const ui = () => {
+      const off = v.paused;
+      btns.forEach((b) => { b.innerHTML = off ? ICON_PLAY : ICON_PAUSE; b.setAttribute("aria-label", off ? "Play the reel" : "Pause the reel"); });
+    };
+    v.addEventListener("playing", () => slide.classList.add("is-playing"));
+    v.addEventListener("play", ui); v.addEventListener("pause", ui);
+    btns.forEach((b) => b.addEventListener("click", () => { if (v.paused) { held = false; play(); } else { held = true; v.pause(); } }));
+    rs.addEventListener("click", () => open?.click());
+    new IntersectionObserver(([e]) => { seen = e.isIntersecting; seen ? play() : v.pause(); }, { threshold: 0.1 }).observe(rs);
+    document.addEventListener("visibilitychange", () => (document.hidden ? v.pause() : play()));
+    document.addEventListener("hm-theater", (e) => { theater = e.detail; theater ? v.pause() : play(); });
+    ui();
+    // the shutter is a one-time intro: gone when it finishes, skipped in a background tab, never stuck
+    const dropShutter = () => shutter?.remove();
+    if (shutter) {
+      if (document.hidden || reduced) dropShutter();
+      else { shutter.lastElementChild?.addEventListener("animationend", dropShutter, { once: true }); setTimeout(dropShutter, 3200); }
+    }
+    if (document.readyState === "complete") play(); else addEventListener("load", play, { once: true });
   }
 
   /* ---------- THEATER · every film plays in the page, with sound ---------- */
@@ -334,6 +377,7 @@
       closeBtn.focus();
       try { history.pushState({ hmTheater: slug }, ""); } catch (_) {}
       bbHold.add("theater");
+      document.dispatchEvent(new CustomEvent("hm-theater", { detail: true }));
       // nothing else plays under the film
       $$(".hm-reelbox video").forEach((v) => { if (!v.paused) { v.dataset.thPaused = "1"; v.pause(); } });
       $$(".hm-tile video").forEach(pauseReel);
@@ -349,6 +393,7 @@
       if (history.state?.hmTheater) { closing = true; history.back(); }
       root.classList.remove("hm-locked");
       bbHold.del("theater");
+      document.dispatchEvent(new CustomEvent("hm-theater", { detail: false }));
       $$(".hm-reelbox video[data-th-paused]").forEach((v) => { delete v.dataset.thPaused; v.play().catch(() => {}); });
       from?.focus({ preventScroll: true });
     });
@@ -486,17 +531,21 @@
       (next.decode ? next.decode() : Promise.resolve()).then(swap, swap);
     }));
 
+    // one slow pass down the site and back when the window comes into view
+    let passT = 0;
+    autoPass = () => {
+      clearTimeout(passT);
+      if (fine && link.matches(":hover")) return;
+      scrollTo(img, 0.55, 7000);
+      passT = setTimeout(() => { if (!(fine && link.matches(":hover"))) scrollHome(img); }, 7600);
+    };
     if (fine) {
-      link.addEventListener("pointerenter", hoverScroll);
+      link.addEventListener("pointerenter", () => { clearTimeout(passT); hoverScroll(); });
       link.addEventListener("pointerleave", () => scrollHome(img));
+      // desktop: the first time it is seen
+      const once = new IntersectionObserver(([e]) => { if (e.isIntersecting) { autoPass(); once.disconnect(); } }, { threshold: 0.6 });
+      once.observe(link);
     } else {
-      // touch: one slow pass down and back when the window comes into view
-      let passT = 0;
-      autoPass = () => {
-        clearTimeout(passT);
-        scrollTo(img, 0.55, 7000);
-        passT = setTimeout(() => scrollHome(img), 7600);
-      };
       new IntersectionObserver(([e]) => { if (e.isIntersecting) autoPass(); }, { threshold: 0.6 }).observe(link);
     }
   }
@@ -552,13 +601,12 @@
         const tw = gsap.to(ch, { scale: 0.93, ease: "none", scrollTrigger: { trigger: next, start: "top bottom", end: "top top", scrub: true } });
         coveredAt.set(ch, tw.scrollTrigger);
       });
-      // a sticky chapter stays "in view" under the next card: its clips stop once it is covered
-      const rb = $(".hm-reelbox");
-      const rch = rb?.closest(".hm-ch"), after = rch && chapters[chapters.indexOf(rch) + 1];
-      const cover = (on) => { if (on) rb.dataset.covered = "1"; else delete rb.dataset.covered; rb.dispatchEvent(new Event("hm-cover")); };
+      // a sticky chapter stays "in view" under the next card: its films stop once it is covered
+      const bch = $("#billboard")?.closest(".hm-ch"), after = bch && chapters[chapters.indexOf(bch) + 1];
+      const cover = (on) => (on ? bbHold.add("covered") : bbHold.del("covered"));
       const coverST = after && ScrollTrigger.create({ trigger: after, start: "top 15%", onEnter: () => cover(true), onLeaveBack: () => cover(false) });
       return () => {
-        coverST?.kill(); if (rb) cover(false);
+        coverST?.kill(); cover(false);
         ScrollTrigger.removeEventListener("refreshInit", setTops);
         deck.classList.remove("is-stack");
         chapters.forEach((ch) => { ch.style.removeProperty("--top"); ch.style.removeProperty("transform"); });
