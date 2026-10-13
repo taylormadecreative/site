@@ -73,6 +73,26 @@
     });
   });
 
+  /* ---------- CORPORATE · two columns of team headshots drift past the lead portrait ---------- */
+  const corp = $("[data-corp]");
+  if (corp) {
+    // each column carries a second copy of itself, so the drift loops without a seam
+    $$(".hm-corp__g", corp).forEach((g) => [...g.children].forEach((li) => {
+      const c = li.cloneNode(true);
+      c.setAttribute("aria-hidden", "true");
+      const im = $("img", c); if (im) im.alt = "";
+      g.append(c);
+    }));
+    new IntersectionObserver(([e]) => corp.classList.toggle("is-held", !e.isIntersecting)).observe(corp);
+    const tb = $("[data-corp-toggle]");
+    tb?.addEventListener("click", () => {
+      const stop = !corp.classList.contains("is-stopped");
+      corp.classList.toggle("is-stopped", stop);
+      tb.textContent = stop ? "Play" : "Pause";
+      tb.setAttribute("aria-label", `${stop ? "Play" : "Pause"} the moving headshots`);
+    });
+  }
+
   /* ---------- screens that scroll inside their device frame ---------- */
   // distance the tall screenshot can travel inside its screen
   const travel = (img) => {
@@ -246,6 +266,7 @@
     const resume = (why) => { if (!stopH.delete(why)) return; t0 = performance.now(); if (!stopH.size) { startCurrent(); runTick(); warm((cur + 1) % slides.length); } };
     const rot = (why, on) => { freeze(); on ? rotH.add(why) : rotH.delete(why); t0 = performance.now(); };
     bbHold.add = stop; bbHold.del = resume;
+    bb.closest(".hm-ch")?.addEventListener("hm-cover", (e) => (e.detail ? stop("covered") : resume("covered")));
 
     pills.forEach((p, i) => { p.tabIndex = i === 0 ? 0 : -1; p.addEventListener("click", () => { go(i, true); track("home_billboard", { film: slides[i].dataset.film }); }); });
     $(".hm-bb__pills", bb).addEventListener("keydown", (e) => {
@@ -468,87 +489,111 @@
     });
   }
 
-  /* ---------- WEB CHAPTER · site switcher + hover scroll (Magic UI Safari port) ---------- */
-  const sites = $("[data-sites]");
-  if (sites) {
-    const chips = $$(".hm-chip", sites);
-    const link = $("[data-site-link]", sites);
-    const img = $("[data-site-img]", sites);
-    const urlText = $("[data-site-url]", sites);
-    const note = $("[data-site-note]", sites);
-    const hint = $(".hm-sites__hint", sites);
-    const sizes = img.getAttribute("sizes") || "100vw";
-    const hintFor = (chip) => (chip.dataset.still ? "Open the window to see the live site" : fine ? "Hover the window to scroll the site" : "Tap the window to open the live site");
-    const filesFor = (chip) => {
-      const hi = chip.dataset.src;
-      return { src: hi, srcset: `${hi.replace(/\.webp$/, "-720.webp")} 720w, ${hi} 1200w` };
+  /* ---------- WEB CHAPTER · every site in an Apple-style gallery ----------
+     Each site scrolls down in the browser and on the phone together, then the next one slides in.
+     Hover holds it (and scrolls the whole site), a dot, a swipe or a click on the peeking site picks
+     one and pauses the autoplay; the button plays or pauses it. */
+  const gal = $("[data-gal]");
+  if (gal) {
+    const rail = $(".hm-gal__track", gal), slides = $$(".hm-gal__slide", gal), dots = $$(".hm-gal__dot", gal);
+    const playBtn = $("[data-gal-pause]", gal);
+    const PASS = 6800, BEAT = 1500;
+    const ICON_PLAY = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5.5v13l10.5-6.5z"/></svg>';
+    const ICON_PAUSE = '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>';
+    let cur = 0, playing = !reduced, acc = 0, t0 = performance.now(), ticking = false, programmatic = 0;
+    const holds = new Set(["offscreen"]);
+    const shots = (sl) => $$(".mu-scroll", sl);
+    const running = () => playing && !holds.size;
+    const pass = (sl) => { if (!reduced && !sl.dataset.still) shots(sl).forEach((im) => scrollTo(im, 0.6, PASS - 500)); };
+    const back = (sl) => shots(sl).forEach(scrollHome);
+    const elapsed = () => acc + (running() ? performance.now() - t0 : 0);
+    const restart = () => { acc = 0; t0 = performance.now(); back(slides[cur]); if (running()) setTimeout(() => running() && pass(slides[cur]), 450); };
+    const ui = () => {
+      gal.classList.toggle("is-paused", !playing);
+      playBtn.innerHTML = playing ? ICON_PAUSE : ICON_PLAY;
+      playBtn.setAttribute("aria-label", playing ? "Pause the websites" : "Play the websites");
     };
-    const preload = (chip) => {
-      const f = filesFor(chip), i = new Image();
-      i.sizes = sizes; i.srcset = f.srcset; i.src = f.src;
-      return i;
-    };
-    const hoverScroll = () => {
-      const d = travel(img);
-      if (d > 40) scrollTo(img, 1, Math.min(14000, Math.max(2600, d * 2.4)));
-    };
-    if (hint) hint.textContent = hintFor(chips.find((c) => c.getAttribute("aria-pressed") === "true") || chips[0]);
-    let token = 0;
-    let autoPass = () => {};
-    // warm a site when the visitor reaches for its chip, so the swap is near instant
-    chips.forEach((chip) => ["pointerenter", "focus", "touchstart"].forEach((ev) =>
-      chip.addEventListener(ev, () => { if (!chip.dataset.warm) { chip.dataset.warm = "1"; preload(chip); } }, { once: true, passive: true })));
-
-    chips.forEach((chip) => chip.addEventListener("click", () => {
-      if (chip.getAttribute("aria-pressed") === "true") return;
-      chips.forEach((c) => c.setAttribute("aria-pressed", String(c === chip)));
-      const name = chip.textContent.trim();
-      link.href = chip.dataset.href;
-      link.setAttribute("aria-label", `Visit ${chip.dataset.url} (opens in a new tab)`);
-      urlText.textContent = chip.dataset.url;
-      note.textContent = chip.dataset.note;
-      if (hint) hint.textContent = hintFor(chip);
-      track("home_site", { site: chip.dataset.site });
-      const my = ++token;
-      const f = filesFor(chip);
-      const next = preload(chip);
-      // fade only once the next site is decoded: no blank window on a slow connection
-      const swap = () => {
-        if (my !== token) return;
-        link.classList.add("is-swapping");
-        setTimeout(() => {
-          if (my !== token) return;
-          scrollHome(img); img.style.setProperty("--dur", "0ms");
-          img.srcset = f.srcset; img.src = f.src;
-          img.alt = `${name} website, full homepage`;
-          const reveal = () => {
-            if (my !== token) return;
-            link.classList.remove("is-swapping");
-            if (fine && link.matches(":hover")) hoverScroll(); else autoPass();
-          };
-          (img.decode ? img.decode() : Promise.resolve()).then(reveal, reveal);
-        }, reduced ? 0 : 160);
-      };
-      (next.decode ? next.decode() : Promise.resolve()).then(swap, swap);
-    }));
-
-    // one slow pass down the site and back when the window comes into view
-    let passT = 0;
-    autoPass = () => {
-      clearTimeout(passT);
-      if (fine && link.matches(":hover")) return;
-      scrollTo(img, 0.55, 7000);
-      passT = setTimeout(() => { if (!(fine && link.matches(":hover"))) scrollHome(img); }, 7600);
-    };
-    if (fine) {
-      link.addEventListener("pointerenter", () => { clearTimeout(passT); hoverScroll(); });
-      link.addEventListener("pointerleave", () => scrollHome(img));
-      // desktop: the first time it is seen
-      const once = new IntersectionObserver(([e]) => { if (e.isIntersecting) { autoPass(); once.disconnect(); } }, { threshold: 0.6 });
-      once.observe(link);
-    } else {
-      new IntersectionObserver(([e]) => { if (e.isIntersecting) autoPass(); }, { threshold: 0.6 }).observe(link);
+    const stepX = () => (slides[1] ? slides[1].offsetLeft - slides[0].offsetLeft : rail.clientWidth);
+    function go(i, { user = false, scroll = true } = {}) {
+      i = (i + slides.length) % slides.length;
+      if (user && playing) { playing = false; ui(); }
+      if (i !== cur) back(slides[cur]);
+      cur = i;
+      slides.forEach((sl, k) => { sl.classList.toggle("is-on", k === i); $("a", sl).tabIndex = k === i ? 0 : -1; });
+      dots.forEach((d, k) => { d.style.setProperty("--p", "0"); d.tabIndex = k === i ? 0 : -1; k === i ? d.setAttribute("aria-current", "true") : d.removeAttribute("aria-current"); });
+      if (scroll) {
+        programmatic = performance.now();
+        const far = Math.abs(rail.scrollLeft - stepX() * i) > stepX() * 1.5;
+        if (far && !reduced) {
+          // from the last site back to the first: a short dip, not a rewind past every site
+          rail.classList.add("is-wrapping");
+          setTimeout(() => { programmatic = performance.now(); rail.scrollTo({ left: stepX() * i, behavior: "auto" }); rail.classList.remove("is-wrapping"); }, 300);
+        } else rail.scrollTo({ left: stepX() * i, behavior: reduced ? "auto" : "smooth" });
+      }
+      restart();
+      tick();
     }
+    function tick() {
+      if (ticking) return;
+      ticking = true;
+      const f = () => {
+        const p = Math.min(1, elapsed() / (PASS + BEAT));
+        dots[cur].style.setProperty("--p", p.toFixed(4));
+        if (running() && p >= 1) { go(cur + 1); }
+        if (!holds.has("offscreen") && !document.hidden) requestAnimationFrame(f); else ticking = false;
+      };
+      requestAnimationFrame(f);
+    }
+    const hold = (why) => { if (holds.has(why)) return; acc = elapsed(); holds.add(why); };
+    const release = (why) => {
+      if (!holds.delete(why)) return;
+      t0 = performance.now();
+      if (!holds.size) { if (why === "offscreen" && acc === 0) restart(); tick(); }
+    };
+    dots.forEach((d, k) => d.addEventListener("click", () => { go(k, { user: true }); track_("dot", k); }));
+    $(".hm-gal__dots", gal).addEventListener("keydown", (e) => {
+      const k = { ArrowRight: cur + 1, ArrowLeft: cur - 1, Home: 0, End: slides.length - 1 }[e.key];
+      if (k === undefined) return;
+      e.preventDefault(); go(k, { user: true }); dots[cur].focus();
+    });
+    const track_ = (how, k) => track("home_site", { site: slides[k].dataset.site, how });
+    playBtn.addEventListener("click", () => { playing = !playing; ui(); if (playing) { restart(); tick(); } else { acc = elapsed(); back(slides[cur]); } });
+    // the peeking site: a click brings it in instead of leaving the page
+    slides.forEach((sl, k) => sl.addEventListener("click", (e) => { if (k !== cur) { e.preventDefault(); go(k, { user: true }); track_("peek", k); } }));
+    // a swipe or trackpad scroll settles on a site: that becomes the current one
+    let settleT = 0;
+    rail.addEventListener("scroll", () => {
+      clearTimeout(settleT);
+      settleT = setTimeout(() => {
+        if (performance.now() - programmatic < 900) return;
+        const k = Math.round(rail.scrollLeft / stepX());
+        if (k !== cur) { go(k, { user: true, scroll: false }); track_("swipe", k); }
+      }, 140);
+    }, { passive: true });
+    // hover: hold the autoplay; over the browser, scroll the whole site (phone too)
+    if (fine) {
+      gal.addEventListener("pointerenter", () => hold("hover"));
+      gal.addEventListener("pointerleave", () => { release("hover"); });
+      slides.forEach((sl, k) => {
+        const link = $(".hm-sites__browser", sl);
+        link.addEventListener("pointerenter", () => {
+          if (k !== cur || sl.dataset.still) return;
+          const d = travel($(".mu-scroll", link));
+          shots(sl).forEach((im) => scrollTo(im, 1, Math.min(14000, Math.max(2600, d * 2.4))));
+        });
+        link.addEventListener("pointerleave", () => {
+          back(sl);
+          // the timer picks up where it was, and so does the site's slow pass
+          if (k === cur && !sl.dataset.still) setTimeout(() => { if (running()) shots(sl).forEach((im) => scrollTo(im, 0.6, Math.max(800, PASS - acc))); }, 950);
+        });
+      });
+    }
+    gal.addEventListener("focusin", (e) => { if (e.target.matches(":focus-visible")) hold("focus"); });
+    gal.addEventListener("focusout", (e) => { if (!gal.contains(e.relatedTarget)) release("focus"); });
+    new IntersectionObserver(([e]) => (e.isIntersecting ? release("offscreen") : hold("offscreen")), { threshold: 0.35 }).observe(gal);
+    document.addEventListener("visibilitychange", () => (document.hidden ? hold("tabhidden") : release("tabhidden")));
+    gal.closest(".hm-ch")?.addEventListener("hm-cover", (e) => (e.detail ? hold("covered") : release("covered")));
+    ui();
   }
 
   /* ---------- VIDEO CHAPTER · the reel and the phone play while on screen, on every device ---------- */
@@ -611,12 +656,13 @@
         const tw = gsap.to(ch, { scale: 0.93, ease: "none", scrollTrigger: { trigger: next, start: "top bottom", end: "top top", scrub: true } });
         coveredAt.set(ch, tw.scrollTrigger);
       });
-      // a sticky chapter stays "in view" under the next card: its films stop once it is covered
-      const bch = $("#billboard")?.closest(".hm-ch"), after = bch && chapters[chapters.indexOf(bch) + 1];
-      const cover = (on) => (on ? bbHold.add("covered") : bbHold.del("covered"));
-      const coverST = after && ScrollTrigger.create({ trigger: after, start: "top 15%", onEnter: () => cover(true), onLeaveBack: () => cover(false) });
+      // a sticky chapter stays "in view" under the next card: whatever moves in it stops once it is covered
+      const tell = (ch, on) => ch.dispatchEvent(new CustomEvent("hm-cover", { detail: on }));
+      const coverSTs = chapters.slice(0, -1).map((ch, i) => ScrollTrigger.create({
+        trigger: chapters[i + 1], start: "top 15%", onEnter: () => tell(ch, true), onLeaveBack: () => tell(ch, false),
+      }));
       return () => {
-        coverST?.kill(); cover(false);
+        coverSTs.forEach((st, i) => { st.kill(); tell(chapters[i], false); });
         ScrollTrigger.removeEventListener("refreshInit", setTops);
         deck.classList.remove("is-stack");
         chapters.forEach((ch) => { ch.style.removeProperty("--top"); ch.style.removeProperty("transform"); });

@@ -33,7 +33,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&amp;family=Unbounded:wght@900&amp;display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="assets/img/films/reel-1280.webp" imagesrcset="assets/img/films/reel-640.webp 640w, assets/img/films/reel-1280.webp 1280w, assets/img/films/reel-1920.webp 1920w" imagesizes="(min-width: 1000px) 62vw, 100vw" fetchpriority="high">
   <link rel="stylesheet" href="css/site.css">
-  <link rel="stylesheet" href="css/home.css?v=4">
+  <link rel="stylesheet" href="css/home.css?v=7">
 
   <!-- GA4 (carried over from the previous site so history stays continuous) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PS0H5W3ZX7"></script>
@@ -308,7 +308,7 @@
 
 
 
-    <!-- ============ THE FOUR · stacked chapters (GSAP card stacking) ============ -->
+    <!-- ============ THE CHAPTERS · web, video, photo, app, corporate as stacked cards (GSAP card stacking) ============ -->
     <section class="hm-deck" id="services" aria-label="Services">
 
       <!-- 01 · WEB DESIGN -->
@@ -329,26 +329,119 @@
             </div>
           </div>
           <div class="hm-ch__media">
-            <div class="hm-sites" data-sites>
-              <div class="hm-sites__chips" role="group" aria-label="Choose a site">
-                <button type="button" class="hm-chip" aria-pressed="true" data-site="chariot" data-url="chariotexteriors.com" data-href="https://chariotexteriors.com/" data-src="assets/img/home/web-chariot.webp" data-note="Home exterior company, Dallas–Fort Worth">Chariot Exteriors</button>
-                <button type="button" class="hm-chip" aria-pressed="false" data-site="jenel" data-url="studio.taylormadecreative.net" data-href="https://studio.taylormadecreative.net/" data-src="assets/img/home/web-jenel.webp" data-note="Studio rental with live booking and payments (our own)">Jenel Studios</button>
-                <button type="button" class="hm-chip" aria-pressed="false" data-site="tabitha" data-still="1" data-url="tabithabrown.com" data-href="https://tabithabrown.com/" data-src="assets/img/home/web-tabitha.webp" data-note="Talent brand site">Tabitha Brown</button>
-                <button type="button" class="hm-chip" aria-pressed="false" data-site="academy" data-url="taylormadeacademy.com" data-href="https://taylormadeacademy.com/" data-src="assets/img/home/web-academy.webp" data-note="Online academy and community (our own)">Taylormade Academy</button>
-                <button type="button" class="hm-chip" aria-pressed="false" data-site="bb" data-url="taylormadecreative.github.io/breakfast-brothers" data-href="https://taylormadecreative.github.io/breakfast-brothers/" data-src="assets/img/home/web-bb.webp" data-note="Restaurant website, studio concept">Breakfast Brothers</button>
+            <div class="hm-gal" data-gal role="region" aria-roledescription="carousel" aria-label="Websites designed and built by Taylormade Creative">
+              <div class="hm-gal__track">
+                <figure class="hm-gal__slide is-on" data-site="chariot" role="group" aria-roledescription="slide" aria-label="1 of 5: Chariot Exteriors">
+                  <div class="hm-sites__stage">
+                    <a class="mu-safari mu-safari--light hm-sites__browser" href="https://chariotexteriors.com/" target="_blank" rel="noopener" aria-label="Visit chariotexteriors.com (opens in a new tab)">
+                      <span class="mu-safari__screen"><img class="mu-scroll" src="assets/img/home/web-chariot.webp" srcset="assets/img/home/web-chariot-720.webp 720w, assets/img/home/web-chariot.webp 1200w" sizes="(min-width: 1000px) 48vw, 80vw" loading="lazy" decoding="async" width="1200" height="4500" alt="Chariot Exteriors website, full homepage"></span>
+                      <svg class="mu-safari__chrome" viewBox="0 0 1203 753" aria-hidden="true" focusable="false">
+                        <path class="f-edge" d="M0 12C0 5.37258 5.37258 0 12 0H1190C1196.63 0 1202 5.37258 1202 12V52H0V12Z"/>
+                        <path class="f-bar" d="M1.06738 12C1.06738 5.92487 5.99225 1 12.0674 1H1189.93C1196.01 1 1200.93 5.92487 1200.93 12V51H1.06738V12Z"/>
+                        <circle class="f-dot" cx="27" cy="25" r="6"/><circle class="f-dot" cx="47" cy="25" r="6"/><circle class="f-dot" cx="67" cy="25" r="6"/>
+                        <path class="f-pill" d="M286 17C286 13.6863 288.686 11 292 11H946C949.314 11 952 13.6863 952 17V35C952 38.3137 949.314 41 946 41H292C288.686 41 286 38.3137 286 35V17Z"/>
+                        <text class="f-url" x="619" y="31" text-anchor="middle">chariotexteriors.com</text>
+                        <path class="f-line" d="M.5 52V741C.5 747.351 5.649 752.5 12 752.5H1190C1196.35 752.5 1201.5 747.351 1201.5 741V52"/>
+                      </svg>
+                    </a>
+                    <div class="mu-iphone hm-sites__phone" aria-hidden="true">
+                      <div class="mu-iphone__screen"><img class="mu-scroll" src="assets/img/home/web-chariot-m.webp" width="420" height="2399" alt="" loading="lazy" decoding="async"></div>
+                      <svg class="mu-iphone__frame" viewBox="0 0 433 882" aria-hidden="true" focusable="false"><use href="#mu-phone"/></svg>
+                    </div>
+                  </div>
+                  <figcaption class="hm-gal__cap"><b>Chariot Exteriors</b><span>Home exterior company, Dallas–Fort Worth</span></figcaption>
+                </figure>
+                <figure class="hm-gal__slide" data-site="jenel" role="group" aria-roledescription="slide" aria-label="2 of 5: Jenel Studios">
+                  <div class="hm-sites__stage">
+                    <a class="mu-safari mu-safari--light hm-sites__browser" href="https://studio.taylormadecreative.net/" target="_blank" rel="noopener" aria-label="Visit studio.taylormadecreative.net (opens in a new tab)" tabindex="-1">
+                      <span class="mu-safari__screen"><img class="mu-scroll" src="assets/img/home/web-jenel.webp" srcset="assets/img/home/web-jenel-720.webp 720w, assets/img/home/web-jenel.webp 1200w" sizes="(min-width: 1000px) 48vw, 80vw" loading="lazy" decoding="async" width="1200" height="4500" alt="Jenel Studios website, full homepage"></span>
+                      <svg class="mu-safari__chrome" viewBox="0 0 1203 753" aria-hidden="true" focusable="false">
+                        <path class="f-edge" d="M0 12C0 5.37258 5.37258 0 12 0H1190C1196.63 0 1202 5.37258 1202 12V52H0V12Z"/>
+                        <path class="f-bar" d="M1.06738 12C1.06738 5.92487 5.99225 1 12.0674 1H1189.93C1196.01 1 1200.93 5.92487 1200.93 12V51H1.06738V12Z"/>
+                        <circle class="f-dot" cx="27" cy="25" r="6"/><circle class="f-dot" cx="47" cy="25" r="6"/><circle class="f-dot" cx="67" cy="25" r="6"/>
+                        <path class="f-pill" d="M286 17C286 13.6863 288.686 11 292 11H946C949.314 11 952 13.6863 952 17V35C952 38.3137 949.314 41 946 41H292C288.686 41 286 38.3137 286 35V17Z"/>
+                        <text class="f-url" x="619" y="31" text-anchor="middle">studio.taylormadecreative.net</text>
+                        <path class="f-line" d="M.5 52V741C.5 747.351 5.649 752.5 12 752.5H1190C1196.35 752.5 1201.5 747.351 1201.5 741V52"/>
+                      </svg>
+                    </a>
+                    <div class="mu-iphone hm-sites__phone" aria-hidden="true">
+                      <div class="mu-iphone__screen"><img class="mu-scroll" src="assets/img/home/web-jenel-m.webp" width="420" height="2399" alt="" loading="lazy" decoding="async"></div>
+                      <svg class="mu-iphone__frame" viewBox="0 0 433 882" aria-hidden="true" focusable="false"><use href="#mu-phone"/></svg>
+                    </div>
+                  </div>
+                  <figcaption class="hm-gal__cap"><b>Jenel Studios</b><span>Studio rental with live booking and payments (our own)</span></figcaption>
+                </figure>
+                <figure class="hm-gal__slide" data-site="tabitha" data-still="1" role="group" aria-roledescription="slide" aria-label="3 of 5: Tabitha Brown">
+                  <div class="hm-sites__stage">
+                    <a class="mu-safari mu-safari--light hm-sites__browser" href="https://tabithabrown.com/" target="_blank" rel="noopener" aria-label="Visit tabithabrown.com (opens in a new tab)" tabindex="-1">
+                      <span class="mu-safari__screen"><img class="mu-scroll" src="assets/img/home/web-tabitha.webp" srcset="assets/img/home/web-tabitha-720.webp 720w, assets/img/home/web-tabitha.webp 1200w" sizes="(min-width: 1000px) 48vw, 80vw" loading="lazy" decoding="async" width="1200" height="750" alt="Tabitha Brown website, full homepage"></span>
+                      <svg class="mu-safari__chrome" viewBox="0 0 1203 753" aria-hidden="true" focusable="false">
+                        <path class="f-edge" d="M0 12C0 5.37258 5.37258 0 12 0H1190C1196.63 0 1202 5.37258 1202 12V52H0V12Z"/>
+                        <path class="f-bar" d="M1.06738 12C1.06738 5.92487 5.99225 1 12.0674 1H1189.93C1196.01 1 1200.93 5.92487 1200.93 12V51H1.06738V12Z"/>
+                        <circle class="f-dot" cx="27" cy="25" r="6"/><circle class="f-dot" cx="47" cy="25" r="6"/><circle class="f-dot" cx="67" cy="25" r="6"/>
+                        <path class="f-pill" d="M286 17C286 13.6863 288.686 11 292 11H946C949.314 11 952 13.6863 952 17V35C952 38.3137 949.314 41 946 41H292C288.686 41 286 38.3137 286 35V17Z"/>
+                        <text class="f-url" x="619" y="31" text-anchor="middle">tabithabrown.com</text>
+                        <path class="f-line" d="M.5 52V741C.5 747.351 5.649 752.5 12 752.5H1190C1196.35 752.5 1201.5 747.351 1201.5 741V52"/>
+                      </svg>
+                    </a>
+                    <div class="mu-iphone hm-sites__phone" aria-hidden="true">
+                      <div class="mu-iphone__screen"><img class="mu-scroll" src="assets/img/home/web-tabitha-m.webp" width="420" height="1225" alt="" loading="lazy" decoding="async"></div>
+                      <svg class="mu-iphone__frame" viewBox="0 0 433 882" aria-hidden="true" focusable="false"><use href="#mu-phone"/></svg>
+                    </div>
+                  </div>
+                  <figcaption class="hm-gal__cap"><b>Tabitha Brown</b><span>Talent brand site</span></figcaption>
+                </figure>
+                <figure class="hm-gal__slide" data-site="academy" role="group" aria-roledescription="slide" aria-label="4 of 5: Taylormade Academy">
+                  <div class="hm-sites__stage">
+                    <a class="mu-safari mu-safari--light hm-sites__browser" href="https://taylormadeacademy.com/" target="_blank" rel="noopener" aria-label="Visit taylormadeacademy.com (opens in a new tab)" tabindex="-1">
+                      <span class="mu-safari__screen"><img class="mu-scroll" src="assets/img/home/web-academy.webp" srcset="assets/img/home/web-academy-720.webp 720w, assets/img/home/web-academy.webp 1200w" sizes="(min-width: 1000px) 48vw, 80vw" loading="lazy" decoding="async" width="1200" height="4500" alt="Taylormade Academy website, full homepage"></span>
+                      <svg class="mu-safari__chrome" viewBox="0 0 1203 753" aria-hidden="true" focusable="false">
+                        <path class="f-edge" d="M0 12C0 5.37258 5.37258 0 12 0H1190C1196.63 0 1202 5.37258 1202 12V52H0V12Z"/>
+                        <path class="f-bar" d="M1.06738 12C1.06738 5.92487 5.99225 1 12.0674 1H1189.93C1196.01 1 1200.93 5.92487 1200.93 12V51H1.06738V12Z"/>
+                        <circle class="f-dot" cx="27" cy="25" r="6"/><circle class="f-dot" cx="47" cy="25" r="6"/><circle class="f-dot" cx="67" cy="25" r="6"/>
+                        <path class="f-pill" d="M286 17C286 13.6863 288.686 11 292 11H946C949.314 11 952 13.6863 952 17V35C952 38.3137 949.314 41 946 41H292C288.686 41 286 38.3137 286 35V17Z"/>
+                        <text class="f-url" x="619" y="31" text-anchor="middle">taylormadeacademy.com</text>
+                        <path class="f-line" d="M.5 52V741C.5 747.351 5.649 752.5 12 752.5H1190C1196.35 752.5 1201.5 747.351 1201.5 741V52"/>
+                      </svg>
+                    </a>
+                    <div class="mu-iphone hm-sites__phone" aria-hidden="true">
+                      <div class="mu-iphone__screen"><img class="mu-scroll" src="assets/img/home/web-academy-m.webp" width="420" height="2399" alt="" loading="lazy" decoding="async"></div>
+                      <svg class="mu-iphone__frame" viewBox="0 0 433 882" aria-hidden="true" focusable="false"><use href="#mu-phone"/></svg>
+                    </div>
+                  </div>
+                  <figcaption class="hm-gal__cap"><b>Taylormade Academy</b><span>Online academy and community (our own)</span></figcaption>
+                </figure>
+                <figure class="hm-gal__slide" data-site="bb" role="group" aria-roledescription="slide" aria-label="5 of 5: Breakfast Brothers">
+                  <div class="hm-sites__stage">
+                    <a class="mu-safari mu-safari--light hm-sites__browser" href="https://taylormadecreative.github.io/breakfast-brothers/" target="_blank" rel="noopener" aria-label="Visit taylormadecreative.github.io/breakfast-brothers (opens in a new tab)" tabindex="-1">
+                      <span class="mu-safari__screen"><img class="mu-scroll" src="assets/img/home/web-bb.webp" srcset="assets/img/home/web-bb-720.webp 720w, assets/img/home/web-bb.webp 1200w" sizes="(min-width: 1000px) 48vw, 80vw" loading="lazy" decoding="async" width="1200" height="4500" alt="Breakfast Brothers website, full homepage"></span>
+                      <svg class="mu-safari__chrome" viewBox="0 0 1203 753" aria-hidden="true" focusable="false">
+                        <path class="f-edge" d="M0 12C0 5.37258 5.37258 0 12 0H1190C1196.63 0 1202 5.37258 1202 12V52H0V12Z"/>
+                        <path class="f-bar" d="M1.06738 12C1.06738 5.92487 5.99225 1 12.0674 1H1189.93C1196.01 1 1200.93 5.92487 1200.93 12V51H1.06738V12Z"/>
+                        <circle class="f-dot" cx="27" cy="25" r="6"/><circle class="f-dot" cx="47" cy="25" r="6"/><circle class="f-dot" cx="67" cy="25" r="6"/>
+                        <path class="f-pill" d="M286 17C286 13.6863 288.686 11 292 11H946C949.314 11 952 13.6863 952 17V35C952 38.3137 949.314 41 946 41H292C288.686 41 286 38.3137 286 35V17Z"/>
+                        <text class="f-url" x="619" y="31" text-anchor="middle">taylormadecreative.github.io/breakfast-brothers</text>
+                        <path class="f-line" d="M.5 52V741C.5 747.351 5.649 752.5 12 752.5H1190C1196.35 752.5 1201.5 747.351 1201.5 741V52"/>
+                      </svg>
+                    </a>
+                    <div class="mu-iphone hm-sites__phone" aria-hidden="true">
+                      <div class="mu-iphone__screen"><img class="mu-scroll" src="assets/img/home/web-bb-m.webp" width="420" height="2399" alt="" loading="lazy" decoding="async"></div>
+                      <svg class="mu-iphone__frame" viewBox="0 0 433 882" aria-hidden="true" focusable="false"><use href="#mu-phone"/></svg>
+                    </div>
+                  </div>
+                  <figcaption class="hm-gal__cap"><b>Breakfast Brothers</b><span>Restaurant website, studio concept</span></figcaption>
+                </figure>
               </div>
-              <a class="mu-safari mu-safari--light hm-sites__browser" href="https://chariotexteriors.com/" target="_blank" rel="noopener" data-site-link aria-label="Visit chariotexteriors.com (opens in a new tab)">
-                <span class="mu-safari__screen"><img class="mu-scroll" src="assets/img/home/web-chariot.webp" srcset="assets/img/home/web-chariot-720.webp 720w, assets/img/home/web-chariot.webp 1200w" sizes="(min-width: 1000px) 52vw, 60vw" loading="lazy" decoding="async" width="1200" height="4500" alt="Chariot Exteriors website, full homepage" data-site-img></span>
-                <svg class="mu-safari__chrome" viewBox="0 0 1203 753" aria-hidden="true" focusable="false">
-                    <path class="f-edge" d="M0 12C0 5.37258 5.37258 0 12 0H1190C1196.63 0 1202 5.37258 1202 12V52H0V12Z"/>
-                    <path class="f-bar" d="M1.06738 12C1.06738 5.92487 5.99225 1 12.0674 1H1189.93C1196.01 1 1200.93 5.92487 1200.93 12V51H1.06738V12Z"/>
-                    <circle class="f-dot" cx="27" cy="25" r="6"/><circle class="f-dot" cx="47" cy="25" r="6"/><circle class="f-dot" cx="67" cy="25" r="6"/>
-                    <path class="f-pill" d="M286 17C286 13.6863 288.686 11 292 11H946C949.314 11 952 13.6863 952 17V35C952 38.3137 949.314 41 946 41H292C288.686 41 286 38.3137 286 35V17Z"/>
-                    <text class="f-url" x="619" y="31" text-anchor="middle" data-site-url>chariotexteriors.com</text>
-                    <path class="f-line" d="M.5 52V741C.5 747.351 5.649 752.5 12 752.5H1190C1196.35 752.5 1201.5 747.351 1201.5 741V52"/>
-                  </svg>
-              </a>
-              <p class="hm-sites__note" aria-live="polite"><span data-site-note>Home exterior company, Dallas–Fort Worth</span><span class="hm-sites__hint">Hover the window to scroll the site</span></p>
+              <div class="hm-gal__ctrl">
+                <div class="hm-gal__dots" role="group" aria-label="Choose a website">
+                  <button type="button" class="hm-gal__dot" data-i="0" aria-label="Show Chariot Exteriors" aria-current="true"><i></i></button>
+                  <button type="button" class="hm-gal__dot" data-i="1" aria-label="Show Jenel Studios" tabindex="-1"><i></i></button>
+                  <button type="button" class="hm-gal__dot" data-i="2" aria-label="Show Tabitha Brown" tabindex="-1"><i></i></button>
+                  <button type="button" class="hm-gal__dot" data-i="3" aria-label="Show Taylormade Academy" tabindex="-1"><i></i></button>
+                  <button type="button" class="hm-gal__dot" data-i="4" aria-label="Show Breakfast Brothers" tabindex="-1"><i></i></button>
+                </div>
+                <button type="button" class="hm-gal__play" data-gal-pause aria-label="Pause the websites"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg></button>
+              </div>
             </div>
           </div>
         </div>
@@ -498,6 +591,55 @@
           </div>
         </div>
       </article>
+
+      <!-- 05 · CORPORATE -->
+      <article class="hm-ch hm-ch--paper" id="corporate" aria-labelledby="ch-corp-h">
+        <div class="hm-ch__in">
+          <div class="hm-ch__copy">
+            <h2 class="hm-ch__h" id="ch-corp-h"><span class="hm-ch__k"><b>05</b> Corporate video and headshots in DFW</span><span class="hm-ch__d">At your office, anywhere in North Texas.</span></h2>
+            <p class="hm-answer">Taylormade Creative shoots corporate video, team headshots and content days on location at offices across Dallas–Fort Worth, or at the downtown Dallas studio. Recent work includes a TONI&amp;GUY Academy commercial inviting Plano ISD students to apply. Every quote comes back within one business day.</p>
+            <ul class="hm-tiers" aria-label="Corporate prices">
+              <li><a href="book/?service=corporate-headshots&amp;where=studio"><span>Team headshots at the studio</span><b>$99 a person</b></a></li>
+              <li><a href="book/?service=corporate-headshots&amp;where=onsite"><span>Team headshots at your office</span><b>$125 a person</b></a></li>
+              <li><a href="book/?service=corporate-headshots&amp;where=event"><span>Headshot booth for an event</span><b>Quote in 1 day</b></a></li>
+              <li><a href="book/?service=corporate-video"><span>Corporate video and content days</span><b>Quote in 1 day</b></a></li>
+            </ul>
+            <div class="hm-acts">
+              <a class="hm-btn hm-btn--ink" href="book/?service=corporate-video">Get a quote</a>
+              <a class="hm-link" href="corporate-headshots/">Team headshots <span aria-hidden="true">→</span></a>
+              <a class="hm-link" href="corporate-video/">Corporate video <span aria-hidden="true">→</span></a>
+            </div>
+          </div>
+          <div class="hm-ch__media">
+            <div class="hm-corp" data-corp>
+              <figure class="hm-corp__lead">
+                <img src="assets/img/headshots/hs-corp-lead-720.webp" srcset="assets/img/headshots/hs-corp-lead-720.webp 720w, assets/img/headshots/hs-corp-lead-1080.webp 1080w" sizes="(min-width: 1000px) 26vw, 58vw" width="1080" height="1620" loading="lazy" decoding="async" alt="Corporate headshot from the studio: a smiling man in a charcoal blazer and a light blue shirt on a soft gray backdrop">
+              </figure>
+              <div class="hm-corp__col">
+                <ul class="hm-corp__g" aria-label="Team headshots from the studio">
+                  <li><img src="assets/img/headshots/hs-corp-2-sm.jpg" srcset="assets/img/headshots/hs-corp-2-sm.jpg 400w, assets/img/headshots/hs-corp-2.jpg 800w" sizes="(min-width: 1000px) 11vw, 30vw" width="800" height="1000" loading="lazy" decoding="async" alt="Corporate headshot of a smiling bearded man in a navy suit and a red and navy striped tie"></li>
+                  <li><img src="assets/img/headshots/hs-20-sm.jpg" srcset="assets/img/headshots/hs-20-sm.jpg 400w, assets/img/headshots/hs-20.jpg 800w" sizes="(min-width: 1000px) 11vw, 30vw" width="800" height="1000" loading="lazy" decoding="async" alt="Studio headshot of a nurse practitioner with long honey-brown waves in black scrubs"></li>
+                  <li><img src="assets/img/headshots/hs-03-sm.jpg" srcset="assets/img/headshots/hs-03-sm.jpg 400w, assets/img/headshots/hs-03.jpg 800w" sizes="(min-width: 1000px) 11vw, 30vw" width="800" height="1000" loading="lazy" decoding="async" alt="Studio headshot of a bearded man in a black shirt on a white background"></li>
+                </ul>
+              </div>
+              <div class="hm-corp__col hm-corp__col--down">
+                <ul class="hm-corp__g" aria-label="More team headshots from the studio">
+                  <li><img src="assets/img/headshots/hs-22-sm.jpg" srcset="assets/img/headshots/hs-22-sm.jpg 400w, assets/img/headshots/hs-22.jpg 800w" sizes="(min-width: 1000px) 11vw, 30vw" width="800" height="1000" loading="lazy" decoding="async" alt="Studio headshot of a smiling woman with long brown waves and a pendant necklace"></li>
+                  <li><img src="assets/img/headshots/hs-21-sm.jpg" srcset="assets/img/headshots/hs-21-sm.jpg 400w, assets/img/headshots/hs-21.jpg 800w" sizes="(min-width: 1000px) 11vw, 30vw" width="800" height="1000" loading="lazy" decoding="async" alt="Studio headshot of a smiling man in a navy blazer and a light blue shirt"></li>
+                  <li><img src="assets/img/headshots/hs-24-sm.jpg" srcset="assets/img/headshots/hs-24-sm.jpg 400w, assets/img/headshots/hs-24.jpg 800w" sizes="(min-width: 1000px) 11vw, 30vw" width="800" height="1000" loading="lazy" decoding="async" alt="Studio headshot of a smiling woman with long highlighted waves in a black zip jacket"></li>
+                </ul>
+              </div>
+            </div>
+            <p class="hm-sites__note hm-corp__note"><span>Team headshots from the studio · 10-person minimum, one retouched headshot each</span><button type="button" class="hm-mq-toggle" data-corp-toggle aria-label="Pause the moving headshots">Pause</button></p>
+            <div class="hm-corp__where">
+              <p>On location in</p>
+              <ul class="hm-kinds" aria-label="Where Taylormade Creative shoots on location">
+                <li>Plano</li><li>Frisco</li><li>Irving</li><li>Allen</li><li>McKinney</li><li>Southlake</li><li>Westlake</li>
+              </ul>
+            </div>
+          </div>
+        </div>
+      </article>
     </section>
 
 
@@ -512,43 +654,6 @@
     </section>
 
 
-    <!-- ============ CORPORATE · on location across North Texas ============ -->
-    <section class="hm-local" id="corporate" aria-labelledby="local-h">
-      <div class="hm-wrap">
-        <div class="hm-local__top">
-          <div class="hm-local__copy">
-            <h2 class="hm-h2 hm-h2--kick" id="local-h" data-fade><span class="hm-ch__k">Corporate video and team headshots across DFW</span>At your office, anywhere in North Texas.</h2>
-            <p class="hm-answer" data-fade>Taylormade Creative shoots corporate video, team headshots, content days and brand campaigns on location at offices across Dallas–Fort Worth, from Plano, Frisco and Irving to Allen, McKinney, Southlake and Westlake. Recent work includes a TONI&amp;GUY Academy commercial inviting Plano ISD students to apply. One downtown Dallas studio directs, shoots and edits all of it, and every quote comes back within one business day.</p>
-            <div class="hm-acts" data-fade>
-              <a class="hm-btn hm-btn--ink" href="book/?service=corporate-video">Get a corporate quote</a>
-              <a class="hm-link" href="corporate-video/">Corporate video <span aria-hidden="true">→</span></a>
-              <a class="hm-link" href="corporate-headshots/">Team headshots <span aria-hidden="true">→</span></a>
-            </div>
-          </div>
-          <figure class="hm-local__lead">
-            <img src="assets/img/headshots/hs-corp-lead-720.webp" srcset="assets/img/headshots/hs-corp-lead-720.webp 720w, assets/img/headshots/hs-corp-lead-1080.webp 1080w" sizes="(min-width: 1000px) 30vw, 88vw" width="1080" height="1620" loading="lazy" decoding="async" alt="Corporate headshot from the studio: a smiling man in a charcoal blazer and a light blue shirt on a soft gray backdrop">
-          </figure>
-        </div>
-      </div>
-      <div class="hm-faces">
-        <div class="hm-wrap hm-faces__bar"><p class="hm-faces__h">Team headshots from the studio</p><button class="hm-mq-toggle" type="button" data-mq-toggle data-mq-name="headshots" aria-label="Pause the moving headshots">Pause</button></div>
-        <div class="mq hm-faces__row" data-mq>
-          <ul class="mq__g" aria-label="Team headshots from the studio">
-            <li><img src="assets/img/headshots/hs-21-sm.jpg" srcset="assets/img/headshots/hs-21-sm.jpg 400w, assets/img/headshots/hs-21.jpg 800w" sizes="(max-width: 699px) 42vw, 17vw" width="800" height="1000" loading="lazy" decoding="async" alt="Studio headshot of a smiling man in a navy blazer and a light blue shirt"></li>
-            <li><img src="assets/img/headshots/hs-corp-2-sm.jpg" srcset="assets/img/headshots/hs-corp-2-sm.jpg 400w, assets/img/headshots/hs-corp-2.jpg 800w" sizes="(max-width: 699px) 42vw, 17vw" width="800" height="1000" loading="lazy" decoding="async" alt="Corporate headshot of a smiling bearded man in a navy suit and a red and navy striped tie"></li>
-            <li><img src="assets/img/headshots/hs-20-sm.jpg" srcset="assets/img/headshots/hs-20-sm.jpg 400w, assets/img/headshots/hs-20.jpg 800w" sizes="(max-width: 699px) 42vw, 17vw" width="800" height="1000" loading="lazy" decoding="async" alt="Studio headshot of a nurse practitioner with long honey-brown waves in black scrubs"></li>
-            <li><img src="assets/img/headshots/hs-03-sm.jpg" srcset="assets/img/headshots/hs-03-sm.jpg 400w, assets/img/headshots/hs-03.jpg 800w" sizes="(max-width: 699px) 42vw, 17vw" width="800" height="1000" loading="lazy" decoding="async" alt="Studio headshot of a bearded man in a black shirt on a white background"></li>
-            <li><img src="assets/img/headshots/hs-22-sm.jpg" srcset="assets/img/headshots/hs-22-sm.jpg 400w, assets/img/headshots/hs-22.jpg 800w" sizes="(max-width: 699px) 42vw, 17vw" width="800" height="1000" loading="lazy" decoding="async" alt="Studio headshot of a smiling woman with long brown waves and a pendant necklace"></li>
-            <li><img src="assets/img/headshots/hs-24-sm.jpg" srcset="assets/img/headshots/hs-24-sm.jpg 400w, assets/img/headshots/hs-24.jpg 800w" sizes="(max-width: 699px) 42vw, 17vw" width="800" height="1000" loading="lazy" decoding="async" alt="Studio headshot of a smiling woman with long highlighted waves in a black zip jacket"></li>
-          </ul>
-        </div>
-      </div>
-      <div class="hm-wrap">
-        <ul class="hm-cities" aria-label="Where Taylormade Creative works on location">
-          <li>Plano</li><li>Frisco</li><li>Irving</li><li>Allen</li><li>McKinney</li><li>Southlake</li><li>Westlake</li><li>Dallas</li><li>Fort Worth</li>
-        </ul>
-      </div>
-    </section>
 
     <!-- ============ ALSO FROM THE STUDIO ============ -->
     <section class="hm-more" aria-labelledby="more-h">
@@ -771,6 +876,6 @@
 
   <script src="js/config.js" defer></script>
   <script src="js/site.js" defer></script>
-  <script src="js/home.js?v=4" defer></script>
+  <script src="js/home.js?v=7" defer></script>
 </body>
 </html>
