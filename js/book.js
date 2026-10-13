@@ -135,8 +135,10 @@
       case "video-podcast":
         return "Video podcast in your studio.\nNew show or existing:\nHosts and guests per episode:\nHow many episodes:\nPreferred date(s):";
       case "product-photography":
+        if (params.get("type") === "campaign") return "Commercial campaign.\nBrand and product(s):\nDeliverables (how many looks and final images):\nWhere it will run (ads, e-commerce, social, print):\nLaunch date and preferred shoot date(s):";
         return "Product photography.\nProducts and how many:\nLooks (clean white, styled, dark, close-up, in hand):\nWhere the photos will live:\nPreferred date(s):";
       case "branding-photoshoot":
+        if (params.get("type") === "beauty") return "Beauty shoot.\nBrand or med spa:\nWhat we are shooting (skin, hair, makeup, product in hand, provider portraits):\nWhere the photos will live:\nPreferred date(s):";
         return "Branding photoshoot.\nYour business and what you do:\nWhere the photos will live (website, socials, press):\nStudio, your business, or on location:\nPreferred date(s):";
       case "event-coverage":
         return `${params.get("type") === "photo" ? "Event photography." : "Event coverage.\nPhotos, video, or both:"}\nEvent and date:\nLocation:\nHours of coverage:`;
