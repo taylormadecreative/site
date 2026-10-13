@@ -108,7 +108,7 @@
   }
 
   // business shoots run as long as headcount and scope need, so no fixed length is shown
-  const BRIEF_SLUGS = ["corporate-headshots", "corporate-video", "content-day", "video-podcast"];
+  const BRIEF_SLUGS = ["corporate-headshots", "corporate-video", "content-day", "video-podcast", "brand-content"];
 
   // quote briefs: start the notes with what a quote for that service needs.
   // ?where= and ?type= from deep links sharpen the first line.
@@ -130,6 +130,8 @@
         }[params.get("type")];
         return `Talking-head video${type ? ` for ${type}.` : ".\nWhat the videos are for:"}\nHow many people on camera:\nAt our office or your studio:\nPreferred date(s):`;
       }
+      case "brand-content":
+        return "Commercial or brand film.\nBrand and what it's for:\nWhere it will run (TV, social, web, in-store):\nOn camera, voiceover, or both:\nIn DFW or on location elsewhere:\nLaunch date and budget range:";
       case "content-day":
         return "Content day at our location.\nBusiness and address:\nWhat we want to film:\nPreferred date(s):";
       case "video-podcast":

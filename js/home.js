@@ -1,7 +1,8 @@
 /* TAYLORMADE/CREATIVE · home
    Magic UI ports (Scroll Progress, Text Animate, Blur Fade, Marquee, Safari + iPhone
-   screen scroll, Text Reveal), the hero stage tabs, the web chapter's site switcher,
-   the reel, GSAP card stacking for the four chapters, and the reviews carousel.
+   screen scroll, Text Reveal), the featured-film billboard, the theater, the film
+   shelves, the web chapter's site switcher, the reels, GSAP card stacking for the four
+   chapters, and the reviews carousel.
    Shared nav, film facades, newsletter and year stay in site.js. */
 (() => {
   const $ = (s, r = document) => r.querySelector(s);
@@ -13,9 +14,6 @@
   const track = (name, params) => { try { window.gtag?.("event", name, params); } catch (_) {} };
 
   root.classList.add("hm-ready");
-
-  // warm a lazy hero image into the cache so its panel wipes in fully painted
-  const warm = (img) => { if (img && !img.complete) { const i = new Image(); i.decoding = "async"; i.src = img.currentSrc || img.src; } };
 
   /* ---------- Magic UI Scroll Progress ---------- */
   const bar = $(".hm-progress span");
@@ -88,171 +86,340 @@
   };
   const scrollHome = (img) => { if (!img) return; img.style.setProperty("--dur", "900ms"); img.style.setProperty("--y", "0px"); };
 
-  /* ---------- HERO STAGE · four tabs, auto-advance until the visitor picks ---------- */
-  const hero = $(".hm-hero");
-  const stage = $("#stage");
-  const tabs = $$(".hm-tab");
-  const panels = tabs.map((t) => document.getElementById(t.getAttribute("aria-controls")));
-  const DUR = 6500;
-  let cur = 0, auto = !reduced, remaining = DUR, t0 = 0, timer = 0, holds = new Set(), gen = 0;
-
-  const heroCta = $("[data-hero-cta]");
-  const reelOf = (panel) => $("video", panel);
-  // reels autoplay only on big screens with motion allowed; phones get the poster and a Play button
-  const bigScreen = matchMedia("(min-width: 1000px)");
-  const canAuto = () => bigScreen.matches && !saveData && !reduced;
+  /* ---------- reels: muted, inline, on every screen; phones get the small file ---------- */
+  const small = matchMedia("(max-width: 999px)");
+  const canAuto = () => !saveData && !reduced;
+  const srcFor = (v) => (small.matches && v.dataset.srcSm) || v.dataset.src;
   const playReel = (v, user = false) => {
     if (!v || (!user && (!canAuto() || v.dataset.userPaused))) return;
-    if (!v.getAttribute("src")) { v.src = v.dataset.src; v.load(); }
+    if (!v.getAttribute("src")) { v.src = srcFor(v); v.load(); }
     v.play().catch(() => {});
   };
   const pauseReel = (v) => { if (v && !v.paused) v.pause(); };
-  // every reel has a Play/Pause button; a visitor's pause sticks
+  // one button plays or pauses every clip in its box; a visitor's pause sticks
   $$("[data-reel-toggle]").forEach((btn) => {
-    const v = $("video", btn.closest(".hm-panel, .hm-reelbox"));
-    if (!v) return;
-    const label = () => { btn.textContent = v.paused ? "Play reel" : "Pause reel"; };
-    v.addEventListener("play", label); v.addEventListener("pause", label);
+    const vids = $$("video", btn.closest(".hm-reelbox"));
+    const label = () => { btn.textContent = vids.some((v) => !v.paused) ? "Pause reel" : "Play reel"; };
+    vids.forEach((v) => { v.addEventListener("play", label); v.addEventListener("pause", label); });
     btn.addEventListener("click", () => {
-      if (v.paused) { delete v.dataset.userPaused; playReel(v, true); }
-      else { v.dataset.userPaused = "1"; v.pause(); }
+      const on = vids.some((v) => !v.paused);
+      vids.forEach((v) => {
+        if (on) { v.dataset.userPaused = "1"; v.pause(); }
+        else { delete v.dataset.userPaused; playReel(v, true); }
+      });
     });
     label();
   });
 
-  // what each panel does when it arrives / leaves
-  const enter = (panel) => {
-    $$("img", panel).forEach(warm);
-    if (panel.id === "p-video" && !holds.has("offscreen")) playReel(reelOf(panel));
-    if (panel.id === "p-web") {
-      const [desk, phone] = $$(".mu-scroll", panel);
-      setTimeout(() => { scrollTo(desk, 0.85, 5600); scrollTo(phone, 0.7, 5600); }, 650);
+  const FILMS = (() => { try { return JSON.parse($("#hm-films").textContent); } catch (_) { return {}; } })();
+
+  /* ---------- HERO BILLBOARD · featured films, one at a time (Apple TV top shelf) ----------
+     The poster paints first and the clip fades in once it is actually playing. Clips advance
+     when they end; a poster with no clip (data saver, autoplay blocked) holds for STILL ms.
+     Picking a film stops the rotation for good and loops that film. */
+  const bb = $("#billboard");
+  const bbHold = { add() {}, del() {} };
+  if (bb) {
+    const slides = $$(".hm-bb__slide", bb);
+    const pills = $$(".hm-pill", bb);
+    const info = $("[data-bb-info]", bb);
+    const kEl = $("[data-bb-k]", bb), tEl = $("[data-bb-t]", bb), playA = $("[data-bb-play]", bb), durEl = $("[data-bb-dur]", bb);
+    const pauseBtn = $("[data-bb-pause]", bb);
+    const STILL = 7000, CYCLES = 2;
+    let cur = 0, auto = !reduced, paused = reduced, wantClips = canAuto(), gen = 0, laps = 0;
+    const stopH = new Set();   // offscreen, tab hidden, theater open: everything stops
+    const rotH = new Set();    // pointer over it, keyboard inside: the film keeps playing, the rotation waits
+    let acc = 0, t0 = performance.now();
+    const vid = (i) => $("video", slides[i]);
+    const img = (i) => $("img", slides[i]);
+    const clockOn = () => !paused && !stopH.size && !rotH.size;
+    const clock = () => acc + (clockOn() ? performance.now() - t0 : 0);
+    const resetClock = () => { acc = 0; t0 = performance.now(); };
+    const freeze = () => { acc = clock(); t0 = performance.now(); };
+
+    const stopSlide = (i) => {
+      const v = vid(i);
+      slides[i].classList.remove("is-playing");
+      if (v && !v.paused) v.pause();
+      if (v && v.readyState) { try { v.currentTime = 0; } catch (_) {} }
+    };
+    const startCurrent = () => {
+      const v = vid(cur);
+      if (!v) return;
+      v.loop = !auto;
+      if (!wantClips || paused || stopH.size) return;
+      if (!v.getAttribute("src")) {
+        const need = $(".hm-bb__screen", bb).clientWidth * (devicePixelRatio || 1);
+        const fast = !navigator.connection?.effectiveType || navigator.connection.effectiveType === "4g";
+        v.src = small.matches ? v.dataset.sm : (need > 1500 && fast && v.dataset.xl) || v.dataset.lg;
+        v.load();
+      }
+      v.play().catch((err) => {
+        v.dataset.blocked = "1";
+        if (err && err.name === "NotAllowedError") wantClips = false;
+      });
+    };
+    const warm = (i) => {
+      const im = img(i);
+      if (!im || im.dataset.warm) return;
+      im.dataset.warm = "1";
+      const pre = new Image(); pre.sizes = im.sizes; pre.srcset = im.srcset; pre.src = im.src;
+    };
+    const paintInfo = (slug) => {
+      const f = FILMS[slug];
+      if (!f) return;
+      kEl.textContent = `Our work · ${f.k}`; tEl.textContent = f.t;
+      if (durEl) durEl.textContent = f.dur;
+      playA.href = `https://www.youtube.com/watch?v=${f.yt}`; playA.dataset.film = slug;
+      if (!reduced) { info.classList.remove("is-swap"); void info.offsetWidth; info.classList.add("is-swap"); }
+    };
+
+    function go(i, user = false) {
+      if (user && auto) {
+        auto = false; bb.classList.add("is-picked"); info.setAttribute("aria-live", "polite");
+        vid(cur) && (vid(cur).loop = true);
+      }
+      if (i === cur) { if (user) startCurrent(); return; }
+      const my = ++gen, to = slides[i];
+      bb.classList.add("is-rotated");
+      // whatever is on screen now stays until the newest pick is ready; anything else goes
+      const vis = slides.findIndex((s) => s.classList.contains("is-on"));
+      slides.forEach((s, k) => { if (k !== vis && k !== i) { stopSlide(k); s.classList.remove("is-on", "is-in"); s.hidden = true; } });
+      pills.forEach((p, k) => { p.style.setProperty("--p", "0"); p.tabIndex = k === i ? 0 : -1; k === i ? p.setAttribute("aria-current", "true") : p.removeAttribute("aria-current"); });
+      cur = i; resetClock();
+      to.hidden = false;
+      const im = img(i);
+      const ready = im.complete && im.naturalWidth ? Promise.resolve() : (im.decode ? im.decode() : Promise.resolve());
+      ready.catch(() => {}).then(() => {
+        if (my !== gen) return;
+        slides.forEach((s, k) => { if (k !== i) s.classList.remove("is-on"); });
+        to.classList.add("is-on");
+        paintInfo(to.dataset.film);
+        if (!reduced) { to.classList.remove("is-in"); void to.offsetWidth; to.classList.add("is-in"); }
+        startCurrent();
+        setTimeout(() => {
+          if (my !== gen) return;
+          slides.forEach((s, k) => { if (k !== i) { stopSlide(k); s.hidden = true; s.classList.remove("is-in"); } });
+        }, 900);
+      });
+      warm((i + 1) % slides.length);
     }
-  };
-  const leave = (panel) => {
-    pauseReel(reelOf(panel));
-    $$(".mu-scroll", panel).forEach(scrollHome);
-  };
+    const next = () => {
+      const n = (cur + 1) % slides.length;
+      if (n === 0 && ++laps >= CYCLES) { auto = false; }   // after two full passes the first film stays and loops
+      go(n);
+      if (!auto) vid(cur) && (vid(cur).loop = true);
+    };
 
-  const clearTimer = () => { clearTimeout(timer); timer = 0; };
-  const runTimer = () => {
-    clearTimer();
-    if (!auto || holds.size) return;
-    t0 = performance.now();
-    timer = setTimeout(() => show((cur + 1) % panels.length), remaining);
-  };
-  const hold = (why) => {
-    if (holds.has(why)) return;
-    if (!holds.size && timer) remaining = Math.max(400, remaining - (performance.now() - t0));
-    holds.add(why); clearTimer();
-    hero.classList.add("hm-stage-held");
-    if (why === "offscreen" || why === "tabhidden") pauseReel(reelOf(panels[cur]));
-  };
-  const release = (why) => {
-    if (!holds.delete(why)) return;
-    if (holds.size) return;
-    hero.classList.remove("hm-stage-held");
-    if (panels[cur].id === "p-video") playReel(reelOf(panels[cur]));
-    runTimer();
-  };
-  const stopAuto = () => {
-    if (!auto) return;
-    auto = false; clearTimer();
-    hero.classList.remove("hm-stage-auto", "hm-stage-held");
-  };
-
-  function show(i, { user = false, focus = false } = {}) {
-    if (user) stopAuto();
-    if (i === cur || !panels[i]) { if (focus) tabs[i]?.focus(); return; }
-    // settle any wipe still running: only the panel on screen now survives
-    const my = ++gen;
-    panels.forEach((p, k) => {
-      [p, $(".hm-panel__art", p)].forEach((el) => el?.getAnimations().forEach((a) => a.cancel()));
-      p.style.zIndex = "";
-      if (k !== cur) p.hidden = true;
+    slides.forEach((s, i) => {
+      const v = vid(i);
+      if (!v) return;
+      v.addEventListener("playing", () => { s.classList.add("is-playing"); delete v.dataset.blocked; });
+      v.addEventListener("ended", () => {
+        if (i !== cur) return;
+        if (auto && clockOn()) next();
+        else { v.currentTime = 0; v.play().catch(() => {}); }
+      });
     });
-    const from = panels[cur], to = panels[i];
-    tabs.forEach((t, k) => {
-      t.setAttribute("aria-selected", String(k === i));
-      t.tabIndex = k === i ? 0 : -1;
-    });
-    if (focus) tabs[i].focus();
-    // once the visitor picks a service, the hero's main button quotes that service
-    if (user && heroCta && tabs[i].dataset.cta) heroCta.href = tabs[i].dataset.cta;
-    cur = i; remaining = DUR;
-    leave(from);
-    to.hidden = false;
-    enter(to);
-    if (reduced) {
-      from.hidden = true;
-    } else {
-      // wipe in from the right (clip-path, strong ease-in-out), outgoing panel settles back
-      to.style.zIndex = "2"; from.style.zIndex = "1";
-      $(".hm-panel__art", to)?.animate([{ transform: "scale(1.035)" }, { transform: "none" }], { duration: 900, easing: "cubic-bezier(.23,1,.32,1)" });
-      from.animate([{ opacity: 1, filter: "blur(0px)" }, { opacity: 0.25, filter: "blur(4px)" }], { duration: 700, easing: "ease" });
-      const wipe = to.animate([{ clipPath: "inset(0 0 0 100%)" }, { clipPath: "inset(0 0 0 0%)" }], { duration: 700, easing: "cubic-bezier(.77,0,.175,1)" });
-      wipe.onfinish = () => {
-        if (my !== gen) return;          // a newer pick already took over
-        from.hidden = true;
-        from.getAnimations().forEach((a) => a.cancel());
-        to.style.zIndex = ""; from.style.zIndex = "";
-      };
-    }
-    runTimer();
-  }
 
-  if (stage && tabs.length) {
-    if (auto) hero.classList.add("hm-stage-auto");
-    hero.style.setProperty("--dur", `${DUR}ms`);
-    tabs.forEach((t, k) => t.addEventListener("click", () => {
-      show(k, { user: true });
-      track("home_tab", { tab: panels[k].id.slice(2) });
-    }));
-    $(".hm-tabs").addEventListener("keydown", (e) => {
-      const n = tabs.length;
+    // one loop drives the progress line: the clip's own time when it plays, the clock when it doesn't
+    const tick = () => {
+      const v = vid(cur);
+      const clip = v && !v.paused && v.duration && !v.dataset.blocked;
+      const p = clip ? v.currentTime / v.duration : Math.min(1, clock() / STILL);
+      pills[cur]?.style.setProperty("--p", p.toFixed(4));
+      if (!clip && auto && clockOn() && clock() >= (wantClips && !v?.dataset.blocked ? STILL * 2.2 : STILL)) next();
+      if (!stopH.has("offscreen") && !stopH.has("tabhidden")) requestAnimationFrame(tick);
+      else ticking = false;
+    };
+    let ticking = false;
+    const runTick = () => { if (!ticking) { ticking = true; requestAnimationFrame(tick); } };
+
+    const setPausedUI = () => {
+      pauseBtn.innerHTML = paused
+        ? '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5.5v13l10.5-6.5z"/></svg>'
+        : '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg>';
+      pauseBtn.setAttribute("aria-label", paused ? "Play the featured films" : "Pause the featured films");
+    };
+    const stop = (why) => { if (stopH.has(why)) return; freeze(); stopH.add(why); const v = vid(cur); if (v && !v.paused) v.pause(); };
+    const resume = (why) => { if (!stopH.delete(why)) return; t0 = performance.now(); if (!stopH.size) { startCurrent(); runTick(); } };
+    const rot = (why, on) => { freeze(); on ? rotH.add(why) : rotH.delete(why); t0 = performance.now(); };
+    bbHold.add = stop; bbHold.del = resume;
+
+    pills.forEach((p, i) => { p.tabIndex = i === 0 ? 0 : -1; p.addEventListener("click", () => { go(i, true); track("home_billboard", { film: slides[i].dataset.film }); }); });
+    $(".hm-bb__pills", bb).addEventListener("keydown", (e) => {
+      const n = pills.length;
       const k = { ArrowRight: (cur + 1) % n, ArrowLeft: (cur - 1 + n) % n, Home: 0, End: n - 1 }[e.key];
       if (k === undefined) return;
       e.preventDefault();
-      show(k, { user: true, focus: true });
+      go(k, true);
+      pills[k].focus();
     });
-    // holds: pointer over the stage or tabs, keyboard focus inside the hero, hero off screen, tab hidden
+    pauseBtn.addEventListener("click", () => {
+      freeze(); paused = !paused; t0 = performance.now();
+      if (paused) { const v = vid(cur); if (v && !v.paused) v.pause(); }
+      else { wantClips = true; startCurrent(); runTick(); }
+      setPausedUI();
+    });
     if (fine) {
-      [stage, $(".hm-tabs")].forEach((el) => {
-        el.addEventListener("pointerenter", () => hold("hover"));
-        el.addEventListener("pointerleave", () => release("hover"));
-      });
+      bb.addEventListener("pointerenter", () => rot("hover", true));
+      bb.addEventListener("pointerleave", () => rot("hover", false));
     }
-    hero.addEventListener("focusin", (e) => { if (e.target.matches(":focus-visible")) hold("focus"); });
-    hero.addEventListener("focusout", (e) => { if (!hero.contains(e.relatedTarget)) release("focus"); });
-    new IntersectionObserver(([e]) => (e.isIntersecting ? release("offscreen") : hold("offscreen")), { threshold: 0.25 }).observe(stage);
-    document.addEventListener("visibilitychange", () => (document.hidden ? hold("tabhidden") : release("tabhidden")));
-    // phones: the rotation starts with the visitor's first scroll or touch, so the first paint stays the largest one
-    if (!bigScreen.matches) {
-      hold("untouched");
-      const go = () => { release("untouched"); ["scroll", "touchstart", "keydown"].forEach((ev) => removeEventListener(ev, go)); };
-      ["scroll", "touchstart", "keydown"].forEach((ev) => addEventListener(ev, go, { passive: true }));
-    }
-
-    // swipe between panels on touch
+    bb.addEventListener("focusin", (e) => { if (e.target.matches(":focus-visible")) rot("focus", true); });
+    bb.addEventListener("focusout", (e) => { if (!bb.contains(e.relatedTarget)) rot("focus", false); });
+    // swipe between films on touch
     let sx = 0, sy = 0, swiping = false;
-    stage.addEventListener("pointerdown", (e) => { if (e.pointerType === "mouse") return; swiping = true; sx = e.clientX; sy = e.clientY; });
-    stage.addEventListener("pointerup", (e) => {
+    const screen = $(".hm-bb__screen", bb);
+    screen.style.touchAction = "pan-y";
+    screen.addEventListener("pointerdown", (e) => { if (e.pointerType === "mouse") return; swiping = true; sx = e.clientX; sy = e.clientY; });
+    screen.addEventListener("pointerup", (e) => {
       if (!swiping) return; swiping = false;
       const dx = e.clientX - sx, dy = e.clientY - sy;
-      if (Math.abs(dx) > 44 && Math.abs(dx) > Math.abs(dy) * 1.4) {
-        const n = panels.length;
-        show(dx < 0 ? (cur + 1) % n : (cur - 1 + n) % n, { user: true });
-      }
+      if (Math.abs(dx) > 44 && Math.abs(dx) > Math.abs(dy) * 1.4) go((cur + (dx < 0 ? 1 : -1) + slides.length) % slides.length, true);
     });
-    stage.addEventListener("pointercancel", () => { swiping = false; });
+    screen.addEventListener("pointercancel", () => { swiping = false; });
+    screen.addEventListener("click", () => playA.click());
+    let touchT = 0;
+    bb.addEventListener("pointerdown", (e) => {
+      if (e.pointerType === "mouse") return;
+      clearTimeout(touchT); rot("touch", true);
+    });
+    bb.addEventListener("pointerup", (e) => {
+      if (e.pointerType === "mouse") return;
+      clearTimeout(touchT); touchT = setTimeout(() => rot("touch", false), 6000);
+    });
 
-    // after load: swap the hero's tall screenshots in, warm the other panels, start the clock
-    const afterLoad = () => {
-      const idle = window.requestIdleCallback || ((fn) => setTimeout(fn, 600));
-      if (!saveData) idle(() => panels.forEach((p) => $$("img", p).forEach(warm)), { timeout: 1500 });
-      runTimer();
+    new IntersectionObserver(([e]) => (e.isIntersecting ? resume("offscreen") : stop("offscreen")), { threshold: 0.2 }).observe(bb);
+    document.addEventListener("visibilitychange", () => (document.hidden ? stop("tabhidden") : resume("tabhidden")));
+    setPausedUI();
+    if (reduced) bb.classList.add("is-picked");
+    // start after the page has painted, so the poster is the first (and largest) paint
+    const begin = () => { startCurrent(); runTick(); warm(1); };
+    if (document.readyState === "complete") begin(); else addEventListener("load", begin, { once: true });
+  }
+
+  /* ---------- THEATER · every film plays in the page, with sound ---------- */
+  const th = $("#theater");
+  if (th && th.showModal) {
+    const scr = $("[data-th-screen]", th);
+    const thK = $("[data-th-k]", th), thT = $("[data-th-t]", th), thD = $("[data-th-d]", th);
+    const closeBtn = $("[data-th-close]", th);
+    let from = null;
+    const open = (slug, opener) => {
+      const f = FILMS[slug];
+      if (!f) return false;
+      from = opener;
+      th.classList.toggle("is-v", f.ar === "9/16");
+      thK.textContent = f.m; thT.textContent = f.t; thD.textContent = f.d;
+      let player;
+      if (f.v) {
+        player = document.createElement("video");
+        player.controls = true; player.playsInline = true; player.preload = "auto";
+        if (f.poster) player.poster = f.poster;
+        player.src = `${f.v}-${f.hd && innerWidth >= 1000 ? 1080 : 720}.mp4`;
+        player.setAttribute("aria-label", `${f.t}, ${f.m}`);
+      } else {
+        player = document.createElement("iframe");
+        player.src = `https://www.youtube-nocookie.com/embed/${f.yt}?autoplay=1&rel=0&modestbranding=1&playsinline=1`;
+        player.title = `${f.t}, ${f.m}`;
+        player.allow = "autoplay; encrypted-media; picture-in-picture; fullscreen";
+        player.allowFullscreen = true;
+      }
+      scr.replaceChildren(player);
+      root.classList.add("hm-locked");
+      th.showModal();
+      th.scrollTop = 0;
+      // started inside the click, so it plays with sound (iPhone included)
+      if (player.play) player.play().catch(() => {});
+      closeBtn.focus();
+      try { history.pushState({ hmTheater: slug }, ""); } catch (_) {}
+      bbHold.add("theater");
+      // nothing else plays under the film
+      $$(".hm-reelbox video").forEach((v) => { if (!v.paused) { v.dataset.thPaused = "1"; v.pause(); } });
+      $$(".hm-tile video").forEach(pauseReel);
+      $$(".hm-tile.is-previewing").forEach((t) => t.classList.remove("is-previewing"));
+      track("home_film_play", { film: slug });
+      return true;
     };
-    if (document.readyState === "complete") afterLoad(); else addEventListener("load", afterLoad, { once: true });
+    let closing = false;
+    if (history.state?.hmTheater) history.replaceState(null, "");
+    th.addEventListener("close", () => {
+      $("video", scr)?.pause();
+      scr.replaceChildren();
+      if (history.state?.hmTheater) { closing = true; history.back(); }
+      root.classList.remove("hm-locked");
+      bbHold.del("theater");
+      $$(".hm-reelbox video[data-th-paused]").forEach((v) => { delete v.dataset.thPaused; v.play().catch(() => {}); });
+      from?.focus({ preventScroll: true });
+    });
+    closeBtn.addEventListener("click", () => th.close());
+    // the phone's back gesture closes the film instead of leaving the page
+    addEventListener("popstate", () => {
+      if (closing) { closing = false; return; }
+      if (th.open) th.close();
+    });
+    // a click on the dark around the film closes it
+    th.addEventListener("click", (e) => { if (e.target === th || e.target.classList.contains("hm-theater__in")) th.close(); });
+    document.addEventListener("click", (e) => {
+      const a = e.target.closest("a[data-film]");
+      if (!a || e.defaultPrevented || e.button || e.metaKey || e.ctrlKey || e.shiftKey || e.altKey) return;
+      if (open(a.dataset.film, a)) e.preventDefault();
+    });
+  }
+
+  /* ---------- SHELVES · arrows page through a row; tiles lift toward the pointer and preview ---------- */
+  $$("[data-shelf]").forEach((sh) => {
+    const row = $(".hm-shelf__row", sh), prev = $("[data-shelf-prev]", sh), next = $("[data-shelf-next]", sh);
+    const upd = () => {
+      const max = row.scrollWidth - row.clientWidth - 2;
+      prev.disabled = row.scrollLeft <= 2;
+      next.disabled = row.scrollLeft >= max;
+    };
+    const page = (dir) => row.scrollBy({ left: dir * row.clientWidth * 0.8, behavior: reduced ? "auto" : "smooth" });
+    prev.addEventListener("click", () => page(-1));
+    next.addEventListener("click", () => page(1));
+    let st = false;
+    row.addEventListener("scroll", () => { if (!st) { st = true; requestAnimationFrame(() => { st = false; upd(); }); } }, { passive: true });
+    addEventListener("resize", upd, { passive: true });
+    upd();
+  });
+  if (fine) {
+    $$(".hm-tile").forEach((tile) => {
+      const art = $(".hm-tile__art", tile);
+      let wait = 0, v = null;
+      tile.addEventListener("pointermove", (e) => {
+        tile.classList.add("is-tracking");
+        const r = art.getBoundingClientRect();
+        const x = (e.clientX - r.left) / r.width, y = (e.clientY - r.top) / r.height;
+        art.style.setProperty("--mx", `${(x * 100).toFixed(1)}%`);
+        art.style.setProperty("--my", `${(y * 100).toFixed(1)}%`);
+        if (!reduced) {
+          art.style.setProperty("--ry", `${((x - 0.5) * 7).toFixed(2)}deg`);
+          art.style.setProperty("--rx", `${((0.5 - y) * 7).toFixed(2)}deg`);
+        }
+      });
+      tile.addEventListener("pointerenter", () => {
+        const f = FILMS[tile.dataset.film];
+        if (!f || !f.pv || saveData || reduced) return;
+        wait = setTimeout(() => {
+          if (!v) {
+            v = document.createElement("video");
+            v.muted = true; v.loop = true; v.playsInline = true; v.preload = "auto";
+            v.setAttribute("aria-hidden", "true"); v.tabIndex = -1;
+            v.addEventListener("playing", () => tile.classList.add("is-previewing"));
+            v.src = f.pv;
+            art.append(v);
+          }
+          v.play().catch(() => {});
+        }, 420);
+      });
+      tile.addEventListener("pointerleave", () => {
+        clearTimeout(wait);
+        tile.classList.remove("is-previewing", "is-tracking");
+        if (v && !v.paused) v.pause();
+        art.style.removeProperty("--rx"); art.style.removeProperty("--ry");
+      });
+    });
   }
 
   /* ---------- WEB CHAPTER · site switcher + hover scroll (Magic UI Safari port) ---------- */
@@ -334,11 +501,14 @@
     }
   }
 
-  /* ---------- VIDEO CHAPTER · reel plays while on screen (big screens); its button pauses it for good ---------- */
+  /* ---------- VIDEO CHAPTER · the reel and the phone play while on screen, on every device ---------- */
   const box = $(".hm-reelbox");
   if (box) {
-    const v = $("video", box);
-    new IntersectionObserver(([e]) => (e.isIntersecting ? playReel(v) : pauseReel(v)), { threshold: 0.35 }).observe(v);
+    const vids = $$("video", box);
+    let seen = false;
+    const sync = () => vids.forEach((v) => (seen && !box.dataset.covered ? playReel(v) : pauseReel(v)));
+    new IntersectionObserver(([e]) => { seen = e.isIntersecting; sync(); }, { threshold: 0.35 }).observe(box);
+    box.addEventListener("hm-cover", sync);
   }
 
   /* ---------- THE FOUR · GSAP card stacking (desktop, tall enough screens) ---------- */
@@ -382,7 +552,13 @@
         const tw = gsap.to(ch, { scale: 0.93, ease: "none", scrollTrigger: { trigger: next, start: "top bottom", end: "top top", scrub: true } });
         coveredAt.set(ch, tw.scrollTrigger);
       });
+      // a sticky chapter stays "in view" under the next card: its clips stop once it is covered
+      const rb = $(".hm-reelbox");
+      const rch = rb?.closest(".hm-ch"), after = rch && chapters[chapters.indexOf(rch) + 1];
+      const cover = (on) => { if (on) rb.dataset.covered = "1"; else delete rb.dataset.covered; rb.dispatchEvent(new Event("hm-cover")); };
+      const coverST = after && ScrollTrigger.create({ trigger: after, start: "top 15%", onEnter: () => cover(true), onLeaveBack: () => cover(false) });
       return () => {
+        coverST?.kill(); if (rb) cover(false);
         ScrollTrigger.removeEventListener("refreshInit", setTops);
         deck.classList.remove("is-stack");
         chapters.forEach((ch) => { ch.style.removeProperty("--top"); ch.style.removeProperty("transform"); });
