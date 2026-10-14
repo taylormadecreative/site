@@ -30,84 +30,15 @@
   <meta name="twitter:image" content="https://www.taylormadecreative.net/assets/img/podcast-app/og-podcast-app.jpg">
   <meta name="robots" content="index,follow">
 
+  <meta name="theme-color" content="#08080a">
+  <link rel="preconnect" href="https://use.typekit.net" crossorigin>
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
-  <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;800;900&family=Familjen+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400&display=swap" rel="stylesheet">
+  <link rel="stylesheet" href="https://use.typekit.net/sbr6kqy.css">
+  <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&amp;family=Unbounded:wght@900&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/site.css">
-  <style>
-    /* This page's small labels use the body face; all-caps in it needs less tracking than the mono did. */
-    :root { --font-m: var(--font-b); }
-    .slate, .hero-hud, .hero-meta span, .sheet-row .sc, .step::before { font-weight: 600; letter-spacing: .12em; font-variant-numeric: tabular-nums; }
-    .btn { font-size: 13px; font-weight: 600; letter-spacing: .1em; }
-    .hero-meta span { font-size: 11.5px; }
-    .act-head { flex-direction: column; align-items: flex-start; gap: 12px; }
-    .shot { display: block; margin: 0; border-radius: 14px; overflow: hidden; background: #000;
-            border: 1px solid var(--line-d); box-shadow: 0 0 0 1px var(--line-d), 0 40px 120px -40px rgba(233,185,73,.18); }
-    .on-paper .shot { border-color: var(--line-p); box-shadow: 0 30px 70px -30px rgba(0,0,0,.45); }
-    .shot img { display: block; width: 100%; height: auto; }
-    a.shot { cursor: zoom-in; transition: transform .25s ease; }
-    a.shot:hover { transform: translateY(-3px); }
-    .shot-cap { margin-top: 12px; color: var(--smoke); font-size: 14.5px; max-width: 70ch; }
-    .on-paper .shot-cap { color: var(--ink-soft); }
-    .hero-shot { margin-top: clamp(28px, 4vw, 48px); }
-    .hero-trust { margin-top: 16px; color: var(--smoke); font-size: 14.5px; }
-    .hero-trust a, .faq .a a, .gear-row a, .not-mac-box a { color: inherit; text-decoration: underline; text-underline-offset: 3px; }
-    .hero-trust a, .gear-row a { color: var(--gold); }
-    .screens { display: grid; gap: clamp(28px, 4vw, 48px); grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr)); }
-    #features .sheet-row { grid-template-columns: 64px 1fr; align-items: baseline; }
-    #features .sheet-row:hover { padding-left: 0; }
-    #features .req { margin-top: 8px; font-size: 13px; font-weight: 600; color: var(--ink-soft); }
-    #features .sheet-row:hover::before { width: 0; }
-    .gear { display: grid; gap: 0; }
-    .gear-row { display: grid; grid-template-columns: minmax(150px, 220px) 1fr; gap: clamp(14px, 3vw, 40px); padding: 22px 0; border-bottom: 1px solid var(--line-d); }
-    .gear-row:first-child { border-top: 1px solid var(--line-d); }
-    .gear-row h3 { font-size: 18px; }
-    .gear-row p { color: var(--smoke); }
-    ol.steps { list-style: none; padding: 0; margin: 0; grid-template-columns: 1fr; align-items: start; }
-    @media (min-width: 700px) { ol.steps { grid-template-columns: 1fr 1fr; } ol.steps .step:last-child { grid-column: 1 / -1; } }
-    @media (min-width: 1180px) { ol.steps { grid-template-columns: repeat(5, 1fr); } ol.steps .step:last-child { grid-column: auto; } }
-    .step p { overflow-wrap: anywhere; }
-    #download .step { background: var(--ink-2); border-color: var(--line-d); }
-    #download .step h3 { color: var(--paper); }
-    #download .step p { color: var(--smoke); }
-    #download .step::before { color: var(--gold); }
-    .js .reveal-d4 { transition-delay: .32s; }
-    .display, .band h2 { text-wrap: balance; }
-    p { text-wrap: pretty; }
-    .not-mac-only { display: none !important; }
-    .not-mac .not-mac-only { display: inline-flex !important; }
-    .not-mac a.dl { display: none; }
-    @media (min-width: 1100px) { #features .sheet-list { grid-template-columns: 1fr 1fr; column-gap: clamp(28px, 4vw, 56px); }
-      #features .sheet-row:nth-child(2) { border-top: 1px solid var(--line-p); } }
-    .dl-box { display: flex; flex-wrap: wrap; gap: 18px 28px; align-items: center; margin-top: clamp(26px, 3.5vw, 40px); }
-    .dl-meta { color: var(--smoke); font-size: 14.5px; line-height: 1.6; }
-    .help { margin-top: clamp(36px, 5vw, 56px); }
-    .help h3 { margin-bottom: 14px; }
-    .not-mac-box { display: none; margin-top: 18px; padding: 16px 18px; border: 1px solid var(--gold); border-radius: 12px; max-width: 560px; }
-    .not-mac .not-mac-box { display: block; }
-    .not-mac-box p { font-size: 15px; }
-    .not-mac-box .row { display: flex; flex-wrap: wrap; gap: 12px 18px; align-items: center; margin-top: 12px; }
-    .not-mac-box button { font: inherit; }
-    .skip { position: absolute; left: -9999px; top: 12px; z-index: 1000; background: var(--gold); color: var(--ink);
-            padding: 10px 16px; border-radius: 8px; font-weight: 700; }
-    .skip:focus { left: 16px; }
-    .hero-logo { display: block; width: clamp(150px, 38vw, 190px); height: auto; margin-bottom: 26px; }
-    @media (min-width: 980px) {
-      .hero { display: grid; grid-template-columns: minmax(0, 1fr) clamp(200px, 17vw, 248px); column-gap: clamp(40px, 6vw, 96px); }
-      .hero > * { grid-column: 1 / -1; }
-      .hero > .hero-sub, .hero > .not-mac-box, .hero > .hero-ctas, .hero > .dl-started, .hero > .hero-trust { grid-column: 1; }
-      .hero-logo { grid-column: 2; grid-row: 3 / span 5; align-self: center; width: 100%; margin: 0; }
-    }
-    .dl-started { margin-top: 14px; padding: 12px 16px; border-left: 3px solid var(--gold); background: rgba(233,185,73,.08);
-                  font-size: 15px; max-width: 620px; }
-    .dl-started:empty { display: none; }
-    @media (max-width: 720px) { .gear-row { grid-template-columns: 1fr; gap: 6px; } }
-    @media (max-width: 520px) {
-      .hero-meta { display: grid; grid-template-columns: 1fr; gap: 14px; }
-      .hero-meta span { display: block; margin-top: 4px; line-height: 1.4; }
-    }
-  </style>
-
+  <link rel="stylesheet" href="../css/home.css?v=1">
+  <link rel="stylesheet" href="../css/podcast.css?v=1">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PS0H5W3ZX7"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -115,7 +46,6 @@
     gtag('js', new Date());
     gtag('config', 'G-PS0H5W3ZX7');
   </script>
-
   <script type="application/ld+json">
 {
   "@context": "https://schema.org",
@@ -249,8 +179,29 @@
 }
   </script>
 </head>
-<body>
+<body class="hm pa">
   <a class="skip" href="#main">Skip to content</a>
+  <div class="hm-progress" aria-hidden="true"><span></span></div>
+  <svg class="mu-defs" width="0" height="0" aria-hidden="true" focusable="false">
+    <defs>
+      <symbol id="mu-phone" viewBox="0 0 433 882">
+        <path style="fill:var(--ph-edge)" fill-rule="evenodd" d="M2 73C2 32.6832 34.6832 0 75 0H357C397.317 0 430 32.6832 430 73V809C430 849.317 397.317 882 357 882H75C34.6832 882 2 849.317 2 809V73ZM77 19.25H355A55.75 55.75 0 0 1 410.75 75V807A55.75 55.75 0 0 1 355 862.75H77A55.75 55.75 0 0 1 21.25 807V75A55.75 55.75 0 0 1 77 19.25Z"/>
+        <path style="fill:var(--ph-edge)" d="M0 171C0 170.448 0.447715 170 1 170H3V204H1C0.447715 204 0 203.552 0 203V171Z"/>
+        <path style="fill:var(--ph-edge)" d="M1 234C1 233.448 1.44772 233 2 233H3.5V300H2C1.44772 300 1 299.552 1 299V234Z"/>
+        <path style="fill:var(--ph-edge)" d="M1 319C1 318.448 1.44772 318 2 318H3.5V385H2C1.44772 385 1 384.552 1 384V319Z"/>
+        <path style="fill:var(--ph-edge)" d="M430 279H432C432.552 279 433 279.448 433 280V384C433 384.552 432.552 385 432 385H430V279Z"/>
+        <path style="fill:var(--ph-bezel)" fill-rule="evenodd" d="M6 74C6 35.3401 37.3401 4 76 4H356C394.66 4 426 35.3401 426 74V808C426 846.66 394.66 878 356 878H76C37.3401 878 6 846.66 6 808V74ZM77 19.25H355A55.75 55.75 0 0 1 410.75 75V807A55.75 55.75 0 0 1 355 862.75H77A55.75 55.75 0 0 1 21.25 807V75A55.75 55.75 0 0 1 77 19.25Z"/>
+        <path style="fill:var(--ph-island)" d="M154 48.5C154 38.2827 162.283 30 172.5 30H259.5C269.717 30 278 38.2827 278 48.5C278 58.7173 269.717 67 259.5 67H172.5C162.283 67 154 58.7173 154 48.5Z"/>
+      </symbol>
+      <symbol id="pa-i-play" viewBox="0 0 20 20"><path fill="currentColor" d="M5 3.2v13.6c0 .8.9 1.3 1.6.9l11-6.8a1 1 0 0 0 0-1.8l-11-6.8C5.9 1.9 5 2.4 5 3.2z"/></symbol>
+      <symbol id="pa-i-pause" viewBox="0 0 20 20"><path fill="currentColor" d="M5 3h3.5v14H5zM11.5 3H15v14h-3.5z"/></symbol>
+      <symbol id="pa-i-dir" viewBox="0 0 20 20"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M2.5 5.5a1.5 1.5 0 0 1 1.5-1.5h3.6l1.8 2h6.6a1.5 1.5 0 0 1 1.5 1.5v7.5a1.5 1.5 0 0 1-1.5 1.5H4a1.5 1.5 0 0 1-1.5-1.5z"/></symbol>
+      <symbol id="pa-i-file" viewBox="0 0 20 20"><path fill="none" stroke="currentColor" stroke-width="1.6" stroke-linejoin="round" d="M5 2.5h6.5L15.5 6.5v11H5zM11.5 2.5v4h4"/></symbol>
+      <symbol id="pa-i-film" viewBox="0 0 20 20"><rect x="2.5" y="4" width="15" height="12" rx="1.5" fill="none" stroke="currentColor" stroke-width="1.6"/><path stroke="currentColor" stroke-width="1.6" d="M6 4v12M14 4v12M2.5 8H6M2.5 12H6M14 8h3.5M14 12h3.5"/></symbol>
+      <symbol id="pa-i-wave" viewBox="0 0 20 20"><path stroke="currentColor" stroke-width="1.6" stroke-linecap="round" d="M3 8.5v3M6.5 6v8M10 3.5v13M13.5 6v8M17 8.5v3"/></symbol>
+    </defs>
+  </svg>
+
   <nav class="nav" aria-label="Main">
     <a class="nav-logo" href="../">TAYLORMADE<span class="slash">/</span>CREATIVE<span class="tag">DFW</span></a>
     <button class="nav-burger" aria-label="Menu" id="burger"><span></span><span></span></button>
@@ -278,208 +229,426 @@
   </nav>
 
   <main id="main">
-  <!-- hero -->
-  <header class="hero wrap" style="min-height: auto;">
-    <img class="hero-logo" src="../assets/img/podcast-app/logo.svg" width="330" height="400" alt="Taylormade Podcast">
-    <p class="hero-hud">
-      <span class="rec">Free beta</span>
-      <span>Mac app</span>
-      <span>macOS 15 or later</span>
-    </p>
-    <h1 class="display">
-      <span class="h-line"><span>Your podcast studio,</span></span>
-      <span class="h-line"><span>on <span class="gold">one Mac.</span></span></span>
-    </h1>
-    <p class="hero-sub lede">Taylormade Podcast records up to four cameras and two mics at once and cuts to whoever is talking. When you stop, it makes the whole episode: a YouTube video with chapters, your podcast for Spotify and Apple Podcasts, reels of your best moments, a transcript, and titles and show notes drafted by AI. Free while it's in beta.</p>
-    <div class="not-mac-box" role="note">
-      <p><strong>Not on a Mac right now?</strong> Taylormade Podcast only runs on a Mac. Send yourself this page, or type taylormadecreative.net/podcast-app on your Mac.</p>
-      <div class="row">
-        <button class="btn btn-gold send-mac" type="button">Send this page to my Mac</button>
-        <a href="mailto:?subject=Taylormade%20Podcast%20for%20Mac&amp;body=https%3A%2F%2Fwww.taylormadecreative.net%2Fpodcast-app%2F">Email me the link</a>
-      </div>
-    </div>
-    <div class="hero-ctas">
-      <a class="btn btn-gold dl" href="https://github.com/taylormadecreative/taylormade-podcast-beta/releases/latest/download/TaylormadePodcast.dmg">Download for Mac</a>
-      <a class="btn btn-ghost" href="https://apps.apple.com/us/app/taylormade-camera/id6789144751">Get Taylormade Camera for iPhone</a>
-    </div>
-    <p class="dl-started" role="status"></p>
-    <p class="hero-trust">No account · Checked by Apple for malware · Recordings stay on your Mac · <a href="#download">How to install</a></p>
-    <figure style="margin:0;">
-      <div class="hero-shot"><a class="shot" href="../assets/img/podcast-app/studio.jpg"><img src="../assets/img/podcast-app/studio.jpg" srcset="../assets/img/podcast-app/studio-sm.jpg 800w, ../assets/img/podcast-app/studio.jpg 1600w" sizes="(max-width: 1280px) 92vw, 1136px" width="1600" height="973" alt="The record screen: a big preview of the host's camera, four camera tiles, two mic meters, the Record button and a run sheet of topics"></a></div>
-      <figcaption class="shot-cap">The record screen, in Practice mode: pretend cameras and voices, so you can learn the app before you plug anything in.</figcaption>
-    </figure>
-    <div class="hero-meta" style="margin-top: clamp(28px, 4vw, 44px);">
-      <div><strong>Up to 4 cameras</strong><span>iPhones, cameras, webcams</span></div>
-      <div><strong>2 mics</strong><span>Each saved on its own</span></div>
-      <div><strong>Practice mode</strong><span>Learn it with no gear</span></div>
-    </div>
-  </header>
-
-  <!-- what it does -->
-  <section class="act act--paper on-paper" id="features">
-    <div class="wrap">
-      <div class="rule"></div>
-      <div class="act-head reveal">
-        <h2 class="display">Press Record. Get an <span class="gold">episode.</span></h2>
-        <span class="slate slate--dim">WHAT IT DOES</span>
-      </div>
-      <div class="sheet-list">
-        <div class="sheet-row reveal"><span class="sc">01</span><div><h3>Reels, made for you</h3><p>Press M after a great moment, and when you stop it's a vertical clip ready for Reels, TikTok and Shorts. Recording a talking head? One click turns the take into a reel with your mistakes and long pauses cut out, three covers to pick from and a caption to post.</p><p class="req">Captions on clips and reels need macOS 26</p></div></div>
-        <div class="sheet-row reveal"><span class="sc">02</span><div><h3>Your podcast, for Spotify and Apple Podcasts</h3><p>Every episode comes with podcast audio, mixed so whoever isn't talking is turned down, and leveled to the podcast standard. Upload it to your podcast host, like Spotify for Creators, to put it on Spotify and Apple Podcasts.</p></div></div>
-        <div class="sheet-row reveal"><span class="sc">03</span><div><h3>A YouTube video, with chapters</h3><p>A finished video that cuts between your cameras, with your logo and name cards on it. Press N when you change topics and the app writes your YouTube chapters, ready to paste. Three thumbnails are one click away.</p></div></div>
-        <div class="sheet-row reveal"><span class="sc">04</span><div><h3>A transcript of every episode</h3><p>Who said what, with time stamps, as a text file and a captions file. Each mic is written out on its own, so every line has the right name. It's all done on your Mac.</p><p class="req">Needs macOS 26</p></div></div>
-        <div class="sheet-row reveal"><span class="sc">05</span><div><h3>AI built in</h3><p>Apple Intelligence reads your episode and drafts three title ideas, a description, the key points, and a caption with hashtags for every clip. It also suggests up to three clips you didn't mark. It runs on your Mac, so nothing is uploaded. Add your own ChatGPT key and it drafts scripts too.</p><p class="req">Needs macOS 26 with Apple Intelligence</p></div></div>
-        <div class="sheet-row reveal"><span class="sc">06</span><div><h3>Start and stop with your voice</h3><p>Ask Siri: “Start recording in Taylormade Podcast.” Stop, mark a clip and next topic work the same way, and in Shortcuts too. With the Taylormade Camera iPhone app (coming soon), just say “start recording.”</p></div></div>
-        <div class="sheet-row reveal"><span class="sc">07</span><div><h3>Your logo, your intro</h3><p>Add your logo, name cards for you and your guest, and your own intro and outro videos, like a logo animation. They go on your YouTube video, and each show keeps its own.</p></div></div>
-        <div class="sheet-row reveal"><span class="sc">08</span><div><h3>It cuts for you</h3><p>Auto-switch follows whoever is talking and goes wide when you both talk. Press 1 to 4 to pick a camera yourself, or show everyone side by side.</p></div></div>
-        <div class="sheet-row reveal"><span class="sc">09</span><div><h3>Scripts and a teleprompter</h3><p>Write or paste your scripts and read them off the teleprompter, which scrolls as you talk. Or record one take per script: after each take it plays back on your Mac so you can Keep, Retake or go Next, and a retake moves the bad one to the Trash.</p><p class="req">Scrolling with your voice needs macOS 26</p></div></div>
-        <div class="sheet-row reveal"><span class="sc">10</span><div><h3>Vertical shows</h3><p>Turn Camera 1 tall and the whole show switches to 9:16 for Reels and TikTok. If a camera plugged into your Mac is mounted sideways, Rotate turns it upright.</p></div></div>
-        <div class="sheet-row reveal"><span class="sc">11</span><div><h3>Sound you can trust</h3><p>Check mics has each person say a sentence and makes sure every mic hears its own person. Mics on the wrong seats get swapped for you. If a wireless mic cuts out mid-take, the Mac's own mic fills the gap.</p></div></div>
-        <div class="sheet-row reveal"><span class="sc">12</span><div><h3>Every angle, ready to edit</h3><p>Each camera and mic is saved as its own file, all lined up from the same moment, plus files that open in Premiere Pro, Final Cut Pro and DaVinci Resolve with everything in sync.</p></div></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- gear -->
-  <section class="act" id="gear">
-    <div class="wrap">
-      <div class="rule"></div>
-      <div class="act-head reveal">
-        <h2 class="display">Works with the gear <span class="gold">you have</span></h2>
-        <span class="slate">CAMERAS · MICS</span>
-      </div>
-      <div class="gear reveal">
-        <div class="gear-row"><h3>iPhones</h3><p>Best with the free <a href="https://apps.apple.com/us/app/taylormade-camera/id6789144751">Taylormade Camera</a> app (version 2.1, coming soon to the App Store): each iPhone joins over Wi-Fi, records its own full-quality copy, and shows that person their own prompter. Any iPhone also works through Continuity Camera.</p></div>
-        <div class="gear-row"><h3>Cameras</h3><p>Canon, Fujifilm, Nikon, Panasonic, Sony and more, over a USB cable (if the camera has a webcam setting) or HDMI through a capture card. Shooting log? The app turns it into normal color for the show and clips.</p></div>
-        <div class="gear-row"><h3>Webcams</h3><p>Plug in and pick it. The MacBook camera works too.</p></div>
-        <div class="gear-row"><h3>Mics</h3><p>Up to two USB mics or wireless mic receivers, one per person. The Mac's own mic records a spare in the background.</p></div>
-      </div>
-    </div>
-  </section>
-
-  <!-- screens -->
-  <section class="act act--paper on-paper" id="screens">
-    <div class="wrap">
-      <div class="rule"></div>
-      <div class="act-head reveal">
-        <h2 class="display">Tell it who's where. <span class="gold">See everything it made.</span></h2>
-        <span class="slate slate--dim">SETUP · EPISODES</span>
-      </div>
-      <div class="screens">
-        <figure class="reveal" style="margin:0;">
-          <a class="shot" href="../assets/img/podcast-app/setup.jpg"><img src="../assets/img/podcast-app/setup.jpg" srcset="../assets/img/podcast-app/setup-sm.jpg 800w, ../assets/img/podcast-app/setup.jpg 1600w" sizes="(max-width: 980px) 100vw, 560px" width="1600" height="973" alt="The Setup screen: four cameras, each with a live picture and a choice of host close-up, guest close-up or both" loading="lazy"></a>
-          <figcaption class="shot-cap">Setup: tell the app who each camera is pointed at. A checklist turns green when your cameras, mics and storage are ready.</figcaption>
-        </figure>
-        <figure class="reveal reveal-d1" style="margin:0;">
-          <a class="shot" href="../assets/img/podcast-app/episodes.jpg"><img src="../assets/img/podcast-app/episodes.jpg" srcset="../assets/img/podcast-app/episodes-sm.jpg 800w, ../assets/img/podcast-app/episodes.jpg 1600w" sizes="(max-width: 980px) 100vw, 560px" width="1600" height="973" alt="The Episodes screen: the finished show, where to post it on YouTube, podcast apps and Reels, a report card, chapters and vertical clips" loading="lazy"></a>
-          <figcaption class="shot-cap">Episodes: everything the app made, sorted by where it goes, with a report card on your sound and pacing.</figcaption>
-        </figure>
-      </div>
-    </div>
-  </section>
-
-  <!-- download -->
-  <section class="act" id="download">
-    <div class="wrap">
-      <div class="rule"></div>
-      <div class="act-head reveal">
-        <h2 class="display">Install the <span class="gold">beta</span></h2>
-        <span class="slate">FREE · 5 STEPS</span>
-      </div>
-      <ol class="steps" role="list">
-        <li class="step reveal"><h3>Download</h3><p>Click Download for Mac and open TaylormadePodcast.dmg from your Downloads.</p></li>
-        <li class="step reveal reveal-d1"><h3>Drag it in</h3><p>Drag Taylormade Podcast into your Applications folder.</p></li>
-        <li class="step reveal reveal-d2"><h3>Open it</h3><p>Open it from Applications. Your Mac asks if you're sure, because it came from the internet: click Open. Then allow the camera and microphone, local network if you'll use iPhones as cameras, and speech recognition (for transcripts) when it asks.</p></li>
-        <li class="step reveal reveal-d3"><h3>Try it</h3><p>No gear handy? Turn on Practice mode and try everything with pretend cameras and voices.</p></li>
-        <li class="step reveal reveal-d4"><h3>Add an iPhone</h3><p>Optional, with Taylormade Camera 2.1 (coming soon to the App Store) on the iPhone. On the Mac, open Setup and click Add an iPhone to show a code. On the iPhone, open Taylormade Camera, tap Podcast and scan it. You only pair once.</p></li>
-      </ol>
-      <div class="dl-box reveal">
-        <a class="btn btn-gold dl" href="https://github.com/taylormadecreative/taylormade-podcast-beta/releases/latest/download/TaylormadePodcast.dmg">Download for Mac</a>
-        <button class="btn btn-gold send-mac not-mac-only" type="button">Send this page to my Mac</button>
-        <p class="dl-meta"><span id="dlVersion">Latest beta</span> · macOS 15 or later · Apple silicon or Intel<br>Signed with an Apple Developer ID and notarized by Apple (checked for malware).</p>
-      </div>
-      <p class="dl-started" role="status"></p>
-      <div class="help reveal">
-        <h3>If something goes wrong</h3>
-        <div class="faq">
-        <details>
-          <summary>My Mac says it can't open the app</summary>
-          <p class="a">Open System Settings › Privacy &amp; Security, scroll down, and click Open Anyway next to Taylormade Podcast.</p>
-        </details>
-        <details>
-          <summary>I clicked Don't Allow for the camera, mic, local network or speech recognition</summary>
-          <p class="a">Open System Settings › Privacy &amp; Security, then Camera, Microphone, Local Network or Speech Recognition, and turn Taylormade Podcast on. Quit and reopen the app.</p>
-        </details>
-        <details>
-          <summary>My camera doesn't show up</summary>
-          <p class="a">In the app, open Setup and click Add a camera. It has the steps for iPhones, webcams, and cameras over USB or HDMI, with menu paths for Canon, Fujifilm, Nikon, Panasonic and Sony.</p>
-        </details>
-        <details>
-          <summary>It can't find my iPhones</summary>
-          <p class="a">Put the Mac and the iPhones on the same Wi-Fi (not a guest network). On the Mac, allow Local Network for Taylormade Podcast (System Settings › Privacy &amp; Security › Local Network). On the iPhone, open Settings › Taylormade Camera and turn on Local Network.</p>
-        </details>
+    <!-- ============ HERO · the app, and a clip it made ============ -->
+    <header class="pa-hero" id="top">
+      <div class="pa-hero__grid">
+        <div class="pa-hero__copy">
+          <img class="pa-icon" data-load style="--i:-2" src="../assets/img/podcast-app/apple-touch-icon.png" width="180" height="180" alt="">
+          <h1 class="hm-h1">
+            <span class="hm-kick" data-load style="--i:-1">Taylormade Podcast · free Mac app · public beta</span>
+            <span class="hm-mast"><span class="w" style="--i:0"><span>Your</span></span> <span class="w" style="--i:1"><span>podcast</span></span> <span class="w" style="--i:2"><span>studio,</span></span> <span class="w" style="--i:3"><span>on</span></span> <span class="w gold" style="--i:4"><span>one</span></span> <span class="w gold" style="--i:5"><span>Mac.</span></span></span>
+          </h1>
+          <p class="hm-lede" data-load style="--i:0">It records up to four cameras and two mics at once and cuts to whoever is talking. Press Stop and it hands you the whole episode: the YouTube video, the podcast, the reels, the transcript and the words to post with them.</p>
+          <div class="not-mac-box" role="note">
+            <p><strong>Not on a Mac right now?</strong> Taylormade Podcast only runs on a Mac. Send yourself this page, or type taylormadecreative.net/podcast-app on your Mac.</p>
+            <div class="row">
+              <button class="hm-btn hm-btn--gold send-mac" type="button">Send this page to my Mac</button>
+              <a href="mailto:?subject=Taylormade%20Podcast%20for%20Mac&amp;body=https%3A%2F%2Fwww.taylormadecreative.net%2Fpodcast-app%2F">Email me the link</a>
+            </div>
+          </div>
+          <div class="hm-acts" data-load style="--i:1">
+            <a class="hm-btn hm-btn--gold dl" href="https://github.com/taylormadecreative/taylormade-podcast-beta/releases/latest/download/TaylormadePodcast.dmg">Download for Mac</a>
+            <a class="hm-btn hm-btn--line" href="#make">See what it makes</a>
+          </div>
+          <p class="dl-started" role="status"></p>
+          <p class="pa-meta" data-load style="--i:2"><b class="dl-version">Free beta</b> · macOS 15 or later · Apple silicon or Intel</p>
+        </div>
+        <div class="pa-stage">
+          <div class="pa-window"><img src="../assets/img/podcast-app/app-episodes.webp" srcset="../assets/img/podcast-app/app-episodes-sm.webp 1100w, ../assets/img/podcast-app/app-episodes.webp 2000w" sizes="(min-width: 1000px) 56vw, 90vw" width="2000" height="1250" alt="Taylormade Podcast's Episodes screen for a real take: the finished video, a report card, title ideas and show notes from Apple Intelligence, and where to post it" fetchpriority="high"></div>
+          <div class="mu-iphone pa-stage__phone" data-play>
+            <div class="mu-iphone__screen"><video muted loop playsinline preload="none" poster="../assets/img/podcast-app/tonight-clip-poster.webp" data-src="../assets/video/podcast-app/tonight-clip.mp4" aria-label="A vertical clip the app made from the take, with captions"></video></div>
+            <svg class="mu-iphone__frame" viewBox="0 0 433 882" aria-hidden="true" focusable="false"><use href="#mu-phone"/></svg>
+          </div>
+          <p class="pa-stage__tag"><b>One take, everything it made.</b> A real episode recorded with the app, and one of the clips it cut from it.</p>
         </div>
       </div>
-    </div>
-  </section>
+    </header>
 
-  <!-- faq -->
-  <section class="act act--paper on-paper" id="faq">
-    <div class="wrap">
-      <div class="rule"></div>
-      <div class="act-head reveal">
-        <h2 class="display">Questions</h2>
-        <span class="slate slate--dim">BETA · FEEDBACK · UPDATES</span>
+    <!-- ============ The promise, scroll-revealed word by word ============ -->
+    <section class="hm-reveal" aria-labelledby="promise-h">
+      <h2 class="sr-only" id="promise-h">What the app does</h2>
+      <div class="hm-reveal__track" data-reveal>
+        <div class="hm-reveal__pin">
+          <p class="hm-reveal__text">Press Record. Talk. Press Stop. The app hands you the whole episode, ready to post.</p>
+        </div>
       </div>
-      <div class="faq reveal">
-        <details open>
+    </section>
+
+    <!-- ============ What one take makes · one real example per feature ============ -->
+    <section class="hm-deck" id="make" aria-labelledby="make-h">
+      <div class="hm-deck__head">
+        <h2 class="hm-h2" id="make-h" data-words>What one take makes</h2>
+        <p class="hm-deck__sub" data-fade>Every example here is real: a one-minute talking-head take recorded with the app, and what it handed back.</p>
+      </div>
+
+      <article class="hm-ch hm-ch--paper" aria-labelledby="f1-h">
+        <div class="hm-ch__in">
+          <div class="hm-ch__copy">
+            <h3 class="hm-ch__h" id="f1-h"><span class="hm-ch__k"><b>01</b> Reels, TikTok and Shorts</span><span class="hm-ch__d">Reels, made for you.</span></h3>
+            <p class="hm-answer">Press M after a great moment and, when you stop, it's a 9:16 clip with captions at social loudness. Recording yourself? One click turns the whole take into a reel with the mistakes and long pauses cut out, three covers to pick from and a caption to post.</p>
+            <p class="pa-req">Captions on clips and reels need macOS 26</p>
+          </div>
+          <div class="hm-ch__media">
+            <div class="pa-phones">
+              <figure data-play>
+                <div class="mu-iphone"><div class="mu-iphone__screen"><video muted loop playsinline preload="none" poster="../assets/img/podcast-app/tonight-clip-poster.webp" data-src="../assets/video/podcast-app/tonight-clip.mp4" aria-label="A 9:16 clip from the take, with captions"></video></div><svg class="mu-iphone__frame" viewBox="0 0 433 882" aria-hidden="true" focusable="false"><use href="#mu-phone"/></svg></div>
+                <figcaption class="pa-cap"><b>A clip, with captions</b>Picked from the take by Apple Intelligence</figcaption>
+              </figure>
+              <figure data-play>
+                <div class="mu-iphone"><div class="mu-iphone__screen"><video muted loop playsinline preload="none" poster="../assets/img/podcast-app/tonight-show-poster.webp" data-src="../assets/video/podcast-app/tonight-show.mp4" aria-label="The whole take as a vertical video"></video></div><svg class="mu-iphone__frame" viewBox="0 0 433 882" aria-hidden="true" focusable="false"><use href="#mu-phone"/></svg></div>
+                <figcaption class="pa-cap"><b>The whole take</b>Vertical, ready to post</figcaption>
+              </figure>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="hm-ch hm-ch--ink" aria-labelledby="f2-h">
+        <div class="hm-ch__in">
+          <div class="hm-ch__copy">
+            <h3 class="hm-ch__h" id="f2-h"><span class="hm-ch__k"><b>02</b> Spotify and Apple Podcasts</span><span class="hm-ch__d">Your podcast, ready to upload.</span></h3>
+            <p class="hm-answer">Every episode comes with podcast audio, mixed so whoever isn't talking is turned down and leveled to the podcast standard. Upload it to your podcast host, like Spotify for Creators, to put it on Spotify and Apple Podcasts.</p>
+          </div>
+          <div class="hm-ch__media">
+            <div class="pa-player" data-player>
+              <div class="pa-player__top">
+                <div class="pa-player__art"><img src="../assets/img/podcast-app/favicon.svg" width="120" height="120" alt=""></div>
+                <div>
+                  <p class="pa-player__show">Podcast audio the app made</p>
+                  <p class="pa-player__t">“Tonight at 7”</p>
+                  <p class="pa-player__m">AAC · leveled to −16 LUFS · 1:04</p>
+                </div>
+              </div>
+              <div class="pa-wave" data-wave role="slider" tabindex="0" aria-label="Seek" aria-valuemin="0" aria-valuemax="64" aria-valuenow="0"></div>
+              <div class="pa-player__bar">
+                <button class="pa-play" type="button" data-toggle aria-label="Play the podcast audio"><svg class="i-play" aria-hidden="true"><use href="#pa-i-play"/></svg><svg class="i-pause" aria-hidden="true"><use href="#pa-i-pause"/></svg></button>
+                <span><span data-now>0:00</span> / 1:04</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="hm-ch hm-ch--paper2" aria-labelledby="f3-h">
+        <div class="hm-ch__in">
+          <div class="hm-ch__copy">
+            <h3 class="hm-ch__h" id="f3-h"><span class="hm-ch__k"><b>03</b> Transcript</span><span class="hm-ch__d">Every word, written down.</span></h3>
+            <p class="hm-answer">Who said what, with time stamps, as a text file and a captions file. Each mic is written out on its own, so every line has the right name. It all happens on your Mac.</p>
+            <p class="pa-req">Needs macOS 26</p>
+          </div>
+          <div class="hm-ch__media">
+            <div class="pa-tx" data-tx>
+              <div class="pa-tx__win"><div class="pa-tx__roll" data-roll></div></div>
+              <div class="pa-tx__bar">
+                <button class="pa-play" type="button" data-toggle aria-label="Play the take and follow the transcript"><svg class="i-play" aria-hidden="true"><use href="#pa-i-play"/></svg><svg class="i-pause" aria-hidden="true"><use href="#pa-i-pause"/></svg></button>
+                <span>The real transcript of this take, exactly as the app wrote it.</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="hm-ch hm-ch--ink3" aria-labelledby="f4-h">
+        <div class="hm-ch__in">
+          <div class="hm-ch__copy">
+            <h3 class="hm-ch__h" id="f4-h"><span class="hm-ch__k"><b>04</b> Apple Intelligence</span><span class="hm-ch__d">AI built in.</span></h3>
+            <p class="hm-answer">Apple Intelligence reads the episode and drafts three title ideas, a description, the key points, and a caption with hashtags for every clip. It also suggests up to three clips you didn't mark. It runs on your Mac, so nothing is uploaded. Add your own ChatGPT key and it drafts scripts too.</p>
+            <p class="pa-req">Needs macOS 26 with Apple Intelligence</p>
+          </div>
+          <div class="hm-ch__media">
+            <div class="pa-ai">
+              <div class="pa-ai__grp">
+                <p class="pa-ai__k" data-fade>Title ideas</p>
+                <ol class="pa-ai__titles">
+                  <li data-fade>AI Won't Take Your Job, But Here's How to Use It</li>
+                  <li data-fade>AI at Work: What You Need to Know</li>
+                  <li data-fade>Join Our Free AI Class Tonight at 7</li>
+                </ol>
+              </div>
+              <div class="pa-ai__grp">
+                <p class="pa-ai__k" data-fade>Key points</p>
+                <ul class="pa-ai__pts">
+                  <li data-fade>AI won't take your job, but knowing how to use it is important.</li>
+                  <li data-fade>Many use AI at work, but not everyone is trained.</li>
+                  <li data-fade>Join our free AI class tonight at 7 p.m. Central to learn how to use AI effectively.</li>
+                </ul>
+              </div>
+              <div class="pa-ai__grp">
+                <p class="pa-ai__k" data-fade>Clip caption</p>
+                <p class="pa-ai__cap" data-fade>AI skills can help you with any task. Learn how to use it in this free hour-long class. <span>#AIskills #AIclass</span></p>
+              </div>
+              <p class="pa-ai__foot" data-fade>Drafted on the Mac by Apple Intelligence for this take, word for word. They're drafts: read them before you post.</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="hm-ch hm-ch--paper" aria-labelledby="f5-h">
+        <div class="hm-ch__in">
+          <div class="hm-ch__copy">
+            <h3 class="hm-ch__h" id="f5-h"><span class="hm-ch__k"><b>05</b> YouTube</span><span class="hm-ch__d">A YouTube video, with chapters.</span></h3>
+            <p class="hm-answer">A finished video that cuts between your cameras, with your logo and name cards on it. Press N when you change topics and the app writes your YouTube chapters, ready to paste. Three thumbnails are one click away.</p>
+          </div>
+          <div class="hm-ch__media">
+            <figure class="pa-shot">
+              <img src="../assets/img/podcast-app/app-where-to-post.webp" width="1400" height="346" alt="The app's Where to post panel: YouTube (show the video, copy the description, make thumbnails), Spotify and Apple Podcasts (the podcast audio), and Reels, TikTok and Shorts (the clips, or make a talking-head reel)" loading="lazy" decoding="async">
+              <figcaption class="pa-cap">Episodes sorts everything by where it goes.</figcaption>
+            </figure>
+          </div>
+        </div>
+      </article>
+
+      <article class="hm-ch hm-ch--ink" aria-labelledby="f6-h">
+        <div class="hm-ch__in">
+          <div class="hm-ch__copy">
+            <h3 class="hm-ch__h" id="f6-h"><span class="hm-ch__k"><b>06</b> Hands-free</span><span class="hm-ch__d">Start it with your voice.</span></h3>
+            <p class="hm-answer">Ask Siri: “Start recording in Taylormade Podcast.” Stop, mark a clip and next topic work the same way, and in Shortcuts too. With the Taylormade Camera iPhone app (coming soon), just say “start recording.”</p>
+          </div>
+          <div class="hm-ch__media">
+            <div class="pa-voice" data-voice aria-hidden="true">
+              <p class="pa-voice__say pa-voice__step on"><span class="pa-voice__line">“Start recording</span><span class="pa-voice__line">in <span class="q">Taylormade</span></span><span class="pa-voice__line q">Podcast.”</span></p>
+              <p class="pa-voice__say pa-voice__step"><span class="pa-voice__line">Recording.</span><span class="pa-voice__line q">Just talk.</span></p>
+              <p class="pa-voice__say pa-voice__step"><span class="pa-voice__line">“Stop</span><span class="pa-voice__line">recording in</span><span class="pa-voice__line q">Taylormade Podcast.”</span></p>
+              <p class="pa-voice__say pa-voice__step"><span class="pa-voice__line">Saved.</span><span class="pa-voice__line q">Making your episode.</span></p>
+              <p class="pa-voice__rec"><i></i><span data-clock>0:00</span></p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="hm-ch hm-ch--paper2" aria-labelledby="f7-h">
+        <div class="hm-ch__in">
+          <div class="hm-ch__copy">
+            <h3 class="hm-ch__h" id="f7-h"><span class="hm-ch__k"><b>07</b> Your brand</span><span class="hm-ch__d">Your logo, your intro.</span></h3>
+            <p class="hm-answer">Add your logo, name cards for you and your guest, and your own intro and outro videos, like a logo animation. They go on your YouTube video, and each show keeps its own.</p>
+          </div>
+          <div class="hm-ch__media">
+            <figure class="pa-brand" data-play>
+              <div class="mu-iphone"><div class="mu-iphone__screen"><video muted loop playsinline preload="none" poster="../assets/img/podcast-app/tonight-show-poster.webp" data-src="../assets/video/podcast-app/tonight-show.mp4" aria-hidden="true"></video><img class="pa-brand__logo" src="../assets/img/podcast-app/logo.svg" width="330" height="400" alt=""><span class="pa-brand__card"><b>Your name</b>Your show</span></div><svg class="mu-iphone__frame" viewBox="0 0 433 882" aria-hidden="true" focusable="false"><use href="#mu-phone"/></svg></div>
+              <figcaption class="pa-cap"><b>How it looks</b>Your logo in the corner, and a name card on each person's first close-up</figcaption>
+            </figure>
+          </div>
+        </div>
+      </article>
+
+      <article class="hm-ch hm-ch--ink" aria-labelledby="f8-h">
+        <div class="hm-ch__in">
+          <div class="hm-ch__copy">
+            <h3 class="hm-ch__h" id="f8-h"><span class="hm-ch__k"><b>08</b> Auto-switch</span><span class="hm-ch__d">It cuts for you.</span></h3>
+            <p class="hm-answer">Auto-switch follows whoever is talking and goes wide when you both talk. Press 1 to 4 to pick a camera yourself, or show everyone side by side.</p>
+          </div>
+          <div class="hm-ch__media">
+            <div class="pa-cams" data-cams>
+              <figure data-play class="is-air">
+                <div class="pa-cams__tile"><video muted loop playsinline preload="none" poster="../assets/img/podcast-app/tonight-cam1-poster.webp" data-src="../assets/video/podcast-app/tonight-cam1.mp4" aria-hidden="true"></video><span class="pa-cams__air">On the show</span></div>
+                <figcaption>Cam 1</figcaption>
+              </figure>
+              <figure data-play>
+                <div class="pa-cams__tile"><video muted loop playsinline preload="none" poster="../assets/img/podcast-app/tonight-cam3-poster.webp" data-src="../assets/video/podcast-app/tonight-cam3.mp4" aria-hidden="true"></video><span class="pa-cams__air">On the show</span></div>
+                <figcaption>Cam 3</figcaption>
+              </figure>
+            </div>
+            <p class="pa-cap">Two angles from the same take. The app picks which one is on the show.</p>
+          </div>
+        </div>
+      </article>
+
+      <article class="hm-ch hm-ch--paper" aria-labelledby="f9-h">
+        <div class="hm-ch__in">
+          <div class="hm-ch__copy">
+            <h3 class="hm-ch__h" id="f9-h"><span class="hm-ch__k"><b>09</b> Scripts and a teleprompter</span><span class="hm-ch__d">Read it. Keep it. Next.</span></h3>
+            <p class="hm-answer">Write or paste your scripts and read them off the teleprompter, which scrolls as you talk. Or record one take per script: after each take it plays back on your Mac so you can Keep, Retake or go Next, and a retake moves the bad one to the Trash.</p>
+            <p class="pa-req">Scrolling with your voice needs macOS 26</p>
+          </div>
+          <div class="hm-ch__media">
+            <div class="pa-prompt" data-prompt>
+              <div class="pa-prompt__win"><div class="pa-prompt__fade"><div class="pa-prompt__roll" data-roll>
+                <p>AI is not gonna take your job.</p>
+                <p>Somebody who knows how to use it will.</p>
+                <p>Three out of four people at work are already using AI,</p>
+                <p>but less than four out of ten of them ever got trained on it.</p>
+                <p>So basically, most people are just guessing.</p>
+                <p>So tonight at 7 PM Central, your boy is teaching a free AI class.</p>
+              </div></div></div>
+              <div class="pa-prompt__acts" aria-hidden="true">
+                <span class="pa-pill" data-act="keep">Keep <kbd>K</kbd></span>
+                <span class="pa-pill" data-act="retake">Retake <kbd>R</kbd></span>
+                <span class="pa-pill" data-act="next">Next <kbd>N</kbd></span>
+              </div>
+              <p class="pa-cap">The script from this take.</p>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="hm-ch hm-ch--ink3" aria-labelledby="f10-h">
+        <div class="hm-ch__in">
+          <div class="hm-ch__copy">
+            <h3 class="hm-ch__h" id="f10-h"><span class="hm-ch__k"><b>10</b> Vertical</span><span class="hm-ch__d">Shoot it tall.</span></h3>
+            <p class="hm-answer">Turn Camera 1 tall and the whole show switches to 9:16 for Reels and TikTok. If a camera plugged into your Mac is mounted sideways, Rotate turns it upright.</p>
+          </div>
+          <div class="hm-ch__media">
+            <div class="pa-shape-wrap" data-shape-box>
+              <div class="pa-shape" data-shape data-play><video muted loop playsinline preload="none" poster="../assets/img/podcast-app/tonight-show-poster.webp" data-src="../assets/video/podcast-app/tonight-show.mp4" aria-hidden="true"></video><span class="pa-shape__badge" data-badge>Wide 16:9</span></div>
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="hm-ch hm-ch--paper2" aria-labelledby="f11-h">
+        <div class="hm-ch__in">
+          <div class="hm-ch__copy">
+            <h3 class="hm-ch__h" id="f11-h"><span class="hm-ch__k"><b>11</b> Sound check</span><span class="hm-ch__d">Sound you can trust.</span></h3>
+            <p class="hm-answer">Check mics has each person say a sentence and makes sure every mic hears its own person. Mics on the wrong seats get swapped for you. If a wireless mic cuts out mid-take, the Mac's own mic fills the gap.</p>
+          </div>
+          <div class="hm-ch__media">
+            <div class="pa-check">
+              <img data-fade src="../assets/img/podcast-app/check-listening.webp" width="1140" height="525" alt="Check mics in the app: Guest, say a sentence, with a 3-second countdown and a level meter" loading="lazy" decoding="async">
+              <img data-fade src="../assets/img/podcast-app/check-swapped.webp" width="1140" height="525" alt="Check mics result: Mics fixed. Host and Guest had each other's mics, and they're swapped now" loading="lazy" decoding="async">
+            </div>
+          </div>
+        </div>
+      </article>
+
+      <article class="hm-ch hm-ch--ink" aria-labelledby="f12-h">
+        <div class="hm-ch__in">
+          <div class="hm-ch__copy">
+            <h3 class="hm-ch__h" id="f12-h"><span class="hm-ch__k"><b>12</b> Edit files</span><span class="hm-ch__d">Every angle, ready to edit.</span></h3>
+            <p class="hm-answer">Each camera and mic is saved as its own file, all lined up from the same moment, plus files that open in Premiere Pro, Final Cut Pro and DaVinci Resolve with everything in sync.</p>
+          </div>
+          <div class="hm-ch__media">
+            <div class="pa-files" role="list" aria-label="The episode folder for this take">
+              <p class="pa-files__dir" data-fade><svg aria-hidden="true"><use href="#pa-i-dir"/></svg>2026-10-09 Tonight at 7</p>
+              <p class="pa-files__row" role="listitem" data-fade><svg aria-hidden="true"><use href="#pa-i-film"/></svg>Show (ready to post).mp4<em>the finished video</em></p>
+              <p class="pa-files__row" role="listitem" data-fade><svg aria-hidden="true"><use href="#pa-i-wave"/></svg>Podcast Audio.m4a<em>for your podcast host</em></p>
+              <p class="pa-files__row" role="listitem" data-fade><svg aria-hidden="true"><use href="#pa-i-film"/></svg>Cameras / Cam 1 - Host close-up.mov<em>4K, every frame</em></p>
+              <p class="pa-files__row" role="listitem" data-fade><svg aria-hidden="true"><use href="#pa-i-film"/></svg>Cameras / Cam 3 - Guest close-up.mov<em>its own file</em></p>
+              <p class="pa-files__row" role="listitem" data-fade><svg aria-hidden="true"><use href="#pa-i-wave"/></svg>Audio / Mic 1 - Host.wav<em>48 kHz, 24-bit</em></p>
+              <p class="pa-files__row" role="listitem" data-fade><svg aria-hidden="true"><use href="#pa-i-file"/></svg>Edit Files / Premiere Pro.xml<em>Premiere Pro</em></p>
+              <p class="pa-files__row" role="listitem" data-fade><svg aria-hidden="true"><use href="#pa-i-file"/></svg>Edit Files / DaVinci Resolve - Final Cut.fcpxml<em>Resolve, Final Cut</em></p>
+              <p class="pa-files__row" role="listitem" data-fade><svg aria-hidden="true"><use href="#pa-i-file"/></svg>Edit Files / Transcript (captions).srt<em>captions</em></p>
+              <p class="pa-files__row" role="listitem" data-fade><svg aria-hidden="true"><use href="#pa-i-file"/></svg>Titles and show notes (drafts).txt<em>AI drafts</em></p>
+            </div>
+          </div>
+        </div>
+      </article>
+    </section>
+
+    <!-- ============ Install ============ -->
+    <section class="pa-install" id="download" aria-labelledby="dl-h">
+      <div class="hm-wrap">
+        <div class="hm-head">
+          <h2 class="hm-h2" id="dl-h" data-words>Install the beta</h2>
+          <p data-fade>Free while it's in beta. Five steps, about two minutes.</p>
+        </div>
+        <ol class="hm-steps">
+          <li data-fade><b>01</b><h3>Download</h3><p>Click Download for Mac and open TaylormadePodcast.dmg from your Downloads.</p></li>
+          <li data-fade><b>02</b><h3>Drag it in</h3><p>Drag Taylormade Podcast into your Applications folder.</p></li>
+          <li data-fade><b>03</b><h3>Open it</h3><p>Open it from Applications. Your Mac asks if you're sure, because it came from the internet: click Open. Then allow the camera and microphone, local network if you'll use iPhones as cameras, and speech recognition (for transcripts) when it asks.</p></li>
+          <li data-fade><b>04</b><h3>Try it</h3><p>No gear handy? Turn on Practice mode and try everything with pretend cameras and voices. A step-by-step guide opens the first time.</p></li>
+          <li data-fade><b>05</b><h3>Add an iPhone</h3><p>Optional. Any iPhone works as a camera through Continuity Camera. With Taylormade Camera 2.1 (coming soon to the App Store), open Setup, click Add an iPhone, and scan the code from the app's Podcast tab.</p></li>
+        </ol>
+        <div class="pa-dl" data-fade>
+          <a class="hm-btn hm-btn--ink dl" href="https://github.com/taylormadecreative/taylormade-podcast-beta/releases/latest/download/TaylormadePodcast.dmg">Download for Mac</a>
+          <button class="hm-btn hm-btn--ink send-mac not-mac-only" type="button">Send this page to my Mac</button>
+          <p><b class="dl-version">Latest beta</b> · macOS 15 or later · Apple silicon or Intel<br>Signed with an Apple Developer ID and notarized by Apple (checked for malware).</p>
+        </div>
+        <p class="dl-started" role="status"></p>
+        <div class="pa-help hm-faq__list">
+          <h3 data-fade>If something goes wrong</h3>
+          <details>
+          <summary>My Mac says it can't open the app</summary>
+          <p class="a">Open System Settings › Privacy &amp; Security, scroll down, and click Open Anyway next to Taylormade Podcast.</p>
+          </details>
+          <details>
+          <summary>I clicked Don't Allow for the camera, mic, local network or speech recognition</summary>
+          <p class="a">Open System Settings › Privacy &amp; Security, then Camera, Microphone, Local Network or Speech Recognition, and turn Taylormade Podcast on. Quit and reopen the app.</p>
+          </details>
+          <details>
+          <summary>My camera doesn't show up</summary>
+          <p class="a">In the app, open Setup and click Add a camera. It has the steps for iPhones, webcams, and cameras over USB or HDMI, with menu paths for Canon, Fujifilm, Nikon, Panasonic and Sony.</p>
+          </details>
+          <details>
+          <summary>It can't find my iPhones</summary>
+          <p class="a">Put the Mac and the iPhones on the same Wi-Fi (not a guest network). On the Mac, allow Local Network for Taylormade Podcast (System Settings › Privacy &amp; Security › Local Network). On the iPhone, open Settings › Taylormade Camera and turn on Local Network.</p>
+          </details>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ Gear ============ -->
+    <section class="pa-gear" id="gear" aria-labelledby="gear-h">
+      <div class="hm-wrap">
+        <div class="hm-head">
+          <h2 class="hm-h2" id="gear-h" data-words>Works with the gear you have</h2>
+          <p data-fade>Up to four cameras and two mics, any mix.</p>
+        </div>
+        <div class="pa-gear__grid">
+          <div data-fade><h3>iPhones</h3><p>Any iPhone works as a wireless camera through Continuity Camera. The free <a href="https://apps.apple.com/us/app/taylormade-camera/id6789144751">Taylormade Camera</a> app (version 2.1, coming soon to the App Store) adds more: each iPhone records its own full-quality copy and shows that person their own prompter.</p></div>
+          <div data-fade><h3>Cameras</h3><p>Canon, Fujifilm, Nikon, Panasonic, Sony and more, over a USB cable (if the camera has a webcam setting) or HDMI through a capture card. Shooting log? The app turns it into normal color for the show and clips.</p></div>
+          <div data-fade><h3>Webcams</h3><p>Plug in and pick it. The MacBook camera works too.</p></div>
+          <div data-fade><h3>Mics</h3><p>Up to two USB mics or wireless mic receivers, one per person. The Mac's own mic records a spare in the background.</p></div>
+        </div>
+      </div>
+    </section>
+
+    <!-- ============ FAQ ============ -->
+    <section class="hm-faq" id="faq" aria-labelledby="faq-h">
+      <div class="hm-wrap hm-faq__grid">
+        <div class="hm-faq__side">
+          <h2 class="hm-h2" id="faq-h" data-fade>Questions</h2>
+          <p data-fade>The <a href="../privacy/podcast/">privacy page</a> lists everything the app does and doesn't do.</p>
+        </div>
+        <div class="hm-faq__list">
+          <details open>
           <summary>Is Taylormade Podcast free?</summary>
           <p class="a">Yes, it's free while it's in beta. Everything you record is saved on your Mac, so it's yours to keep.</p>
-        </details>
-        <details>
+          </details>
+          <details>
           <summary>What does beta mean?</summary>
           <p class="a">It works, and I'm still fixing things. Try Practice mode first. For a show you can't record again, keep a backup recorder running.</p>
-        </details>
-        <details>
+          </details>
+          <details>
           <summary>Do I need the Taylormade Camera iPhone app?</summary>
           <p class="a">No. Any camera you can connect to a Mac works. Any iPhone also works as a wireless camera through Continuity Camera. The free <a href="https://apps.apple.com/us/app/taylormade-camera/id6789144751">Taylormade Camera</a> app (version 2.1, coming soon to the App Store) adds more: each iPhone keeps a full-quality copy, shows its person a prompter, and lets you start, stop and mark clips from the phone, even by saying “start recording.”</p>
-        </details>
-        <details>
+          </details>
+          <details>
           <summary>What Mac do I need?</summary>
           <p class="a">macOS 15 Sequoia or later, on an Apple silicon or Intel Mac. Transcripts, and the captions on clips and reels, need macOS 26. The AI drafts (titles, show notes, clip captions and suggested clips) also need Apple Intelligence turned on, on a Mac that supports it.</p>
-        </details>
-        <details>
+          </details>
+          <details>
           <summary>Where do my recordings go?</summary>
           <p class="a">To the Movies folder on your Mac (Movies › Taylormade Podcast), or any folder you pick. Nothing is uploaded.</p>
-        </details>
-        <details>
+          </details>
+          <details>
           <summary>How do I send feedback?</summary>
           <p class="a">In the app, choose Help › Send Beta Feedback. It opens an email with your Mac and camera details already filled in. Or email <a href="mailto:taylormademd@gmail.com?subject=Taylormade%20Podcast%20beta%20feedback">taylormademd@gmail.com</a>.</p>
-        </details>
-        <details>
+          </details>
+          <details>
           <summary>How do I get updates?</summary>
           <p class="a">When a new beta is out, a gold Update button shows up at the top of the app. Click it to download the new beta, quit the app, then open the download and drag it into Applications. Choose Replace when your Mac asks. Your recordings and settings stay put.</p>
-        </details>
-        <details>
+          </details>
+          <details>
           <summary>Is there a Windows version?</summary>
           <p class="a">No. Taylormade Podcast is a Mac app.</p>
-        </details>
+          </details>
+        </div>
       </div>
-      <p class="shot-cap" style="margin-top: 24px;">The <a href="../privacy/podcast/" style="color:inherit;text-decoration:underline;text-underline-offset:3px;">privacy page</a> lists everything the app does and doesn't do.</p>
-    </div>
-  </section>
+    </section>
 
-  <section class="band">
-    <div class="wrap">
-      <div>
-        <h2>Free while it's in beta.</h2>
-        <p>I'm Nelson Taylor at Taylormade Creative. Record your next episode on the cameras you already have, and tell me what to fix.</p>
+    <section class="hm-cta" aria-labelledby="cta-h">
+      <div class="hm-wrap">
+        <h2 class="hm-cta__h" id="cta-h" data-words>Press Record.</h2>
+        <div class="hm-cta__row">
+          <p data-fade>I'm Nelson Taylor at Taylormade Creative. Record your next episode on the cameras you already have, and tell me what to fix. It's free while it's in beta.</p>
+          <div class="hm-acts" data-fade>
+            <a class="hm-btn hm-btn--ink dl" href="https://github.com/taylormadecreative/taylormade-podcast-beta/releases/latest/download/TaylormadePodcast.dmg">Download for Mac</a>
+            <button class="hm-btn hm-btn--ink send-mac not-mac-only" type="button">Send this page to my Mac</button>
+          </div>
+        </div>
         <p class="dl-started" role="status"></p>
       </div>
-      <a class="btn dl" href="https://github.com/taylormadecreative/taylormade-podcast-beta/releases/latest/download/TaylormadePodcast.dmg">Download for Mac</a>
-      <button class="btn send-mac not-mac-only" type="button">Send this page to my Mac</button>
-    </div>
-  </section>
+    </section>
   </main>
 
   <footer class="footer">
@@ -487,62 +656,39 @@
       <div class="footer-grid">
         <div>
           <a class="nav-logo" href="../">TAYLORMADE<span class="slash">/</span>CREATIVE</a>
-          <p style="margin-top:14px;color:var(--smoke);font-size:14.5px;max-width:34ch;">Dallas–Fort Worth creative studio. Cinematic video, photography, AI content, web, social, and live workshops.</p>
-        </div>
-        <div>
-          <h4>Services</h4>
-          <a href="../video-production/">Video production</a>
-          <a href="../corporate-video/">Corporate video</a>
-          <a href="../photography/">Photography</a>
-          <a href="../ai-creative/">AI content</a>
-          <a href="../web-design/">Web design</a>
-          <a href="../social-media/">Social media</a>
-          <a href="../workshops/">Workshops</a>
-          <a href="https://jenelstudios.com/">Studio rental — Jenel Studios</a>
+          <p style="margin-top:14px;color:var(--smoke);font-size:14.5px;max-width:34ch;">Dallas–Fort Worth creative agency for web design, commercial video, commercial photography and app design.</p>
         </div>
         <div>
           <h4>Apps</h4>
-          <a href="./">Taylormade Podcast for Mac</a>
+          <a href="./" aria-current="page">Taylormade Podcast for Mac</a>
           <a href="https://apps.apple.com/us/app/taylormade-camera/id6789144751">Taylormade Camera for iPhone</a>
+          <a href="../app-design/">App design</a>
           <a href="../privacy/podcast/">Podcast app privacy</a>
         </div>
         <div>
           <h4>Studio</h4>
+          <a href="../#work">Selected work</a>
+          <a href="../#services">Services</a>
           <a href="../#about">About Nelson</a>
           <a href="../faqs/">FAQs</a>
           <a href="../book/">Book a shoot</a>
         </div>
+        <div>
+          <h4>Clients</h4>
+          <a href="https://book.taylormadecreative.net/login.html">Client portal</a>
+          <a href="https://www.instagram.com/taylormade_creative/" rel="noopener" target="_blank">Instagram</a>
+        </div>
       </div>
       <div class="footer-bottom">
-        <span>© <span id="year">2026</span> Taylormade Creative · DFW</span>
-        <span>Directed, designed &amp; built in-house</span>
+        <span>© <span id="year">2026</span> Taylormade Creative · Dallas, TX</span>
+        <span>Directed, designed and built in-house</span>
       </div>
     </div>
   </footer>
 
+  <script type="application/json" id="pa-take">{"dur":64.17,"peaks":[0.327,0.896,0.765,0.574,0.87,0.736,0.815,0.478,0.736,0.556,0.635,0.639,0.432,0.58,0.638,0.541,0.779,0.619,0.608,0.732,0.734,0.592,0.743,0.484,0.609,0.618,0.366,0.611,0.69,0.714,1.0,0.819,0.388,0.584,0.636,0.675,0.627,0.618,0.717,0.5,0.538,0.622,0.54,0.595,0.377,0.645,0.536,0.673,0.679,0.434,0.624,0.534,0.487,0.531,0.396,0.649,0.433,0.604,0.579,0.56,0.41,0.498,0.379,0.559,0.511,0.289,0.647,0.65,0.502,0.419,0.696,0.548,0.475,0.209,0.49,0.258,0.503,0.475,0.469,0.237,0.632,0.585,0.553,0.487,0.65,0.637,0.365,0.566,0.308,0.823,0.557,0.357,0.389,0.105,0.105,0.105],"lines":[{"s":0,"e":2.22,"w":[["AI",0,0.84],["is",0.84,1.14],["not",1.14,1.26],["going",1.26,1.38],["to",1.38,1.5],["take",1.5,1.62],["your",1.62,1.8],["job.",1.8,2.22]]},{"s":2.28,"e":4.92,"w":[["Somebody",2.28,2.76],["that",2.76,3],["knows",3,3.18],["how",3.18,3.42],["to",3.42,3.54],["use",3.54,3.66],["it",3.66,3.84],["wheels,",3.84,4.68],["though.",4.68,4.92]]},{"s":4.98,"e":10.02,"w":[["3",4.98,5.4],["out",5.4,5.64],["of",5.64,5.76],["4",5.76,5.88],["people",5.88,6.12],["at",6.12,6.36],["work",6.36,6.54],["are",6.54,7.08],["already",7.08,7.74],["using",7.74,7.92],["AI,",7.92,8.7],["but",8.7,8.88],["less",8.88,9.06],["than",9.06,9.24],["4",9.24,9.54],["out",9.54,9.78],["of",9.78,9.9],["10",9.9,10.02]]},{"s":10.02,"e":12.12,"w":[["of",10.02,10.26],["them",10.26,10.38],["ever",10.38,10.86],["got",10.86,11.1],["trained",11.1,11.4],["on",11.4,11.64],["how",11.64,11.76],["to",11.76,11.82],["use",11.82,11.94],["it.",11.94,12.12]]},{"s":12.18,"e":15.24,"w":[["So",12.18,12.48],["basically,",12.48,13.14],["most",13.14,13.5],["people",13.5,13.74],["are",13.74,13.98],["just",13.98,14.1],["guessing,",14.1,14.64],["you",14.64,14.76],["know",14.76,14.88],["what",14.88,14.94],["I",14.94,15.06],["mean?",15.06,15.24]]},{"s":15.3,"e":17.52,"w":[["That's",15.3,15.96],["why",15.96,16.08],["their",16.08,16.32],["answers",16.32,16.74],["come",16.74,16.92],["out",16.92,17.1],["trash.",17.1,17.52]]},{"s":17.58,"e":22.38,"w":[["So",17.58,18.06],["tonight",18.06,18.3],["at",18.3,18.66],["7",18.66,18.9],["p.m.",18.9,19.44],["Central,",19.44,19.92],["your",19.92,20.04],["boy",20.04,20.28],["is",20.28,20.46],["teaching",20.46,20.76],["a",20.76,20.94],["free",20.94,21.06],["AI",21.06,21.48],["class,",21.48,21.96],["it's",21.96,22.38]]},{"s":22.38,"e":24.54,"w":[["one",22.38,22.62],["hour,",22.62,23.16],["it's",23.16,23.46],["live,",23.46,23.82],["and",23.82,23.94],["it's",23.94,24.24],["online.",24.24,24.54]]},{"s":24.6,"e":27.66,"w":[["If",24.6,25.14],["y'all",25.14,25.44],["want",25.44,25.56],["to",25.56,25.68],["bring",25.68,25.74],["something",25.74,25.98],["that's",25.98,26.4],["been",26.4,26.52],["eating",26.52,26.7],["up",26.7,27.06],["your",27.06,27.18],["time",27.18,27.3],["every",27.3,27.48],["week.",27.48,27.66]]},{"s":27.72,"e":31.62,"w":[["Maybe",27.72,28.2],["it's",28.2,28.5],["an",28.5,28.56],["email",28.56,28.8],["you",28.8,29.04],["keep",29.04,29.22],["putting",29.22,29.34],["off,",29.34,29.76],["a",29.76,30.12],["post",30.12,30.24],["for",30.24,30.54],["your",30.54,30.6],["business,",30.6,31.14],["or",31.14,31.44],["a",31.44,31.62]]},{"s":31.62,"e":35.46,"w":[["flyer",31.62,31.92],["for",31.92,32.04],["your",32.04,32.16],["church,",32.16,32.46],["and",32.46,33.12],["before",33.12,33.3],["class",33.3,33.6],["is",33.6,33.84],["over,",33.84,34.2],["AI",34.2,34.68],["is",34.68,34.86],["gonna",34.86,34.98],["write",34.98,35.16],["the",35.16,35.28],["1st",35.28,35.46]]},{"s":35.46,"e":36.06,"w":[["draft",35.46,35.64],["for",35.64,35.88],["you.",35.88,36.06]]},{"s":36.12,"e":37.56,"w":[["And",36.12,36.48],["it's",36.48,36.78],["gonna",36.78,36.84],["sound",36.84,37.02],["just",37.02,37.2],["like",37.2,37.32],["you.",37.32,37.56]]},{"s":37.62,"e":42.18,"w":[["I'm",37.62,38.58],["gonna",38.58,38.64],["show",38.64,38.88],["you",38.88,39],["which",39,39.18],["AI",39.18,39.66],["to",39.66,39.84],["use,",39.84,40.2],["how",40.2,40.56],["to",40.56,40.74],["talk",40.74,40.86],["to",40.86,40.98],["it,",40.98,41.34],["and",41.34,41.64],["how",41.64,41.88],["to",41.88,42.06],["check",42.06,42.18]]},{"s":42.18,"e":43.5,"w":[["it",42.18,42.42],["so",42.42,42.6],["it's",42.6,42.84],["not",42.84,42.9],["making",42.9,43.02],["stuff",43.02,43.26],["up.",43.26,43.5]]},{"s":43.56,"e":45.9,"w":[["And",43.56,44.16],["you're",44.16,44.4],["gonna",44.4,44.46],["leave",44.46,44.7],["with",44.7,45],["my",45,45.18],["prompt",45.18,45.48],["kit.",45.48,45.9]]},{"s":45.9,"e":48.54,"w":[["And",45.9,46.44],["if",46.44,46.56],["you've",46.56,46.86],["never",46.86,46.92],["used",46.92,47.16],["AI",47.16,47.64],["before,",47.64,48.06],["that's",48.06,48.3],["perfect.",48.3,48.54]]},{"s":48.6,"e":50.16,"w":[["This",48.6,49.32],["class",49.32,49.5],["is",49.5,49.74],["for",49.74,49.98],["you.",49.98,50.16]]},{"s":50.22,"e":52.62,"w":[["If",50.22,50.82],["you",50.82,50.94],["can",50.94,51.06],["send",51.06,51.24],["a",51.24,51.48],["text,",51.48,51.84],["you",51.84,52.14],["can",52.14,52.26],["do",52.26,52.38],["this.",52.38,52.62]]},{"s":52.68,"e":56.46,"w":[["So",52.68,53.28],["go",53.28,53.46],["ahead,",53.46,54],["tap",54,54.42],["the",54.42,54.6],["link",54.6,54.72],["in",54.72,54.96],["my",54.96,55.08],["bio,",55.08,55.68],["sign",55.68,55.98],["up.",55.98,56.46]]},{"s":56.52,"e":59.04,"w":[["Your",56.52,56.88],["room",56.88,57.06],["link",57.06,57.3],["is",57.3,57.66],["gonna",57.66,57.78],["come",57.78,58.02],["straight",58.02,58.2],["into",58.2,58.5],["your",58.5,58.68],["email.",58.68,59.04]]},{"s":59.1,"e":60.48,"w":[["Don't",59.1,59.82],["get",59.82,59.94],["left",59.94,60.06],["behind.",60.06,60.48]]},{"s":60.54,"e":62.1,"w":[["Now",60.54,61.2],["see",61.2,61.56],["y'all",61.56,61.8],["at",61.8,61.92],["seven.",61.92,62.1]]}]}</script>
   <script src="../js/site.js" defer></script>
-  <script>
-    // Count downloads (GA doesn't track .dmg by itself) and show the current beta's version from latest.json.
-    document.querySelectorAll("a.dl").forEach(function (a) {
-      a.addEventListener("click", function () {
-        if (window.gtag) gtag("event", "file_download", { file_extension: "dmg", file_name: "TaylormadePodcast.dmg", link_url: a.href });
-        // Say what happens next, right where they clicked (the download itself starts in the background).
-        var note = a.closest("header, section").querySelector(".dl-started");
-        if (note) note.innerHTML = 'Your download should start now (if your browser asks, click Allow). Next: open <strong>TaylormadePodcast.dmg</strong> from your Downloads and drag the app into Applications. <a href="#download">See the steps</a>';
-      });
-    });
-    fetch("latest.json", { cache: "no-store" }).then(function (r) { return r.ok ? r.json() : null; }).then(function (j) {
-      if (!j || !j.version) return;
-      var el = document.getElementById("dlVersion");
-      if (el) el.textContent = "Beta " + j.version + " (build " + j.build + ")" + (j.size ? " · " + j.size : "");
-    }).catch(function () {});
-    document.querySelectorAll(".send-mac").forEach(function (b) {
-      b.addEventListener("click", function () {
-        var url = "https://www.taylormadecreative.net/podcast-app/";
-        if (navigator.share) { navigator.share({ title: "Taylormade Podcast for Mac", url: url }).catch(function () {}); }
-        else { location.href = "mailto:?subject=Taylormade%20Podcast%20for%20Mac&body=" + encodeURIComponent(url); }
-      });
-    });
-  </script>
+  <script src="../js/home.js?v=1" defer></script>
+  <script src="../js/podcast.js?v=1" defer></script>
 </body>
 </html>
