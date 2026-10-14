@@ -1,7 +1,7 @@
 {
   "version": "1.0",
-  "build": 2,
-  "url": "https://github.com/taylormadecreative/taylormade-podcast-beta/releases/download/v1.0-2/TaylormadePodcast.dmg",
-  "notes": "First public beta. Record a video podcast on up to four cameras and two mics with one Mac. Works with iPhones, webcams, and Canon, Fujifilm, Nikon, Panasonic and Sony cameras over USB or HDMI. Send feedback from Help \u203a Send Beta Feedback.",
-  "size": "5.2MB"
+  "build": 3,
+  "url": "https://github.com/taylormadecreative/taylormade-podcast-beta/releases/download/v1.0-3/TaylormadePodcast.dmg",
+  "notes": "Scripts mode: your script shows on the iPhone's prompter, one take per script. After every take, watch it back, then Keep, Retake or Next. Start, stop, mark a clip and go to the next topic from the iPhone. Vertical 9:16 shows, with a Rotate button for a sideways camera. Pick each camera right on its tile, and check your mics before you record. A new app icon. Works with Taylormade Camera 2.1 on the iPhone, coming soon to the App Store.",
+  "size": "20MB"
 }
