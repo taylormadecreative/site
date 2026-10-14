@@ -1,7 +1,7 @@
 {
   "version": "1.0",
-  "build": 3,
-  "url": "https://github.com/taylormadecreative/taylormade-podcast-beta/releases/download/v1.0-3/TaylormadePodcast.dmg",
-  "notes": "Scripts mode: your script shows on the iPhone's prompter, one take per script. After every take, watch it back, then Keep, Retake or Next. Start, stop, mark a clip and go to the next topic from the iPhone. Vertical 9:16 shows, with a Rotate button for a sideways camera. Pick each camera right on its tile, and check your mics before you record. A new app icon. Works with Taylormade Camera 2.1 on the iPhone, coming soon to the App Store.",
+  "build": 4,
+  "url": "https://github.com/taylormadecreative/taylormade-podcast-beta/releases/download/v1.0-4/TaylormadePodcast.dmg",
+  "notes": "Taylormade Podcast for Mac, free beta. Record up to four cameras and two mics. When you stop, you get a YouTube video with chapters, podcast audio for Spotify and Apple Podcasts, vertical clips and reels of your best moments, and files for Premiere Pro, Final Cut Pro and DaVinci Resolve. On macOS 26 you also get a transcript and captions, plus titles and show notes from Apple Intelligence. This build adds a step-by-step guide for your first podcast.",
   "size": "20MB"
 }
