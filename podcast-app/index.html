@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Taylormade Podcast for Mac: free beta | Taylormade Creative</title>
-  <meta name="description" content="Record a video podcast on up to four cameras and two mics with one Mac. It cuts to whoever talks and makes your video, clips and edit files. Free beta.">
+  <meta name="description" content="Record a video podcast on up to four cameras and two mics with one Mac. When you stop, you get your YouTube video, podcast, reels and transcript. Free beta.">
   <link rel="canonical" href="https://www.taylormadecreative.net/podcast-app/">
   <link rel="icon" href="../assets/img/podcast-app/favicon-32.png" sizes="32x32" type="image/png">
   <link rel="icon" href="../assets/img/podcast-app/favicon.svg" type="image/svg+xml">
@@ -18,7 +18,7 @@
   <meta property="og:type" content="website">
   <meta property="og:site_name" content="Taylormade Creative">
   <meta property="og:title" content="Taylormade Podcast for Mac: free beta">
-  <meta property="og:description" content="Up to four cameras and two mics on one Mac. It cuts to whoever is talking and makes your video, clips and edit files when you stop.">
+  <meta property="og:description" content="Up to four cameras and two mics on one Mac. When you stop: a YouTube video with chapters, your podcast, reels, a transcript and AI-drafted show notes.">
   <meta property="og:image" content="https://www.taylormadecreative.net/assets/img/podcast-app/og-podcast-app.jpg">
   <meta property="og:image:width" content="1200">
   <meta property="og:image:height" content="630">
@@ -26,7 +26,7 @@
   <meta property="og:url" content="https://www.taylormadecreative.net/podcast-app/">
   <meta name="twitter:card" content="summary_large_image">
   <meta name="twitter:title" content="Taylormade Podcast for Mac: free beta">
-  <meta name="twitter:description" content="Up to four cameras and two mics on one Mac.">
+  <meta name="twitter:description" content="Your podcast studio on one Mac: the video, the podcast, the reels and the transcript.">
   <meta name="twitter:image" content="https://www.taylormadecreative.net/assets/img/podcast-app/og-podcast-app.jpg">
   <meta name="robots" content="index,follow">
 
@@ -56,6 +56,7 @@
     .screens { display: grid; gap: clamp(28px, 4vw, 48px); grid-template-columns: repeat(auto-fit, minmax(min(420px, 100%), 1fr)); }
     #features .sheet-row { grid-template-columns: 64px 1fr; align-items: baseline; }
     #features .sheet-row:hover { padding-left: 0; }
+    #features .req { margin-top: 8px; font-size: 13px; font-weight: 600; color: var(--ink-soft); }
     #features .sheet-row:hover::before { width: 0; }
     .gear { display: grid; gap: 0; }
     .gear-row { display: grid; grid-template-columns: minmax(150px, 220px) 1fr; gap: clamp(14px, 3vw, 40px); padding: 22px 0; border-bottom: 1px solid var(--line-d); }
@@ -123,7 +124,21 @@
   "operatingSystem": "macOS 15 or later",
   "applicationCategory": "MultimediaApplication",
   "softwareVersion": "1.0 beta",
-  "description": "A Mac app for recording video podcasts on up to four cameras and two mics. It cuts to whoever is talking, saves every camera and mic on its own, and makes a video for YouTube, podcast audio, vertical clips and edit files when you stop.",
+  "description": "A Mac app for recording video podcasts on up to four cameras and two mics. It cuts to whoever is talking, saves every camera and mic on its own, and when you stop makes a YouTube video with chapters, podcast audio, vertical reels and clips, a transcript, AI-drafted titles and show notes, and edit files.",
+  "featureList": [
+    "Vertical clips and talking-head reels for Reels, TikTok and Shorts",
+    "Podcast audio leveled to -16 LUFS for Spotify and Apple Podcasts",
+    "YouTube video with chapters and three thumbnails",
+    "Speaker-labeled transcript (macOS 26)",
+    "Apple Intelligence titles, show notes, clip captions and suggested clips (macOS 26)",
+    "Start and stop with Siri and Shortcuts",
+    "Your logo, name cards, intro and outro",
+    "Auto-switching between up to four cameras",
+    "Teleprompter and Scripts mode with Keep, Retake and Next",
+    "Vertical 9:16 shows",
+    "Mic check and a sound safety net",
+    "Premiere Pro, Final Cut Pro and DaVinci Resolve files"
+  ],
   "downloadUrl": "https://github.com/taylormadecreative/taylormade-podcast-beta/releases/latest/download/TaylormadePodcast.dmg",
   "screenshot": "https://www.taylormadecreative.net/assets/img/podcast-app/studio.jpg",
   "offers": {
@@ -167,7 +182,7 @@
       "name": "Do I need the Taylormade Camera iPhone app?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "No. Any camera you can connect to a Mac works. The free Taylormade Camera app (version 2.1, coming soon to the App Store) turns iPhones into wireless cameras that each keep a full-quality copy, and shows each person their own prompter."
+        "text": "No. Any camera you can connect to a Mac works. Any iPhone also works as a wireless camera through Continuity Camera. The free Taylormade Camera app (version 2.1, coming soon to the App Store) adds more: each iPhone keeps a full-quality copy, shows its person a prompter, and lets you start, stop and mark clips from the phone, even by saying “start recording.”"
       }
     },
     {
@@ -175,7 +190,7 @@
       "name": "What Mac do I need?",
       "acceptedAnswer": {
         "@type": "Answer",
-        "text": "macOS 15 Sequoia or later, on an Apple silicon or Intel Mac. Transcripts and clip captions need macOS 26. Episode titles and show notes also need Apple Intelligence."
+        "text": "macOS 15 Sequoia or later, on an Apple silicon or Intel Mac. Transcripts, and the captions on clips and reels, need macOS 26. The AI drafts (titles, show notes, clip captions and suggested clips) also need Apple Intelligence turned on, on a Mac that supports it."
       }
     },
     {
@@ -274,7 +289,7 @@
       <span class="h-line"><span>Your podcast studio,</span></span>
       <span class="h-line"><span>on <span class="gold">one Mac.</span></span></span>
     </h1>
-    <p class="hero-sub lede">Taylormade Podcast records up to four cameras and two mics at once and cuts to whoever is talking. When you stop, you get a video ready for YouTube, podcast audio, vertical clips of the moments you marked, and files you can open in Premiere Pro, Final Cut Pro or DaVinci Resolve. Free while it's in beta.</p>
+    <p class="hero-sub lede">Taylormade Podcast records up to four cameras and two mics at once and cuts to whoever is talking. When you stop, it makes the whole episode: a YouTube video with chapters, your podcast for Spotify and Apple Podcasts, reels of your best moments, a transcript, and titles and show notes drafted by AI. Free while it's in beta.</p>
     <div class="not-mac-box" role="note">
       <p><strong>Not on a Mac right now?</strong> Taylormade Podcast only runs on a Mac. Send yourself this page, or type taylormadecreative.net/podcast-app on your Mac.</p>
       <div class="row">
@@ -308,12 +323,18 @@
         <span class="slate slate--dim">WHAT IT DOES</span>
       </div>
       <div class="sheet-list">
-        <div class="sheet-row reveal"><span class="sc">01</span><div><h3>Every angle, saved</h3><p>Each camera and each mic is saved as its own file, all starting at the same moment, plus one finished show that switches between them.</p></div></div>
-        <div class="sheet-row reveal"><span class="sc">02</span><div><h3>It cuts for you</h3><p>Auto-switch follows whoever is talking. Press 1 to 4 to pick a camera yourself, or show everyone side by side.</p></div></div>
-        <div class="sheet-row reveal"><span class="sc">03</span><div><h3>Ready to post</h3><p>A video for YouTube with chapters from your list of topics, podcast audio set to the right volume, and vertical clips of the moments you marked.</p></div></div>
-        <div class="sheet-row reveal"><span class="sc">04</span><div><h3>Edit files</h3><p>Open the episode in Premiere Pro, Final Cut Pro or DaVinci Resolve with every camera and mic already lined up.</p></div></div>
-        <div class="sheet-row reveal"><span class="sc">05</span><div><h3>Run the show</h3><p>A run sheet of topics, a teleprompter, a cue card, and silent hand signals that pop up on your guest's iPhone.</p></div></div>
-        <div class="sheet-row reveal"><span class="sc">06</span><div><h3>A safety net for sound</h3><p>If a wireless mic cuts out, the app finds the gap and fills it from the Mac's own mic, so the episode doesn't go silent.</p></div></div>
+        <div class="sheet-row reveal"><span class="sc">01</span><div><h3>Reels, made for you</h3><p>Press M after a great moment, and when you stop it's a vertical clip ready for Reels, TikTok and Shorts. Recording a talking head? One click turns the take into a reel with your mistakes and long pauses cut out, three covers to pick from and a caption to post.</p><p class="req">Captions on clips and reels need macOS 26</p></div></div>
+        <div class="sheet-row reveal"><span class="sc">02</span><div><h3>Your podcast, for Spotify and Apple Podcasts</h3><p>Every episode comes with podcast audio, mixed so whoever isn't talking is turned down, and leveled to the podcast standard. Upload it to your podcast host, like Spotify for Creators, to put it on Spotify and Apple Podcasts.</p></div></div>
+        <div class="sheet-row reveal"><span class="sc">03</span><div><h3>A YouTube video, with chapters</h3><p>A finished video that cuts between your cameras, with your logo and name cards on it. Press N when you change topics and the app writes your YouTube chapters, ready to paste. Three thumbnails are one click away.</p></div></div>
+        <div class="sheet-row reveal"><span class="sc">04</span><div><h3>A transcript of every episode</h3><p>Who said what, with time stamps, as a text file and a captions file. Each mic is written out on its own, so every line has the right name. It's all done on your Mac.</p><p class="req">Needs macOS 26</p></div></div>
+        <div class="sheet-row reveal"><span class="sc">05</span><div><h3>AI built in</h3><p>Apple Intelligence reads your episode and drafts three title ideas, a description, the key points, and a caption with hashtags for every clip. It also suggests up to three clips you didn't mark. It runs on your Mac, so nothing is uploaded. Add your own ChatGPT key and it drafts scripts too.</p><p class="req">Needs macOS 26 with Apple Intelligence</p></div></div>
+        <div class="sheet-row reveal"><span class="sc">06</span><div><h3>Start and stop with your voice</h3><p>Ask Siri: “Start recording in Taylormade Podcast.” Stop, mark a clip and next topic work the same way, and in Shortcuts too. With the Taylormade Camera iPhone app (coming soon), just say “start recording.”</p></div></div>
+        <div class="sheet-row reveal"><span class="sc">07</span><div><h3>Your logo, your intro</h3><p>Add your logo, name cards for you and your guest, and your own intro and outro videos, like a logo animation. They go on your YouTube video, and each show keeps its own.</p></div></div>
+        <div class="sheet-row reveal"><span class="sc">08</span><div><h3>It cuts for you</h3><p>Auto-switch follows whoever is talking and goes wide when you both talk. Press 1 to 4 to pick a camera yourself, or show everyone side by side.</p></div></div>
+        <div class="sheet-row reveal"><span class="sc">09</span><div><h3>Scripts and a teleprompter</h3><p>Write or paste your scripts and read them off the teleprompter, which scrolls as you talk. Or record one take per script: after each take it plays back on your Mac so you can Keep, Retake or go Next, and a retake moves the bad one to the Trash.</p><p class="req">Scrolling with your voice needs macOS 26</p></div></div>
+        <div class="sheet-row reveal"><span class="sc">10</span><div><h3>Vertical shows</h3><p>Turn Camera 1 tall and the whole show switches to 9:16 for Reels and TikTok. If a camera plugged into your Mac is mounted sideways, Rotate turns it upright.</p></div></div>
+        <div class="sheet-row reveal"><span class="sc">11</span><div><h3>Sound you can trust</h3><p>Check mics has each person say a sentence and makes sure every mic hears its own person. Mics on the wrong seats get swapped for you. If a wireless mic cuts out mid-take, the Mac's own mic fills the gap.</p></div></div>
+        <div class="sheet-row reveal"><span class="sc">12</span><div><h3>Every angle, ready to edit</h3><p>Each camera and mic is saved as its own file, all lined up from the same moment, plus files that open in Premiere Pro, Final Cut Pro and DaVinci Resolve with everything in sync.</p></div></div>
       </div>
     </div>
   </section>
@@ -420,11 +441,11 @@
         </details>
         <details>
           <summary>Do I need the Taylormade Camera iPhone app?</summary>
-          <p class="a">No. Any camera you can connect to a Mac works. The free <a href="https://apps.apple.com/us/app/taylormade-camera/id6789144751">Taylormade Camera</a> app (version 2.1, coming soon to the App Store) turns iPhones into wireless cameras that each keep a full-quality copy, and shows each person their own prompter.</p>
+          <p class="a">No. Any camera you can connect to a Mac works. Any iPhone also works as a wireless camera through Continuity Camera. The free <a href="https://apps.apple.com/us/app/taylormade-camera/id6789144751">Taylormade Camera</a> app (version 2.1, coming soon to the App Store) adds more: each iPhone keeps a full-quality copy, shows its person a prompter, and lets you start, stop and mark clips from the phone, even by saying “start recording.”</p>
         </details>
         <details>
           <summary>What Mac do I need?</summary>
-          <p class="a">macOS 15 Sequoia or later, on an Apple silicon or Intel Mac. Transcripts and clip captions need macOS 26. Episode titles and show notes also need Apple Intelligence.</p>
+          <p class="a">macOS 15 Sequoia or later, on an Apple silicon or Intel Mac. Transcripts, and the captions on clips and reels, need macOS 26. The AI drafts (titles, show notes, clip captions and suggested clips) also need Apple Intelligence turned on, on a Mac that supports it.</p>
         </details>
         <details>
           <summary>Where do my recordings go?</summary>
