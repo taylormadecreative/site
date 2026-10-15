@@ -137,20 +137,34 @@ span.mu-iphone, span.mu-iphone__screen { display: block; }
 /* ============================================================
    FACTS (paper)
    ============================================================ */
-.vp-facts { background: var(--paper); color: var(--ink); padding: clamp(36px, 4.4vw, 56px) 0; overflow: hidden; }
-.vp-facts__in { display: grid; gap: 18px; grid-template-columns: minmax(0, 1fr); align-items: center; }
-@media (min-width: 900px) { .vp-facts__in { grid-template-columns: 250px minmax(0, 1fr); gap: 40px; } }
-.vp-facts__side { display: flex; align-items: center; justify-content: space-between; gap: 16px; }
-@media (min-width: 900px) { .vp-facts__side { flex-direction: column; align-items: flex-start; justify-content: center; gap: 12px; } }
-.vp-facts__stat { display: flex; align-items: baseline; gap: 12px; }
-.vp-facts__stat b { flex: none; font-family: var(--cond); font-weight: 800; font-size: clamp(38px, 3.4vw, 52px); line-height: .82; text-transform: uppercase; }
-.vp-facts__stat span { font-size: 14.5px; line-height: 1.35; color: var(--mute-on-paper); max-width: 17ch; }
-.vp-mq-toggle { flex: none; min-height: 44px; padding: 0 16px; border-radius: 999px; font-weight: 600; font-size: 14px; color: var(--ink); box-shadow: inset 0 0 0 1px color-mix(in srgb, var(--ink) 22%, transparent); }
-@media (hover: hover) and (pointer: fine) { .vp-mq-toggle:hover { box-shadow: inset 0 0 0 1.5px var(--ink); } }
-.vp-clients { --gap: 34px; --duration: 38s; min-width: 0; -webkit-mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); mask-image: linear-gradient(90deg, transparent, #000 5%, #000 95%, transparent); }
-.vp-clients li { display: flex; align-items: center; gap: var(--gap); white-space: nowrap; font-family: var(--cond); font-weight: 800; text-transform: uppercase; font-size: clamp(32px, 3.6vw, 56px); line-height: 1; letter-spacing: -.005em; color: var(--ink); }
-.vp-clients li::after { content: "/"; color: var(--gold-deep); font-weight: 700; }
-@media (max-width: 899px) { .vp-clients { margin: 0 calc(-1 * var(--g)); } }
+/* ============================================================
+   CLIENTS · a full-bleed ribbon of names between the hero and the offer
+   ============================================================ */
+.vp-cb { position: relative; display: flex; align-items: center; background: var(--paper); color: var(--ink); padding: clamp(22px, 2.6vw, 34px) 0; border-block: 1px solid var(--hair-paper); }
+.vp-cb__row {
+  --gap: clamp(26px, 2.6vw, 44px); --duration: 44s; flex: 1 1 auto; min-width: 0;
+
+}
+.vp-cb__row li {
+  display: flex; align-items: center; gap: var(--gap); white-space: nowrap;
+  font-family: var(--cond); font-weight: 800; text-transform: uppercase; font-synthesis: none;
+  font-size: clamp(34px, 3.9vw, 62px); line-height: .9; letter-spacing: -.004em; padding-top: .06em;
+}
+.vp-cb__row li::after { content: "/"; color: var(--gold-deep); font-weight: 700; transform: translateY(-.02em); }
+/* paper caps: names dissolve in from the left and out before the pause control on the right */
+.vp-cb::before, .vp-cb::after { content: ""; position: absolute; top: 0; bottom: 0; z-index: 1; pointer-events: none; }
+.vp-cb::before { left: 0; width: clamp(40px, 6vw, 96px); background: linear-gradient(90deg, var(--paper), rgba(245, 242, 234, 0)); }
+.vp-cb::after { right: 0; width: calc(var(--g) + 150px); background: linear-gradient(90deg, rgba(245, 242, 234, 0), var(--paper) 62%); }
+.vp-cb__pause { z-index: 2; position: absolute; right: var(--g); top: 50%; transform: translateY(-50%); color: var(--ink); background: var(--paper); box-shadow: inset 0 0 0 1px var(--hair-paper); }
+.vp-cb__pause:active { transform: translateY(-50%) scale(.94); }
+@media (hover: hover) and (pointer: fine) { .vp-cb__pause:hover { color: var(--gold-ink); background: var(--paper); } }
+.vp-cb :focus-visible { outline-color: var(--ink); }
+@media (max-width: 699px) {
+  .vp-cb__row li { font-size: 34px; }
+  .vp-cb__pause { width: 40px; height: 40px; }
+  .vp-cb::after { width: calc(var(--g) + 96px); }
+}
+@media (prefers-reduced-motion: reduce) { .vp-cb::before, .vp-cb::after { display: none; } .vp-cb__row { padding: 0 var(--g); } .vp-cb__row li { font-size: clamp(26px, 2.6vw, 40px); } }
 
 /* ============================================================
    THE OFFER · bento

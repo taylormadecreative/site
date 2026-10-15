@@ -545,6 +545,18 @@
     player({ el: fig, videos: vids, btn: $("[data-pause]", fig), threshold: 0.35, load: () => vids.forEach((v) => pickSrc(v)) });
   });
 
+  /* ---------- the client ribbon's pause (the marquee itself comes from home.js) ---------- */
+  $$("[data-cb-pause]").forEach((btn) => {
+    const row = $("[data-mq]", btn.closest("section"));
+    if (reduced) { btn.hidden = true; return; }
+    btn.addEventListener("click", () => {
+      const stop = !row.classList.contains("is-stopped");
+      row.classList.toggle("is-stopped", stop);
+      btn.classList.toggle("is-paused", stop);
+      btn.setAttribute("aria-label", `${stop ? "Play" : "Pause"} the moving client names`);
+    });
+  });
+
   /* ---------- theater: "Build your month" closes the film first ---------- */
   $("[data-th-month]")?.addEventListener("click", () => $("#theater")?.close());
 

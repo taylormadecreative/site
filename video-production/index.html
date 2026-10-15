@@ -31,7 +31,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&amp;family=Unbounded:wght@900&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/site.css">
   <link rel="stylesheet" href="../css/home.css?v=8">
-  <link rel="stylesheet" href="../css/video.css?v=1">
+  <link rel="stylesheet" href="../css/video.css?v=2">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PS0H5W3ZX7"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -773,19 +773,14 @@
       </div>
     </section>
 
-    <!-- CLIENTS · a scrolling bar of names (Magic UI Marquee from home.js) -->
-    <section class="vp-facts" aria-label="Clients">
-      <div class="hm-wrap vp-facts__in">
-        <div class="vp-facts__side">
-          <p class="vp-facts__stat"><b>14 yrs</b><span>Of creative direction and design</span></p>
-          <button class="vp-mq-toggle" type="button" data-mq-toggle aria-label="Pause the moving client names">Pause</button>
-        </div>
-        <div class="mq vp-clients" data-mq>
-          <ul class="mq__g">
-            <li>TONI&amp;GUY Academy</li><li>Hoodies+Stripes</li><li>It’s a Secret Med Spa</li><li>Oribe</li><li>Marviano Cosmetics</li><li>Juices &amp; Botanics</li><li>La Supreme Hair</li>
-          </ul>
-        </div>
+    <!-- CLIENTS · one scrolling ribbon of names (the marquee from home.js; its pause is ours) -->
+    <section class="vp-cb" aria-label="Clients">
+      <div class="mq vp-cb__row" data-mq>
+        <ul class="mq__g">
+          <li>TONI&amp;GUY Academy</li><li>Hoodies+Stripes</li><li>It’s a Secret Med Spa</li><li>Oribe</li><li>Marviano Cosmetics</li><li>Juices &amp; Botanics</li><li>La Supreme Hair</li>
+        </ul>
       </div>
+      <button class="vp-ctl vp-cb__pause" type="button" data-cb-pause aria-label="Pause the moving client names"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="i-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/><path class="i-play" d="M8 5v14l11-7z"/></svg></button>
     </section>
 
     <!-- THE OFFER -->
@@ -1189,6 +1184,6 @@
   <script src="../js/config.js" defer></script>
   <script src="../js/site.js" defer></script>
   <script src="../js/home.js?v=8" defer></script>
-  <script src="../js/video.js?v=1" defer></script>
+  <script src="../js/video.js?v=2" defer></script>
 </body>
 </html>
