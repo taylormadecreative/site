@@ -65,6 +65,17 @@
     <p class="slate">BOOKING · TAYLORMADE CREATIVE · DFW</p>
     <h1 class="display" style="font-size: clamp(30px, 5.4vw, 64px); margin-top: 14px;">Lock your <span class="gold">date.</span></h1>
     <p class="lede" style="color: var(--smoke); margin-top: 16px;">Real availability, straight from my production calendar. Sessions confirm instantly with online payment; custom projects get a personal quote within one business day.</p>
+    <script>
+      // arriving from a website page: the same form, framed as the quote it is
+      (function () {
+        var q = new URLSearchParams(location.search);
+        if (q.get("service") !== "web-design" || q.get("type") === "app") return;
+        var app = document.getElementById("bookApp");
+        app.querySelector("h1").innerHTML = 'Get your website <span class="gold">quote.</span>';
+        app.querySelector(".lede").textContent = "Tell me about the business and what the site has to do. You get the scope, the price and the timeline within one business day, before any deposit. A preferred date is optional.";
+        document.title = "Get a Website Quote — Taylormade Creative";
+      })();
+    </script>
 
     <div class="book-steps" id="bookSteps" aria-hidden="true">
       <span data-step="1" class="on">1 · Service</span>

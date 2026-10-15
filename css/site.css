@@ -651,3 +651,6 @@ a.quote:hover { transform: translateY(-3px); border-color: var(--gold-deep); }
   .nav-links { gap: 14px; }
   .nav-links .btn { padding: 10px 16px; }
 }
+
+/* the burger is a full 44px target */
+.nav-burger { min-width: 44px; min-height: 44px; align-items: center; justify-content: center; }

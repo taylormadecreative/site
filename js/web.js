@@ -36,6 +36,7 @@
   const TAB_NAMES = ["About Me", "Tab + Chance", "Body Mist", "Donna's Recipe", "Books", "Clearance Merch", "Tab Time", "Events"];
   const tabSet = (base, kind, n, sizes) => {
     if (kind === "d") return { src: `${base}tab-d-${n}-720.webp`, srcset: `${base}tab-d-${n}-720.webp 720w, ${base}tab-d-${n}.webp 1280w`, sizes, alt: `Tabitha Brown website: the ${TAB_NAMES[n]} page` };
+    if (kind === "m") return { src: `${base}tab-m-${n}.webp`, srcset: `${base}tab-m-${n}-240.webp 240w, ${base}tab-m-${n}.webp 400w`, sizes };
     return { src: `${base}tab-${kind}-${n}.webp` };
   };
   const baseOf = (img) => (img.getAttribute("src") || "").replace(/tab-[dtm]-\d+(-720)?\.webp.*$/, "");
@@ -46,15 +47,18 @@
     const screens = { d: $('[data-screen="d"]', stage), t: $('[data-screen="t"]', stage), m: $('[data-screen="m"]', stage) };
     const base = baseOf($("img", screens.d));
     const sizes = $("img", screens.d).getAttribute("sizes");
+    const mSizes = $("img", screens.m).getAttribute("sizes");
     const pills = $$(".hm-pill", stage);
     const pauseBtn = $("[data-stage-pause]", stage);
     const nameEl = $("[data-stage-name]", stage);
     const DUR = 3800;
+    const padOn = matchMedia("(min-width: 700px)");   // the iPad shows from 700px; phones never fetch its pictures
+    const kinds = () => (padOn.matches ? ["d", "t", "m"] : ["d", "m"]);
     let cur = 0, playing = !reduced, acc = 0, t0 = 0, ticking = false, busy = false;
     const holds = new Set(["intro", "offscreen"]);
     const running = () => playing && !holds.size;
     const elapsed = () => acc + (running() ? performance.now() - t0 : 0);
-    const preload = (n) => ["d", "t", "m"].forEach((k) => { const s = tabSet(base, k, n, sizes); const im = new Image(); if (s.srcset) { im.sizes = sizes; im.srcset = s.srcset; } im.src = s.src; });
+    const preload = (n) => kinds().forEach((k) => { const s = tabSet(base, k, n, k === "m" ? mSizes : sizes); const im = new Image(); if (s.srcset) { im.sizes = s.sizes; im.srcset = s.srcset; } im.src = s.src; });
     const ui = () => {
       stage.classList.toggle("is-paused", !playing);
       pauseBtn.innerHTML = playing ? ICON_PAUSE : ICON_PLAY;
@@ -70,7 +74,7 @@
       nameEl.textContent = TAB_NAMES[n];
       nameEl.classList.remove("is-swap"); void nameEl.offsetWidth; nameEl.classList.add("is-swap");
       // the laptop first, then the iPad, then the phone: a wave across the line-up
-      ["d", "t", "m"].forEach((k, i) => setTimeout(() => swapLayer(screens[k], tabSet(base, k, n, sizes)), reduced ? 0 : i * 120));
+      kinds().forEach((k, i) => setTimeout(() => swapLayer(screens[k], tabSet(base, k, n, k === "m" ? mSizes : sizes)), reduced ? 0 : i * 120));
       preload((n + 1) % TAB_NAMES.length);
       acc = 0; t0 = performance.now();
       ui(); tick();
@@ -94,6 +98,14 @@
       if (k === undefined) return;
       e.preventDefault(); go(k, true); pills[cur].focus();
     });
+    // the screenshots carry Tabitha's own arrows: the laptop screen answers them
+    screens.d.addEventListener("click", (e) => {
+      const r = screens.d.getBoundingClientRect();
+      go(e.clientX < r.left + r.width / 2 ? cur - 1 : cur + 1, true);
+      track("web_hero_slide", { slide: TAB_NAMES[cur], how: "screen" });
+    });
+    // a window widened past 700px: the iPad catches up with the slide on screen
+    padOn.addEventListener?.("change", () => { if (padOn.matches) swapLayer(screens.t, tabSet(base, "t", cur)); });
     pauseBtn.addEventListener("click", () => { playing = !playing; if (playing) { acc = 0; t0 = performance.now(); } ui(); if (playing) tick(); });
     new IntersectionObserver(([e]) => (e.isIntersecting ? release("offscreen") : hold("offscreen")), { threshold: 0.25 }).observe(stage);
     document.addEventListener("visibilitychange", () => (document.hidden ? hold("tabhidden") : release("tabhidden")));
@@ -132,7 +144,7 @@
     const mStage = $(".wd-morph__stage", mTrack);
     const steps = $$(".wd-morph__steps li", mTrack);
     const pxEl = $("[data-px]", mTrack);
-    const mq = matchMedia("(min-width: 1000px) and (min-height: 640px)");
+    const mq = matchMedia("(min-width: 1000px) and (min-height: 600px)");
     let live = false, geo = null, mTick = false, lastStep = -1;
     const BAR = 30;
     const measure = () => {
@@ -158,9 +170,10 @@
       dev.style.setProperty("--bar", `${bar.toFixed(1)}px`);
       dev.style.setProperty("--barO", clamp(1 - e1 * 2.2).toFixed(3));
       dev.style.setProperty("--sr", e1 < 0.05 ? `0 0 ${sr}px ${sr}px` : `${sr.toFixed(1)}px`);
-      const oT = clamp((e1 - 0.3) / 0.35) * (1 - clamp((e2 - 0.3) / 0.35));
-      const oM = clamp((e2 - 0.3) / 0.35);
-      dev.style.setProperty("--oD", (1 - clamp((e1 - 0.3) / 0.35)).toFixed(3));
+      // each layout hands over in a short window, so two layouts are never on screen together for long
+      const fT = clamp((e1 - 0.42) / 0.16), fM = clamp((e2 - 0.42) / 0.16);
+      const oT = fT * (1 - fM), oM = fM;
+      dev.style.setProperty("--oD", (1 - fT).toFixed(3));
       dev.style.setProperty("--oT", oT.toFixed(3));
       dev.style.setProperty("--oM", oM.toFixed(3));
       dev.style.setProperty("--isl", clamp((e2 - 0.55) / 0.3).toFixed(3));
@@ -199,10 +212,8 @@
     let dTick = false;
     const paintRise = () => {
       dTick = false;
-      near.forEach((d) => {
-        const r = d.getBoundingClientRect();
-        d.style.setProperty("--e", clamp((innerHeight - r.top) / (innerHeight * 0.6)).toFixed(3));
-      });
+      const list = [...near], tops = list.map((d) => d.getBoundingClientRect().top);
+      list.forEach((d, i) => d.style.setProperty("--e", clamp((innerHeight - tops[i]) / (innerHeight * 0.6)).toFixed(3)));
     };
     if (!reduced) {
       // a case already scrolled past (a jump to #pricing, a reload mid-page) stays fully in place
@@ -220,54 +231,101 @@
       requestAnimationFrame(paintRise);
     }
 
-    // the site plays: down slowly, a beat, back up, a beat; the browser and the phone together
+    // the site plays: down slowly, a beat, back up; the browser and the phone together.
+    // Two passes, then it rests (the button plays it again). The pointer over a screen holds it.
     // layout sizes, not the on-screen box: the browser is tilted while it rises in
     const travel = (img) => Math.max(0, img.offsetHeight - img.parentElement.clientHeight);
     const moveTo = (img, y, ms) => { img.style.setProperty("--dur", `${ms}ms`); img.style.setProperty("--y", `${-y}px`); };
+    const nowY = (img) => -new DOMMatrix(getComputedStyle(img).transform).m42;
+    const PASSES = 2;
     function player(d) {
       const shots = $$(".mu-scroll", d);
       const slides = d.dataset.slides ? d.dataset.slides.split(",").map(Number) : null;
-      let timer = 0, on = false, phase = 0, si = 0;
-      // leaving the screen: back to the top, so a return starts the pass from the beginning
-      const stop = () => { if (!on) return; on = false; clearTimeout(timer); phase = 0; shots.forEach((im) => moveTo(im, 0, 600)); };
+      const btn = $("[data-duo-ctl]", d);
+      const name = btn.getAttribute("aria-label").replace(/^Pause the (.*) preview$/, "$1");
+      let timer = 0, running = false, mode = "down", si = 0, passes = 0, steps = 0, userPaused = reduced, visible = false;
+      const holds = new Set();
+      const done = () => passes >= PASSES;
+      const playing = () => !userPaused && !done();
+      const ui = () => {
+        const p = playing();
+        btn.innerHTML = p ? ICON_PAUSE : ICON_PLAY;
+        btn.setAttribute("aria-label", `${p ? "Pause" : "Play"} the ${name} preview`);
+      };
+      const halt = (home) => {
+        running = false; clearTimeout(timer);
+        if (home) { mode = "down"; shots.forEach((im) => moveTo(im, 0, 600)); }
+        else shots.forEach((im) => moveTo(im, nowY(im), 0));
+      };
       const stepScroll = () => {
-        if (!on) return;
-        if (phase === 0) {
-          const far = Math.max(...shots.map(travel));
-          const ms = clamp(far * 3.2, 7000, 14000);
+        if (!running) return;
+        if (mode === "down") {
+          const far = Math.max(...shots.map(travel)) * 0.92;
+          const left = 1 - clamp(nowY(shots[0]) / Math.max(1, travel(shots[0]) * 0.92));
+          const ms = Math.max(400, clamp(far * 3.2, 7000, 14000) * left);
           shots.forEach((im) => moveTo(im, travel(im) * 0.92, ms));
-          phase = 1; timer = setTimeout(stepScroll, ms + 1600);
+          timer = setTimeout(() => { mode = "up"; stepScroll(); }, ms + 1600);
         } else {
           shots.forEach((im) => moveTo(im, 0, 1700));
-          phase = 0; timer = setTimeout(stepScroll, 1700 + 1100);
+          timer = setTimeout(() => { mode = "down"; passes++; if (done()) { running = false; ui(); } else stepScroll(); }, 1700 + 1100);
         }
       };
       const stepSlides = () => {
-        if (!on) return;
-        si = (si + 1) % slides.length;
-        const n = slides[si];
-        const [bScreen, pScreen] = $$(".wd-screen", d);
-        const bImg = $("img", bScreen);
-        const base = baseOf(bImg);
-        swapLayer(bScreen, tabSet(base, "d", n, bImg.getAttribute("sizes")));
-        setTimeout(() => swapLayer(pScreen, tabSet(base, "m", n)), 140);
-        timer = setTimeout(stepSlides, 2900);
+        timer = setTimeout(() => {
+          if (!running) return;
+          si = (si + 1) % slides.length; steps++;
+          const n = slides[si];
+          const [bScreen, pScreen] = $$(".wd-screen", d);
+          const bImg = $("img", bScreen);
+          const base = baseOf(bImg);
+          swapLayer(bScreen, tabSet(base, "d", n, bImg.getAttribute("sizes")));
+          setTimeout(() => swapLayer(pScreen, tabSet(base, "m", n, $("img", pScreen).getAttribute("sizes"))), 140);
+          if (steps >= slides.length * PASSES) { passes = PASSES; running = false; ui(); return; }
+          stepSlides();
+        }, 2900);
       };
-      const start = () => { if (on || reduced) return; on = true; timer = setTimeout(slides ? stepSlides : stepScroll, slides ? 2200 : 700); };
-      return { start, stop };
+      const run = () => {
+        ui();
+        if (running || !visible || holds.size || document.hidden || !playing()) return;
+        running = true;
+        if (slides) stepSlides(); else timer = setTimeout(stepScroll, 500);
+      };
+      btn.addEventListener("click", () => {
+        if (playing()) { userPaused = true; halt(false); }
+        else { userPaused = false; if (done()) { passes = 0; steps = 0; } }
+        run();
+        track("web_case_preview", { site: name, action: userPaused ? "pause" : "play" });
+      });
+      if (!slides) $$(".wd-duo__browser, .wd-duo__phone", d).forEach((el) => {
+        el.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") { holds.add("hover"); if (running) halt(false); } });
+        el.addEventListener("pointerleave", () => { if (holds.delete("hover")) run(); });
+      });
+      ui();
+      return {
+        enter() { visible = true; run(); },
+        leave() { visible = false; halt(true); if (!userPaused) { passes = 0; steps = 0; } ui(); },
+        tab() { if (document.hidden) { if (running) halt(false); } else run(); },
+      };
     }
     const players = new Map(duos.map((d) => [d, player(d)]));
     const playIO = new IntersectionObserver((es) => es.forEach((en) => {
       const pl = players.get(en.target);
-      en.isIntersecting && !document.hidden ? pl.start() : pl.stop();
+      en.isIntersecting ? pl.enter() : pl.leave();
     }), { threshold: 0.45 });
     duos.forEach((d) => playIO.observe(d));
-    document.addEventListener("visibilitychange", () => { if (document.hidden) players.forEach((pl) => pl.stop()); });
+    // back from another tab: whatever is on screen picks up again
+    document.addEventListener("visibilitychange", () => players.forEach((pl) => pl.tab()));
   }
 
-  /* ---------- BENTO · the parts move only while on screen ---------- */
+  /* ---------- BENTO · each part plays once when it comes into view; the pointer on a card plays it again ---------- */
   const bento = $("[data-bento]");
-  if (bento && !reduced) new IntersectionObserver(([e]) => bento.classList.toggle("is-play", e.isIntersecting), { threshold: 0.15 }).observe(bento);
+  if (bento && !reduced) {
+    new IntersectionObserver(([e]) => bento.classList.toggle("is-play", e.isIntersecting), { threshold: 0.3 }).observe(bento);
+    $$(".wd-b", bento).forEach((card) => card.addEventListener("pointerenter", (e) => {
+      if (e.pointerType !== "mouse" || !bento.classList.contains("is-play") || !card.getAnimations) return;
+      card.getAnimations({ subtree: true }).forEach((a) => { if (a.playState === "finished") { a.cancel(); a.play(); } });
+    }));
+  }
 
   /* ---------- PLATFORMS · segmented control (tabs) ---------- */
   const plat = $("[data-plat]");
