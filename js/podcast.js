@@ -1,5 +1,8 @@
 /* TAYLORMADE PODCAST · the Mac app's page
-   The live examples, all from one real take recorded with the app ("Tonight at 7"):
+   The live examples come from two real takes recorded with the app: Nelson's solo promo
+   ("Tonight at 7") and Auntie PB's first episode (two people, two cameras). For Auntie PB:
+   the finished video with a cut strip that follows it, and the two cameras lit by the
+   app's real cuts. For "Tonight at 7":
    clips that play only while on screen, the podcast audio with its waveform, the
    transcript lighting up word by word, the voice steps, the prompter, the 16:9 to 9:16
    turn and the camera switch. Plus the download counter, the beta's version from
@@ -21,12 +24,18 @@
     }, { threshold: 0.35 }).observe(el);
   };
 
+  /* big screens with sharp displays get the 1080p cut of the episode video */
+  if (matchMedia("(min-width: 1000px) and (min-resolution: 1.5dppx)").matches) {
+    $$("video[data-src-hd]").forEach((v) => { v.dataset.src = v.dataset.srcHd; });
+  }
+
   /* ---------- clips: muted loops that load and play only while on screen ---------- */
   $$("[data-play]").forEach((box) => {
     const v = $("video", box);
     if (!v || reduced || saveData) return;
     new IntersectionObserver(([e]) => {
       if (e.isIntersecting) {
+        if (box.dataset.held) return;
         if (!v.getAttribute("src")) { v.src = v.dataset.src; v.load(); }
         v.play().catch(() => {});
       } else if (!v.paused) v.pause();
@@ -159,8 +168,82 @@
     });
   }
 
+  /* ---------- Auntie PB: the strip that follows the episode video ----------
+     13 seconds of the episode; its blocks are the app's real cuts. The playhead and the
+     lit block follow the video's own clock; a click on a block jumps the video there. */
+  $$("[data-zoom]").forEach((z) => {
+    const v = $(z.dataset.zoom);
+    if (!v) return;
+    const len = +z.dataset.len;
+    const blocks = $$(".pa-cuts__b", z);
+    let raf = 0;
+    const paint = () => {
+      const t = Math.min(v.currentTime, len - 0.001);
+      z.style.setProperty("--t", (t / len).toFixed(4));
+      const on = blocks.find((b) => t >= +b.dataset.s && t < +b.dataset.e) || blocks[0];
+      blocks.forEach((b) => b.classList.toggle("on", b === on));
+      if (!v.paused) raf = requestAnimationFrame(paint);
+    };
+    v.addEventListener("play", () => { cancelAnimationFrame(raf); paint(); });
+    v.addEventListener("seeked", paint);
+    v.addEventListener("pause", () => cancelAnimationFrame(raf));
+    blocks.forEach((b) => b.addEventListener("click", () => {
+      if (!v.getAttribute("src")) { v.src = v.dataset.src; v.load(); }
+      v.currentTime = +b.dataset.s + 0.02;
+      paint();
+    }));
+    paint();
+  });
+
+  /* the episode video's controls: pause / play, and "Hear it" (sound on starts it from the top) */
+  $$(".pa-ep__film").forEach((fig) => {
+    const v = $("video", fig);
+    const pause = $("[data-pause]", fig);
+    const sound = $("[data-sound]", fig);
+    const load = () => { if (!v.getAttribute("src")) { v.src = v.dataset.src; v.load(); } };
+    const sync = () => {
+      pause.classList.toggle("is-paused", v.paused);
+      $(".sr-only", pause).textContent = v.paused ? "Play the video" : "Pause the video";
+      sound.classList.toggle("is-on", !v.muted);
+      $(".pa-ep__btn-t", sound).textContent = v.muted ? "Hear it" : "Mute";
+    };
+    // a visitor's pause sticks: scrolling back doesn't restart it
+    pause.addEventListener("click", () => {
+      load();
+      if (v.paused) { fig.dataset.held = ""; delete fig.dataset.held; v.play().catch(() => {}); }
+      else { fig.dataset.held = "1"; v.pause(); }
+    });
+    sound.addEventListener("click", () => {
+      load();
+      v.muted = !v.muted;
+      if (!v.muted) { delete fig.dataset.held; v.currentTime = 0; v.play().catch(() => {}); }
+      sync();
+    });
+    ["play", "pause", "volumechange"].forEach((e) => v.addEventListener(e, sync));
+    sync();
+  });
+
+  /* ---------- 08 auto-switch, two-person: the camera on the show follows the app's real cuts ---------- */
+  const live = $("[data-cams][data-cuts]");
+  if (live) {
+    const cuts = live.dataset.cuts.split(",").map((p) => { const [t, cam] = p.split(":"); return [+t, cam]; });
+    const figs = $$("figure", live);
+    const [a, b] = figs.map((f) => $("video", f));
+    let raf = 0;
+    const paint = () => {
+      const t = a.currentTime;
+      let cam = cuts[0][1];
+      for (const [at, c] of cuts) if (t >= at) cam = c;
+      figs.forEach((f) => f.classList.toggle("is-air", f.dataset.cam === cam));
+      if (!b.paused && Math.abs(b.currentTime - t) > 0.12) b.currentTime = t;
+      if (!a.paused) raf = requestAnimationFrame(paint);
+    };
+    a.addEventListener("play", () => { cancelAnimationFrame(raf); paint(); });
+    a.addEventListener("pause", () => cancelAnimationFrame(raf));
+  }
+
   /* ---------- 08 auto-switch: the show cuts between the angles ---------- */
-  const cams = $("[data-cams]");
+  const cams = $("[data-cams]:not([data-cuts])");
   if (cams) {
     const tiles = $$("figure", cams);
     let i = 0;
