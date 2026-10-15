@@ -580,7 +580,7 @@
         TM.rpc("bk_public_services", {}),
         TM.rpc("bk_public_addons", {}).catch(() => []),
       ]);
-      // studio rentals moved to Jenel Studios (studio.taylormadecreative.net)
+      // studio rentals moved to Jenel Studios (jenelstudios.com)
       state.services = services.filter((s) => !s.slug.startsWith("studio-"));
       state.addons = addons;
       const params = new URLSearchParams(location.search);

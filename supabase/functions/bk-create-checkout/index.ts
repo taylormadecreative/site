@@ -37,6 +37,8 @@ function json(body: unknown, status = 200): Response {
 
 const SITE_BASE = "https://book.taylormadecreative.net";
 const ALLOWED_RETURN_PREFIXES = [
+  "https://jenelstudios.com/",
+  "https://www.jenelstudios.com/",
   "https://studio.taylormadecreative.net/",
   "https://www.taylormadecreative.net/",
   "https://taylormadecreative.net/",
