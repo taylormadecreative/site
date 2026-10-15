@@ -266,13 +266,13 @@
 .wd-build { padding: clamp(96px, 12vw, 176px) 0; }
 .wd-bento { display: grid; grid-template-columns: minmax(0, 1fr); gap: 16px; }
 @media (min-width: 760px) { .wd-bento { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
-@media (min-width: 1100px) {
+@media (min-width: 1000px) {
   .wd-bento { grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 20px; }
   .wd-b--book { grid-column: span 4; grid-row: span 1; }
   .wd-b--play { grid-column: span 2; }
   .wd-b--dash, .wd-b--store, .wd-b--seo { grid-column: span 2; }
 }
-@media (min-width: 760px) and (max-width: 1099px) { .wd-b--book { grid-column: span 2; } }
+@media (min-width: 760px) and (max-width: 999px) { .wd-b--book { grid-column: span 2; } }
 .wd-b {
   position: relative; display: grid; grid-template-rows: auto 1fr; gap: 26px; overflow: hidden;
   padding: clamp(22px, 2.2vw, 32px); border-radius: 24px; background: var(--ink-2); box-shadow: inset 0 0 0 1px var(--hair-ink);
@@ -285,7 +285,7 @@
 
 /* booking: a day, a time, then Booked */
 .wd-b--book { grid-template-columns: minmax(0, 1fr); }
-@media (min-width: 1100px) { .wd-b--book { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); grid-template-rows: 1fr; align-items: center; } }
+@media (min-width: 1000px) { .wd-b--book { grid-template-columns: minmax(0, 1.25fr) minmax(0, 1fr); grid-template-rows: 1fr; align-items: center; } }
 .wd-cal { display: grid; gap: 12px; }
 .wd-cal__head { display: flex; justify-content: space-between; align-items: baseline; }
 .wd-cal__head b { font-weight: 700; font-size: 15px; }
@@ -594,46 +594,58 @@ html:not(.js) .wd-plat__panel[hidden] { display: grid; }
 @media (prefers-reduced-motion: reduce) { .wd-duo__ctl { display: none; } }
 
 /* ============================================================
-   THE WORK · one stage, six sites (Apple-style: pick one on the left,
-   the devices on the right switch to it; auto-advances until touched)
+   THE WORK · one stage, six sites. The names are a fixed list and every
+   write-up shares one slot as tall as the longest, so switching sites
+   (by hand or by the tour) never moves anything else on the page.
    ============================================================ */
-.wd-show { display: grid; grid-template-columns: minmax(0, 1fr); gap: 28px; margin-top: clamp(28px, 3vw, 48px); }
-@media (min-width: 1000px) { .wd-show { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(40px, 5vw, 96px); align-items: center; } }
-.wd-show__list { border-top: 1px solid var(--hair-ink); }
-.wd-show__item { border-bottom: 1px solid var(--hair-ink); }
-.wd-show__h { margin: 0; }
+.wd-show { display: grid; grid-template-columns: minmax(0, 1fr); gap: 24px; margin-top: clamp(28px, 3vw, 48px); }
+@media (min-width: 1000px) { .wd-show { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); gap: clamp(40px, 5vw, 96px); align-items: start; } }
+.wd-show__tabs { border-top: 1px solid var(--hair-ink); }
 .wd-show__btn {
   position: relative; display: grid; grid-template-columns: 34px minmax(0, 1fr) auto; align-items: baseline; column-gap: 12px;
-  width: 100%; min-height: 60px; padding: 16px 0 15px; text-align: left; color: var(--mute-on-ink); -webkit-tap-highlight-color: transparent;
-  transition: color .25s ease;
+  width: 100%; min-height: 56px; padding: 14px 0 13px; border-bottom: 1px solid var(--hair-ink); text-align: left; color: var(--mute-on-ink);
+  -webkit-tap-highlight-color: transparent; transition: color .25s ease;
 }
 .wd-show__btn b { font-family: var(--cond); font-weight: 700; font-size: 22px; line-height: 1; color: var(--gold); opacity: .6; transition: opacity .25s ease; }
-.wd-show__n { font-family: var(--cond); font-weight: 800; font-size: clamp(28px, 2.5vw, 40px); line-height: .95; text-transform: uppercase; letter-spacing: .005em; }
-.wd-show__k { font-weight: 600; font-size: 12.5px; letter-spacing: .06em; text-transform: uppercase; text-align: right; color: var(--mute-on-ink); }
-.wd-show__item.is-on .wd-show__btn { color: var(--paper); }
-.wd-show__item.is-on .wd-show__btn b { opacity: 1; }
-@media (hover: hover) and (pointer: fine) { .wd-show__item:not(.is-on) .wd-show__btn:hover { color: var(--paper); } }
+.wd-show__n { font-family: var(--cond); font-weight: 800; font-size: clamp(26px, 2.3vw, 36px); line-height: .95; text-transform: uppercase; letter-spacing: .005em; }
+.wd-show__k { font-weight: 600; font-size: 12px; letter-spacing: .06em; text-transform: uppercase; text-align: right; color: var(--mute-on-ink); }
+.wd-show__btn.is-on { color: var(--paper); }
+.wd-show__btn.is-on b { opacity: 1; }
+@media (hover: hover) and (pointer: fine) { .wd-show__btn:not(.is-on):hover { color: var(--paper); } }
 .wd-show__btn:focus-visible { outline: 2px solid var(--gold); outline-offset: 2px; }
-/* the bar under the open site fills while it plays, like Apple's feature lists */
-.wd-show__bar { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; background: transparent; overflow: hidden; }
-.wd-show__item.is-on .wd-show__bar::after { content: ""; position: absolute; inset: 0; background: var(--gold); transform-origin: 0 50%; transform: scaleX(var(--p, 0)); }
-.wd-show.is-held .wd-show__item.is-on .wd-show__bar::after { transform: scaleX(1); opacity: .5; }
-.wd-show__body { padding: 0 0 26px 46px; }
-.wd-show__body[hidden] { display: none; }
-.wd-show__item.is-on .wd-show__body { animation: hm-fade .45s var(--ease-out) both; }
+/* the bar under the open site fills while the tour runs */
+.wd-show__bar { position: absolute; left: 0; right: 0; bottom: -1px; height: 2px; overflow: hidden; }
+.wd-show__btn.is-on .wd-show__bar::after { content: ""; position: absolute; inset: 0; background: var(--gold); transform-origin: 0 50%; transform: scaleX(var(--p, 0)); }
+.wd-show.is-held .wd-show__btn.is-on .wd-show__bar::after { transform: scaleX(1); opacity: .5; }
+.wd-show__slot { display: grid; margin-top: 24px; }
+.wd-show__body { grid-area: 1 / 1; visibility: hidden; opacity: 0; transform: translateY(6px); transition: opacity .35s ease, transform .45s var(--ease-out), visibility 0s linear .35s; }
+.wd-show__body.is-on { visibility: visible; opacity: 1; transform: none; transition: opacity .35s ease .05s, transform .45s var(--ease-out) .05s, visibility 0s; }
+.wd-show__t { position: absolute; width: 1px; height: 1px; overflow: hidden; clip: rect(0 0 0 0); white-space: nowrap; }
 .wd-show__body .wd-case__built { margin-top: 0; }
-.wd-show__body .wd-case__tags { margin: 18px 0 14px; }
+.wd-show__body .wd-case__tags { margin: 16px 0 12px; }
 .wd-show__panel { display: none; }
 .wd-show__panel.is-on { display: block; animation: wd-panel-in .6s var(--ease-out) both; }
 @keyframes wd-panel-in { from { opacity: 0; transform: translateY(10px) scale(.985); } to { opacity: 1; transform: none; } }
-/* phones: the devices stay in view at the top while the list scrolls under them */
+html:not(.js) .wd-show__body { grid-area: auto; visibility: visible; opacity: 1; transform: none; margin-bottom: 28px; }
+/* phones and tablets: the devices, a row of names to swipe, then the write-up */
 @media (max-width: 999px) {
-  .wd-show__media { order: -1; position: sticky; top: var(--nav-h); z-index: 3; margin: 0 calc(-1 * var(--g)); padding: 10px var(--g) 16px; background: var(--ink); }
-  .wd-show__body { padding-left: 46px; }
-  .wd-show__k { display: none; }
-  .wd-show__btn { grid-template-columns: 34px minmax(0, 1fr); }
+  .wd-show { display: flex; flex-direction: column; }
+  .wd-show__media { order: -1; }
+  .wd-show__tabs {
+    display: flex; gap: 8px; border: 0; overflow-x: auto; overscroll-behavior-x: contain; scrollbar-width: none;
+    margin: 0 calc(-1 * var(--g)); padding: 2px var(--g) 4px; scroll-padding-inline: var(--g); scroll-snap-type: x proximity;
+  }
+  .wd-show__tabs::-webkit-scrollbar { display: none; }
+  .wd-show__btn {
+    display: inline-flex; align-items: center; flex: none; width: auto; min-height: 44px; padding: 0 16px; border: 1px solid var(--hair-ink); border-radius: 999px;
+    scroll-snap-align: start; color: var(--soft-on-ink);
+  }
+  .wd-show__btn b, .wd-show__k, .wd-show__bar { display: none; }
+  .wd-show__n { font-family: var(--body); font-weight: 700; font-size: 15px; text-transform: none; letter-spacing: 0; }
+  .wd-show__btn.is-on { background: var(--paper); border-color: var(--paper); color: var(--ink); }
+  .wd-show__slot { margin-top: 18px; }
 }
-@media (prefers-reduced-motion: reduce) { .wd-show__panel.is-on, .wd-show__item.is-on .wd-show__body { animation: none; } }
+@media (prefers-reduced-motion: reduce) { .wd-show__panel.is-on { animation: none; } .wd-show__body, .wd-show__body.is-on { transition: none; transform: none; } }
 
 /* ---------- MORE SITES · one row you can swipe ---------- */
 .wd-more { padding: clamp(40px, 5vw, 72px) 0 clamp(72px, 9vw, 128px); }
@@ -697,7 +709,7 @@ html:not(.js) .wd-pick__b[aria-selected="true"] { background: #fbf9f4; color: va
 @media (prefers-reduced-motion: reduce) { .wd-show__pause { display: none; } }
 
 /* every screen: a shorter pin now that it closes the page's proof */
-.wd-morph__track.is-live { height: 220vh; }
+.wd-morph__track.is-live { height: 190vh; }
 
 /* links in the feature captions open that site in The work */
 .wd-b p a { color: var(--paper); text-decoration: underline; text-decoration-color: rgba(233, 185, 73, .55); text-underline-offset: 3px; }
@@ -739,3 +751,60 @@ html:not(.js) .wd-pick__b[aria-selected="true"] { background: #fbf9f4; color: va
 
 /* no script: every featured site, one after another */
 html:not(.js) .wd-show__panel { display: block; margin-bottom: 40px; }
+
+/* art-director round 2: the gallery's devices ride beside the list; phones keep them in the flow */
+@media (min-width: 1000px) {
+  .wd-show { align-items: start; }
+  .wd-show__media { position: sticky; top: calc(var(--nav-h) + 32px); }
+}
+@media (max-width: 999px) { .wd-show__media { position: static; margin: 0; padding: 0 0 8px; background: none; } }
+/* one control for everything that moves in the gallery */
+.wd-show .wd-duo__ctl { display: none; }
+/* more sites on paper: the page alternates light and dark all the way down */
+.wd-more { background: var(--paper); color: var(--ink); }
+.wd-more :focus-visible { outline-color: var(--ink); }
+.wd-more__h { color: var(--ink); }
+.wd-more__bar p { color: var(--mute-on-paper); }
+.wd-more .wd-tile { color: var(--ink); }
+.wd-more .wd-tile__m { color: var(--mute-on-paper); }
+.wd-more .wd-tile__m em, .wd-more .wd-tile__t i { color: var(--gold-ink); }
+.wd-more .wd-tile__win { box-shadow: 0 22px 40px -26px rgba(8, 8, 10, .45); }
+.wd-more .hm-round { border-color: var(--hair-paper); color: var(--ink); }
+@media (hover: hover) and (pointer: fine) { .wd-more .wd-tile:hover .wd-tile__t { color: var(--gold-ink); } .wd-more .hm-round:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); } }
+/* the hero chips land on the cards, not the section's top padding */
+.wd-pick { scroll-margin-top: calc(var(--nav-h) + 24px); }
+/* small phones: the platform illustrations step aside; real-site proofs stay */
+@media (max-width: 640px) { .wd-plat__vis:not(:has(.wd-plat__proof)) { display: none; } }
+
+.wd-show__media { scroll-margin-top: calc(var(--nav-h) + 8px); }
+
+/* UX round 2 */
+.wd-plat__panel { scroll-margin-top: calc(var(--nav-h) + 16px); }
+/* phones: feature cards lead with their name; the demo is a smaller picture under it */
+@media (max-width: 759px) {
+  .wd-bento > .wd-b { grid-template-rows: auto auto; align-content: start; gap: 16px; }
+  .wd-bento > .wd-b .wd-b__txt { order: -1; }
+  .wd-bento > .wd-b .wd-demo { min-height: 0; }
+  .wd-bento .wd-cal__grid i { height: 24px; font-size: 12px; }
+  .wd-bento .wd-cal { gap: 9px; }
+  .wd-bento .wd-store__card { width: min(150px, 60%); }
+  .wd-bento .wd-dash__list li:nth-child(3) { display: none; }
+}
+/* phones: the morph repeats what the hero and the work already show, so it steps aside */
+@media (max-width: 699px) { .wd-morph { display: none; } }
+/* phones: the four steps as a compact numbered list */
+@media (max-width: 699px) {
+  .wd .hm-steps { gap: 0; }
+  .wd .hm-steps li { display: grid; grid-template-columns: 44px minmax(0, 1fr); column-gap: 10px; padding: 16px 0 18px; }
+  .wd .hm-steps b { grid-row: 1 / 3; font-size: 40px; }
+  .wd .hm-steps h3 { margin-top: 2px; font-size: 24px; }
+  .wd .hm-steps p { margin-top: 6px; font-size: 15px; }
+}
+
+/* small phones: the platform chips in one row you can swipe */
+@media (max-width: 399px) {
+  .wd-where { flex-wrap: nowrap; justify-content: flex-start; overflow-x: auto; scrollbar-width: none; margin-inline: calc(-1 * var(--g)); padding-inline: var(--g); }
+  .wd-where::-webkit-scrollbar { display: none; }
+  .wd-where__q { flex: none; flex-basis: auto; margin: 0 4px 0 0; white-space: nowrap; }
+  .wd-where a { flex: none; }
+}

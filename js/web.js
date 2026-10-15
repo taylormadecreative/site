@@ -207,6 +207,7 @@
 
   /* ---------- CASES · rise in with the scroll, then play the real site ---------- */
   const duos = $$("[data-duo]");
+  const duoPlayers = new Map();
   if (duos.length) {
     const near = new Set();
     let dTick = false;
@@ -302,12 +303,14 @@
       });
       ui();
       return {
+        setPaused(v) { userPaused = v || reduced; if (userPaused) { if (running) halt(false); } else if (done()) { passes = 0; steps = 0; } run(); },
         enter() { visible = true; run(); },
         leave() { visible = false; halt(true); if (!userPaused) { passes = 0; steps = 0; } ui(); },
         tab() { if (document.hidden) { if (running) halt(false); } else run(); },
       };
     }
-    const players = new Map(duos.map((d) => [d, player(d)]));
+    const players = duoPlayers;
+    duos.forEach((d) => players.set(d, player(d)));
     const playIO = new IntersectionObserver((es) => es.forEach((en) => {
       const pl = players.get(en.target);
       en.isIntersecting ? pl.enter() : pl.leave();
@@ -317,30 +320,27 @@
     document.addEventListener("visibilitychange", () => players.forEach((pl) => pl.tab()));
   }
 
-  /* ---------- THE WORK · one stage: pick a site, the devices switch; it moves on by itself until touched ---------- */
+  /* ---------- THE WORK · one stage: pick a site, the devices switch; with a mouse it tours by itself until touched ----------
+     The names are tabs; every write-up shares one slot, so a switch never moves the rest of the page. */
   const show = $("[data-show]");
   if (show) {
-    const items = $$(".wd-show__item", show), panels = $$("[data-show-panel]", show);
-    const btns = items.map((it) => $(".wd-show__btn", it)), bodies = items.map((it) => $(".wd-show__body", it));
-    const STEP = 9000;
-    // every site's write-up is in the page for no-JS readers; with the script, only the open one shows
-    bodies.forEach((bd, k) => { bd.hidden = !items[k].classList.contains("is-on"); });
-    let cur = 0, auto = !reduced, t0 = 0, acc = 0, ticking = false;
+    const btns = $$('[role="tab"]', show), bodies = $$(".wd-show__body", show), panels = $$("[data-show-panel]", show);
+    const STEP = 14000;
+    let cur = 0, auto = !reduced && matchMedia("(hover: hover) and (pointer: fine)").matches, t0 = 0, acc = 0, ticking = false;
     const holds = new Set(["offscreen"]);
     const running = () => auto && !holds.size;
     const elapsed = () => acc + (running() ? performance.now() - t0 : 0);
     function go(i, user = false) {
-      i = (i + items.length) % items.length;
+      i = (i + btns.length) % btns.length;
       if (user) { auto = false; show.classList.add("is-held"); }
       if (i === cur) return;
-      items.forEach((it, k) => { const on = k === i; it.classList.toggle("is-on", on); btns[k].setAttribute("aria-expanded", on ? "true" : "false"); bodies[k].hidden = !on; it.style.removeProperty("--p"); });
+      btns.forEach((b, k) => { const on = k === i; b.classList.toggle("is-on", on); b.setAttribute("aria-selected", on ? "true" : "false"); b.tabIndex = on ? 0 : -1; b.style.removeProperty("--p"); });
+      bodies.forEach((bd, k) => bd.classList.toggle("is-on", k === i));
       panels.forEach((pn, k) => pn.classList.toggle("is-on", k === i));
       cur = i; acc = 0; t0 = performance.now();
-      if (user && matchMedia("(max-width: 999px)").matches) {
-        // phones: the list item just opened stays where the thumb is; the devices above already switched
-        const r = items[i].getBoundingClientRect();
-        if (r.top < 0 || r.top > innerHeight * 0.75) items[i].scrollIntoView({ block: "center", behavior: reduced ? "auto" : "smooth" });
-      }
+      // phones: keep the picked name in view inside its row
+      const row = btns[i].parentElement;
+      if (row.scrollWidth > row.clientWidth) row.scrollTo({ left: btns[i].offsetLeft - 16, behavior: reduced ? "auto" : "smooth" });
       tick();
     }
     function tick() {
@@ -348,7 +348,7 @@
       ticking = true;
       const f = () => {
         const p = clamp(elapsed() / STEP);
-        items[cur].style.setProperty("--p", p.toFixed(4));
+        btns[cur].style.setProperty("--p", p.toFixed(4));
         if (p >= 1) go(cur + 1);
         if (running()) requestAnimationFrame(f); else ticking = false;
       };
@@ -357,12 +357,12 @@
     const hold = (why) => { if (holds.has(why)) return; acc = elapsed(); holds.add(why); };
     const release = (why) => { if (!holds.delete(why)) return; t0 = performance.now(); tick(); };
     btns.forEach((b, k) => b.addEventListener("click", () => { go(k, true); track("web_work_pick", { site: $(".wd-show__n", b).textContent }); }));
-    $(".wd-show__list", show).addEventListener("keydown", (e) => {
+    $(".wd-show__tabs", show).addEventListener("keydown", (e) => {
       const k = btns.indexOf(document.activeElement);
       if (k < 0) return;
-      const n = { ArrowDown: k + 1, ArrowUp: k - 1, Home: 0, End: btns.length - 1 }[e.key];
+      const n = { ArrowDown: k + 1, ArrowRight: k + 1, ArrowUp: k - 1, ArrowLeft: k - 1, Home: 0, End: btns.length - 1 }[e.key];
       if (n === undefined) return;
-      e.preventDefault(); btns[(n + btns.length) % btns.length].focus();
+      e.preventDefault(); go(n, true); btns[(n + btns.length) % btns.length].focus();
     });
     // the pointer over the list or the devices holds the clock, so nothing moves while someone is reading
     show.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") hold("hover"); });
@@ -372,27 +372,29 @@
     new IntersectionObserver(([e]) => (e.isIntersecting ? release("offscreen") : hold("offscreen")), { threshold: 0.35 }).observe(show);
     document.addEventListener("visibilitychange", () => (document.hidden ? hold("tab") : release("tab")));
     if (!auto) show.classList.add("is-held");
+    // one button for everything that moves here: the tour and the site playing in the devices
     const pauseBtn = $("[data-show-pause]", show);
+    let still = reduced;
     const paintPause = () => {
-      pauseBtn.innerHTML = (auto ? '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg><span>Pause the tour</span>' : '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5.5v13l10.5-6.5z"/></svg><span>Play the tour</span>');
-      pauseBtn.setAttribute("aria-label", auto ? "Pause the tour of sites" : "Play the tour of sites");
+      pauseBtn.innerHTML = still ? '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5.5v13l10.5-6.5z"/></svg><span>Play</span>' : '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg><span>Pause</span>';
+      pauseBtn.setAttribute("aria-label", still ? "Play the previews" : "Pause the previews");
     };
     pauseBtn.addEventListener("click", () => {
-      auto = !auto;
-      show.classList.toggle("is-held", !auto);
-      if (auto) { acc = 0; t0 = performance.now(); holds.delete("focus"); tick(); }
+      still = !still;
+      show.classList.toggle("is-held", still || !auto);
+      if (still) hold("user"); else release("user");
+      panels.forEach((pn) => { const d = $("[data-duo]", pn); duoPlayers.get(d)?.setPaused(still); });
       paintPause();
+      track("web_work_pause", { paused: still });
     });
-    // any pick by hand ends the tour: the button says so
-    btns.forEach((b) => b.addEventListener("click", paintPause));
     paintPause();
     // "Sitting Pretty Rashae's" in a feature caption opens that site here
-    const order = items.map((it) => $(".wd-show__btn", it).id.replace(/^show-|-btn$/g, ""));
+    const order = btns.map((b) => b.id.replace(/^show-|-btn$/g, ""));
     $$("[data-show-go]").forEach((a) => a.addEventListener("click", (e) => {
       const k = order.indexOf(a.dataset.showGo);
       if (k < 0) return;
       e.preventDefault();
-      go(k, true); paintPause();
+      go(k, true);
       document.getElementById("work").scrollIntoView({ behavior: reduced ? "auto" : "smooth" });
     }));
   }
@@ -437,7 +439,10 @@
       const i = ids.indexOf(id);
       if (i < 0) return false;
       select(i);
-      document.getElementById("platforms").scrollIntoView({ behavior: reduced || how === "load" ? "auto" : "smooth" });
+      // keyboard users continue from the card they picked; phones land on its detail, desktops on the row of cards
+      tabs[i].focus({ preventScroll: true });
+      const target = matchMedia("(max-width: 699px)").matches ? panels[i] : $(".wd-pick", plat);
+      target.scrollIntoView({ block: "start", behavior: reduced || how === "load" ? "auto" : "smooth" });
       track("web_platform_tab", { platform: id, how });
       return true;
     };
@@ -452,7 +457,8 @@
   if (qbar && matchMedia("(max-width: 699px)").matches) {
     qbar.hidden = false;
     const seen = { hero: true, end: false };
-    const paint = () => qbar.classList.toggle("is-on", !seen.hero && !seen.end);
+    // off screen it is inert, so keyboards and screen readers only meet it while it is showing
+    const paint = () => { const on = !seen.hero && !seen.end; qbar.classList.toggle("is-on", on); qbar.inert = !on; };
     new IntersectionObserver(([e]) => { seen.hero = e.isIntersecting; paint(); }).observe($(".wd-hero"));
     const ends = [$(".hm-cta"), $(".footer")].filter(Boolean);
     const vis = new Set();
