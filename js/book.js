@@ -108,7 +108,9 @@
   }
 
   // business shoots run as long as headcount and scope need, so no fixed length is shown
-  const BRIEF_SLUGS = ["corporate-headshots", "corporate-video", "content-day", "video-podcast", "brand-content"];
+  const BRIEF_SLUGS = ["corporate-headshots", "corporate-video", "content-day", "video-podcast", "brand-content", "music-video"];
+  // video quotes go bigger than the general $5,000+ bucket (visitor's own range, not a posted price)
+  const VIDEO_SLUGS = ["brand-content", "video-podcast", "music-video", "corporate-video", "content-day", "event-coverage"];
 
   // quote briefs: start the notes with what a quote for that service needs.
   // ?where= and ?type= from deep links sharpen the first line.
@@ -132,8 +134,25 @@
         if (params.get("type") === "interviews") return "Interview videos.\nWho we're interviewing (leaders, employees, customers, experts):\nWhat the videos are for:\nHow many people on camera:\nAt our office or your studio:\nPreferred date(s):";
         return `Talking-head video${type ? ` for ${type}.` : ".\nWhat the videos are for:"}\nHow many people on camera:\nAt our office or your studio:\nPreferred date(s):`;
       }
-      case "brand-content":
+      case "brand-content": {
+        // deep links from /video-production/ and its pages: ?type= picks the brief
+        const ty = params.get("type");
+        if (ty === "retainer") {
+          // "Build your month" sends the visitor's own picks; keep it plain text, short, and only if it is ours
+          const month = (params.get("month") || "").replace(/[\u0000-\u0008\u000b-\u001f\u007f]/g, "").slice(0, 1200).trim();
+          if (month.startsWith("Monthly video (retainer).")) return month;
+          return "Monthly video (retainer).\nWhat you need each month (social ads, podcast episodes, interview videos, commercials):\nWhere it runs:\nStart month:\nBrand and who it's for:";
+        }
+        if (ty === "social") return "Social ad videos.\nBrand and product or offer:\nWhere they run (Reels, TikTok, Stories, feed, YouTube):\nHow many ads or versions:\nLaunch date and budget range:";
+        if (ty === "commercial") return "Commercial or product video.\nBrand and product:\nWhere it will run (TV, social, web, in-store):\nOn camera, voiceover, or both:\nLaunch date and budget range:";
+        if (ty === "campaign") return "Ad campaign.\nBrand and what's launching:\nLocations (in DFW, or a destination):\nWhere the ads run:\nLaunch date and budget range:";
+        if (ty === "video") return "Video project.\nWhat you're making (commercial, social ads, video podcast, interview videos, brand film, music video, event):\nWhere it will run:\nIn DFW or on location elsewhere:\nLaunch date and budget range:";
+        if (ty === "brandfilm") return "Brand film or interview videos.\nCompany and what the film is for:\nWho's on camera (leaders, employees, customers):\nWhere it will be shown:\nIn DFW or on location elsewhere:\nLaunch date and budget range:";
+        if (ty === "lighting") return "Lighting.\nWhat's being shot (video, photos, podcast, event):\nLocation and date:\nWho else is on the shoot:";
         return "Commercial or brand film.\nBrand and what it's for:\nWhere it will run (TV, social, web, in-store):\nOn camera, voiceover, or both:\nIn DFW or on location elsewhere:\nLaunch date and budget range:";
+      }
+      case "music-video":
+        return "Music video.\nArtist and song (link to the finished track):\nRelease date:\nIdeas or references:\nBudget range:";
       case "content-day":
         return "Content day at our location.\nBusiness and address:\nWhat we want to film:\nPreferred date(s):";
       case "video-podcast":
@@ -161,6 +180,8 @@
   }
   const durLabel = (svc) => (BRIEF_SLUGS.includes(svc.slug) ? "" : fmtDur(svc.duration_min));
 
+  // a month built on /video-production/ is the visitor's own brief: it can be sent as is
+  const builtMonth = (slug, notes) => slug === "brand-content" && new URLSearchParams(location.search).get("type") === "retainer" && (notes || "").includes("Each month:");
   function selectService(slug) {
     // birthday shoots book on their own page, which explains the deposit and
     // the day-before balance charge (bk-charge-balances) before checkout
@@ -180,10 +201,13 @@
     if (state.brief && slug !== state.brief.slug && state.details.notes === state.brief.notes) state.details.notes = "";
     if (!state.details.notes.trim() && briefFor(slug)) {
       state.brief = { slug, notes: briefFor(slug) };
+      state.brief.filled = builtMonth(slug, state.brief.notes);
       state.details.notes = state.brief.notes;
     }
     state.day = null; state.slot = null; state.flexible = false;
     state.month = null; state.slotsByDay = {};
+    // a month built on /video-production/ goes straight to the details: no appointment calendar
+    if (state.brief?.filled && state.brief.slug === slug) { state.flexible = true; renderDetails(); return; }
     renderCalendar();
   }
 
@@ -212,6 +236,7 @@
     host.innerHTML = `
       <section aria-label="Pick a date and time">
         <p class="slate" style="margin-bottom:10px;">${esc(state.svc.name).toUpperCase()}${durLabel(state.svc) ? ` · ${durLabel(state.svc).toUpperCase()}` : ""}${state.svc.kind === "project" ? " · PREFERRED DATE (OPTIONAL)" : ""}</p>
+        ${state.svc.kind === "project" ? `<button class="btn btn-ghost" id="skipCalTop" style="margin:0 0 16px;">I'm flexible — skip the calendar</button>` : ""}
         <div class="cal-wrap">
           <div class="cal" id="cal"><div class="spin" style="margin: 40px auto;"></div></div>
           <div class="slots" id="slots">
@@ -225,6 +250,7 @@
     document.getElementById("backSvc").addEventListener("click", renderServices);
     const skip = document.getElementById("skipCal");
     if (skip) skip.addEventListener("click", () => { state.flexible = true; state.day = null; state.slot = null; renderDetails(); });
+    document.getElementById("skipCalTop")?.addEventListener("click", () => { state.flexible = true; state.day = null; state.slot = null; renderDetails(); });
 
     try {
       await fetchMonth(state.month);
@@ -372,16 +398,16 @@
             <input id="fLoc" name="location" maxlength="240" placeholder="Studio, your location, or not sure yet" value="${esc(d.location)}"></div>` : `
           <div class="bk-field"><label for="fCompany">Company / brand (optional)</label>
             <input id="fCompany" name="company" maxlength="160" value="${esc(d.company)}"></div>
-          <div class="bk-field"><label for="fBudget">Budget range</label>
+          <div class="bk-field"><label for="fBudget">${state.brief?.filled ? "Monthly budget range" : "Budget range"}</label>
             <select id="fBudget" name="budget">
               <option${d.budget === "Not sure yet" ? " selected" : ""}>Not sure yet</option>
               ${state.svc.slug === "web-design" ? "" : `<option${d.budget === "Under $1,000" ? " selected" : ""}>Under $1,000</option>`}
               <option${d.budget === "$1,000–$2,500" ? " selected" : ""}>$1,000–$2,500</option>
               <option${d.budget === "$2,500–$5,000" ? " selected" : ""}>$2,500–$5,000</option>
-              <option${d.budget === "$5,000+" ? " selected" : ""}>$5,000+</option>
+              ${VIDEO_SLUGS.includes(state.svc.slug) ? ["$5,000–$10,000", "$10,000–$25,000", "$25,000+"].map((b) => `<option${d.budget === b ? " selected" : ""}>${b}</option>`).join("") : `<option${d.budget === "$5,000+" ? " selected" : ""}>$5,000+</option>`}
             </select></div>`}
           <div class="bk-field"><label for="fNotes">${isSession ? "Anything I should know? (optional)" : "Tell me about the project *"}</label>
-            <textarea id="fNotes" name="notes" rows="4" maxlength="3000" ${isSession ? "" : "required"} placeholder="${isSession ? "Looks you want, references, questions…" : "What are we making? Goals, timeline, references…"}">${esc(d.notes)}</textarea></div>
+            <textarea id="fNotes" name="notes" rows="${Math.min(12, Math.max(4, (d.notes || "").split("\n").length + 1))}" maxlength="3000" ${isSession ? "" : "required"} placeholder="${isSession ? "Looks you want, references, questions…" : "What are we making? Goals, timeline, references…"}">${esc(d.notes)}</textarea></div>
           ${isStudio(state.svc) && state.addons.length ? `
           <div class="bk-field"><label>Rent gear with the space (added to your total)</label>
             ${state.addons.map((a) => `
@@ -424,7 +450,7 @@
       if (!f.name.value.trim()) return showErr(err, "Your name is required.", f.name);
       if (!/^[^@\s]+@[^@\s]+\.[^@\s]+$/.test(email)) return showErr(err, "Enter a valid email — your confirmation goes there.", f.email);
       if (!isSession && !f.notes.value.trim()) return showErr(err, "Tell me a little about the project.", f.notes);
-      if (!isSession && state.brief?.slug === state.svc.slug && f.notes.value.trim() === state.brief.notes.trim())
+      if (!isSession && state.brief?.slug === state.svc.slug && !state.brief.filled && f.notes.value.trim() === state.brief.notes.trim())
         return showErr(err, "Fill in the brief so I can quote it.", f.notes);
       state.details = {
         name: f.name.value.trim(), email, phone: f.phone.value.trim(),
@@ -617,7 +643,8 @@
       }
       const brief = briefFor(want);
       if (brief) {
-        state.brief = { slug: want, notes: brief };
+        // a month built on /video-production/ is already the visitor's own words, so it can be sent as is
+        state.brief = { slug: want, notes: brief, filled: builtMonth(want, brief) };
         state.details.notes = brief;
       }
       renderServices();
