@@ -1827,3 +1827,1205 @@
   new ResizeObserver(() => { if (!raf) step(0); }).observe(root);
   step(0);
 })();
+
+/* ==================== files ==================== */
+/* ==================== files ==================== */
+/* 11 · Edit files (id "files")
+   Acts out the real files of Auntie PB, Episode 1, from Taylormade Podcast 1.0 (4):
+   Episodes › Want to edit it yourself? › Show in Finder; Finder on the episode folder (Audio,
+   Cameras, Edit Files); then Premiere Pro.xml opened in a plain editor: the "All Cameras In Sync"
+   sequence (every camera and mic from the same first frame), then the "Rough Cut" (the 196 cuts
+   made while recording), zoomed to 11:39 and played. The cuts and waveforms are the episode's own
+   (data block in the markup). The pointer is the user. Plays only while the card is on screen and
+   not covered; pauses where it is. Reduced motion: the finished state, nothing moves by itself. */
+(() => {
+  const root = document.querySelector("[data-files]");
+  if (!root) return;
+  const $ = (s) => root.querySelector(s);
+  const $$ = (s) => [...root.querySelectorAll(s)];
+  let D;
+  try { D = JSON.parse($("[data-fl-data]").textContent); } catch (_) { return; }
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const STOP = Symbol("stop");
+  const FPS = D.fps, FR = D.frames, DUR = FR / FPS, W0 = D.win[0], W1 = D.win[1], WIN = W1 - W0;
+  const T = (k) => $(`[data-fl-t="${k}"]`);
+  const stage = $("[data-fl-stage]"), cur = $("[data-fl-cur]");
+  const app = $("[data-fl-app]"), fnd = $("[data-fl-fnd]"), nle = $("[data-fl-nle]");
+  root.classList.add("is-js");
+
+  /* ---------- the timeline, drawn from Premiere Pro.xml and the two mic files ---------- */
+  const bar = $("[data-fl-bar]");
+  bar.setAttribute("viewBox", `0 0 ${FR} 10`);
+  let rects = "";
+  for (let i = 0; i < D.cuts.length - 1; i++) {
+    rects += `<rect class="${i % 2 ? "c4" : "c1"}" x="${D.cuts[i]}" y="0" width="${D.cuts[i + 1] - D.cuts[i]}" height="10"/>`;
+  }
+  bar.innerHTML = rects;
+
+  const wave = (svg, v) => {
+    const n = v.length, top = [], bot = [];
+    svg.setAttribute("viewBox", `0 0 ${n} 100`);
+    v.forEach((a, i) => {
+      const h = Math.max(1.2, a * 47);
+      top.push(`${i + 0.5} ${(50 - h).toFixed(1)}`);
+      bot.unshift(`${i + 0.5} ${(50 + h).toFixed(1)}`);
+    });
+    svg.innerHTML = `<path d="M0 50L${top.join("L")}L${n} 50L${bot.join("L")}Z"/>`;
+  };
+  wave($('[data-fl-w="ov-g"]'), D.ov.g);
+  wave($('[data-fl-w="ov-h"]'), D.ov.h);
+  wave($('[data-fl-w="dt-g"]'), D.dt.g);
+  wave($('[data-fl-w="dt-h"]'), D.dt.h);
+
+  // the rough cut's clips between 11:39 and 12:09, with their names
+  const dv = $("[data-fl-dv]"), shots = [];
+  for (let i = 0; i < D.cuts.length - 1; i++) {
+    const a = D.cuts[i] / FPS, b = D.cuts[i + 1] / FPS;
+    if (b <= W0 || a >= W1) continue;
+    const c1 = i % 2 === 0, el = document.createElement("span");
+    el.className = `fl__c fl__c--v${c1 ? "" : " fl__c--c4"}`;
+    el.style.left = `${((Math.max(a, W0) - W0) / WIN * 100).toFixed(3)}%`;
+    el.style.width = `${((Math.min(b, W1) - Math.max(a, W0)) / WIN * 100).toFixed(3)}%`;
+    el.innerHTML = `<b>${c1 ? "Cam 1 · Guest close-up" : "Cam 4 · Wide"}</b>`;
+    dv.appendChild(el);
+    shots.push({ el, a, b });
+  }
+
+  const lanes = $("[data-fl-lanes]"), ov = $("[data-fl-ov]"), dt = $("[data-fl-dt]");
+  const ruler = $("[data-fl-ruler]"), ph = $("[data-fl-ph]"), tc = $("[data-fl-tc]");
+  const ticks = [], labs = [];
+  for (let i = 0; i < 64; i++) ticks.push(ruler.appendChild(document.createElement("i")));
+  for (let i = 0; i < 12; i++) labs.push(ruler.appendChild(document.createElement("span")));
+
+  const view = { a: 0, span: DUR, e: 0, t: 0, now: false };
+  const ss = (a, b, x) => { const t = Math.min(1, Math.max(0, (x - a) / (b - a))); return t * t * (3 - 2 * t); };
+  const tcode = (sec) => {
+    const f = Math.max(0, Math.round(sec * FPS));
+    return [Math.floor(f / FPS / 3600), Math.floor(f / FPS / 60) % 60, Math.floor(f / FPS) % 60, f % FPS].map((x) => String(x).padStart(2, "0")).join(":");
+  };
+  const STEPS = [1, 2, 5, 10, 15, 30, 60, 120, 300, 600];
+  const narrow = () => stage.offsetWidth < 560 && stage.offsetHeight > stage.offsetWidth;
+  const render = () => {
+    const W = lanes.clientWidth;
+    if (!W) return;
+    const { a, span, e } = view, px = W / span;
+    ov.style.transform = `translateX(${(-a * px).toFixed(2)}px) scaleX(${(DUR / span).toFixed(5)})`;
+    dt.style.transform = `translateX(${((W0 - a) * px).toFixed(2)}px) scaleX(${(WIN / span).toFixed(5)})`;
+    ov.style.opacity = (1 - ss(0.5, 0.86, e)).toFixed(3);
+    dt.style.opacity = ss(0.38, 0.8, e).toFixed(3);
+    ov.style.setProperty("--olab", (1 - ss(0, 0.12, e)).toFixed(3));
+    dt.style.setProperty("--lab", ss(0.86, 1, e).toFixed(3));
+    // the ruler lays itself out again at every zoom, like an editor's
+    const n = nle.offsetWidth / (narrow() ? 400 : 720);
+    const step = STEPS.find((s) => s * px >= (narrow() ? 86 : 78) * n) || 600;
+    const minor = step / (step === 2 || step === 30 || step === 120 ? 4 : 5);
+    let k = 0, l = 0;
+    for (let s = Math.ceil(a / minor) * minor; s <= a + span + 1e-6 && k < ticks.length; s += minor) {
+      const x = (s - a) * px, big = Math.abs(s / step - Math.round(s / step)) < 1e-6;
+      const tk = ticks[k++];
+      tk.style.display = "";
+      tk.style.transform = `translateX(${x.toFixed(1)}px)`;
+      tk.classList.toggle("is-big", big);
+      if (big && l < labs.length && x < W - 60 * n) {
+        const lb = labs[l++];
+        lb.style.display = "";
+        lb.style.transform = `translateX(${x.toFixed(1)}px)`;
+        const txt = tcode(Math.round(s));
+        if (lb.textContent !== txt) lb.textContent = txt;
+      }
+    }
+    for (; k < ticks.length; k++) ticks[k].style.display = "none";
+    for (; l < labs.length; l++) labs[l].style.display = "none";
+    // the playhead and its timecode
+    const x = (view.t - a) * px;
+    ph.style.transform = `translateX(${x.toFixed(2)}px)`;
+    ph.style.opacity = x < -2 || x > W + 2 ? "0" : "1";
+    const t = tcode(view.t);
+    if (tc.textContent !== t) tc.textContent = t;
+    shots.forEach((s) => s.el.classList.toggle("is-now", view.now && s.a <= view.t && view.t < s.b));
+  };
+  const fit = () => { // a clip too narrow for its name shows none, as editors do
+    const n = nle.offsetWidth / (narrow() ? 400 : 720);
+    shots.forEach((s) => s.el.classList.toggle("is-tiny", s.el.offsetWidth < 46 * n));
+  };
+  const zoom = (e) => { // from the whole episode to 11:39-12:09, keeping 11:39 under the playhead
+    view.e = e;
+    view.span = DUR * Math.pow(WIN / DUR, e);
+    view.a = W0 - (W0 / DUR) * (1 - e) * view.span;
+    view.t = W0;
+    render();
+  };
+
+  /* ---------- Finder: rows slide when a folder opens ---------- */
+  const list = $("[data-fl-rows]"), selEl = $("[data-fl-sel]");
+  const rows = $$(".fl__row").map((el) => ({ el, id: el.dataset.id || null, p: el.dataset.p || null, dir: el.dataset.k === "dir" }));
+  const open = new Set();
+  let sel = null;
+  const layout = () => {
+    const at = new Map();
+    let i = 0;
+    rows.forEach((r) => {
+      const vis = !r.p || (open.has(r.p) && at.has(r.p));
+      if (vis) { if (r.id) at.set(r.id, i); r.el.style.setProperty("--i", i++); r.el.classList.remove("is-hid"); } else {
+        r.el.style.setProperty("--i", at.get(r.p) ?? 0);
+        r.el.classList.add("is-hid");
+      }
+      if (r.dir && r.id) r.el.classList.toggle("is-open", open.has(r.id));
+      r.el.classList.toggle("is-sel", !!sel && r.id === sel);
+    });
+    selEl.classList.toggle("is-on", !!sel);
+    if (sel) selEl.style.setProperty("--i", at.get(sel));
+  };
+  const row = (id) => rows.find((r) => r.id === id).el;
+  const listBox = $("[data-fl-list]");
+  const scrollTo = (n) => list.style.setProperty("--scroll", n.toFixed(3));
+  const scrollEnd = () => { // as far down as the list goes (Finder can't scroll past its last row)
+    const h = row("audio").offsetHeight || 1, shown = rows.filter((r) => !r.el.classList.contains("is-hid")).length;
+    scrollTo(Math.max(0, shown + 0.3 - listBox.clientHeight / h));
+  };
+  const instantly = (fn) => { root.classList.add("no-tr"); fn(); void root.offsetWidth; root.classList.remove("no-tr"); };
+
+  /* ---------- the app: how far Show in Finder moves when the editors fold away ---------- */
+  const edit = $("[data-fl-edit]");
+  const measure = () => root.style.setProperty("--fl-h", `${edit.offsetHeight}px`);
+
+  /* ---------- scenes: which window is in front ---------- */
+  const scene = (n) => {
+    root.dataset.scene = String(n);
+    app.classList.toggle("is-back", n >= 2);
+    fnd.classList.toggle("is-back", n >= 3);
+  };
+
+  /* ---------- a clock that only runs while the card is in view ---------- */
+  let vt = 0, last = 0, raf = 0, running = false, gen = 0;
+  const waits = new Set(), tweens = new Set();
+  const frame = (now) => {
+    vt += Math.min(64, now - last); last = now;
+    tweens.forEach((tw) => {
+      const p = Math.min(1, (vt - tw.t0) / tw.dur);
+      tw.fn(tw.ease(p));
+      if (p >= 1) { tweens.delete(tw); tw.res(); }
+    });
+    waits.forEach((w) => { if (vt >= w.at) { waits.delete(w); w.res(); } });
+    raf = requestAnimationFrame(frame);
+  };
+  const sleep = (ms, g) => new Promise((res, rej) => { waits.add({ at: vt + ms, res: () => (g === gen ? res() : rej(STOP)) }); });
+  const inOut = (p) => (p < 0.5 ? 4 * p * p * p : 1 - Math.pow(-2 * p + 2, 3) / 2);
+  const linear = (p) => p;
+  const tween = (ms, fn, g, ease = inOut) => new Promise((res, rej) => { tweens.add({ t0: vt, dur: ms, fn, ease, res: () => (g === gen ? res() : rej(STOP)) }); });
+  const anims = () => root.getAnimations({ subtree: true });
+  const pauseAll = () => { running = false; cancelAnimationFrame(raf); anims().forEach((a) => a.playState === "running" && a.pause()); };
+  const playAll = () => {
+    if (running) return;
+    running = true; last = performance.now(); raf = requestAnimationFrame(frame);
+    anims().forEach((a) => a.playState === "paused" && a.play());
+  };
+
+  /* ---------- the pointer: points inside the stage, in its own (unscaled) pixels ---------- */
+  const pt = (el, ax = 0.5, ay = 0.5) => {
+    const s = stage.getBoundingClientRect(), r = el.getBoundingClientRect(), k = s.width / stage.offsetWidth || 1;
+    return { x: (r.left + r.width * ax - s.left) / k, y: (r.top + r.height * ay - s.top) / k };
+  };
+  const tip = () => ({ x: cur.offsetWidth * 5.2 / 24, y: cur.offsetHeight * 2.6 / 24 });
+  let cx = 0, cy = 0;
+  const at = (x, y) => `${x.toFixed(1)}px ${y.toFixed(1)}px`;
+  const settle = (a) => a.finished.then(() => { try { a.commitStyles(); } catch (_) {} a.cancel(); }, () => {});
+  const curTo = (p, ms, g, ease = "cubic-bezier(.55,.05,.25,1)") => {
+    const t = tip(), x = p.x - t.x, y = p.y - t.y;
+    const a = cur.animate([{ translate: at(cx, cy) }, { translate: at(x, y) }], { duration: ms, easing: ease, fill: "forwards" });
+    cx = x; cy = y;
+    return settle(a).then(() => { if (g !== gen) throw STOP; });
+  };
+  const curAt = (p) => { const t = tip(); cx = p.x - t.x; cy = p.y - t.y; cur.style.translate = at(cx, cy); };
+  const fade = (el, to, ms) => settle(el.animate([{ opacity: getComputedStyle(el).opacity }, { opacity: to }], { duration: ms, easing: "ease-out", fill: "forwards" }));
+  const press = async (el, g) => {
+    el?.classList.add("is-down");
+    cur.animate([{ scale: 1 }, { scale: 0.86 }, { scale: 1 }], { duration: 200, easing: "ease-out" });
+    await sleep(120, g);
+    el?.classList.remove("is-down");
+  };
+
+  /* ---------- the two ends of the loop ---------- */
+  const reset = (done) => {
+    cur.getAnimations().forEach((a) => a.cancel());
+    cur.style.opacity = "0";
+    tweens.clear();
+    instantly(() => {
+      scene(done ? 3 : 1);
+      root.classList.toggle("is-open", done);
+      root.classList.toggle("is-imp", done);
+      root.classList.toggle("is-sync", done);
+      root.classList.remove("is-rough");
+      open.clear();
+      if (done) ["audio", "cameras", "edit"].forEach((id) => open.add(id));
+      sel = done ? "xml" : null;
+      layout();
+      if (done) scrollEnd(); else scrollTo(0);
+    });
+    $$(".is-hover, .is-down").forEach((el) => el.classList.remove("is-hover", "is-down"));
+    T("sync").classList.add("is-on"); T("rough").classList.remove("is-on");
+    Object.assign(view, { a: 0, span: DUR, e: 0, t: 0, now: false });
+    render();
+  };
+
+  /* ---------- the loop: what the user does ---------- */
+  const clickRow = async (id, g, part = ".fl__tri", ax = 0.5) => {
+    await curTo(pt(row(id).querySelector(part), ax, 0.5), 720, g);
+    await press(null, g);
+  };
+  const run = async (g, first) => {
+    reset(false);
+    await sleep(first ? 1500 : 700, g);
+    // the app: open "Want to edit it yourself?"
+    const disc = T("disc"), show = T("show");
+    const d0 = pt(disc.querySelector(".fl__chev"));
+    curAt({ x: d0.x + stage.offsetWidth * 0.2, y: d0.y + stage.offsetWidth * 0.14 });
+    await fade(cur, 1, 240);
+    await curTo(d0, 860, g);
+    await press(null, g);
+    root.classList.add("is-open");
+    await sleep(950, g);
+    // Show in Finder
+    await curTo(pt(show, 0.42, 0.56), 760, g);
+    show.classList.add("is-hover");
+    await sleep(160, g);
+    await press(show, g);
+    show.classList.remove("is-hover");
+    await sleep(140, g);
+    scene(2);
+    await sleep(1150, g);
+    // Finder: open Audio and Cameras
+    await clickRow("audio", g);
+    open.add("audio"); layout();
+    await sleep(560, g);
+    await clickRow("cameras", g);
+    open.add("cameras"); layout();
+    await sleep(900, g);
+    // then Edit Files, and pick Premiere Pro.xml
+    await clickRow("edit", g);
+    open.add("edit"); layout();
+    await sleep(500, g);
+    // scroll down to see what's in Edit Files
+    const l0 = pt(listBox, 0.42, 0.62);
+    await curTo(l0, 520, g);
+    scrollEnd();
+    cur.animate([{ translate: at(cx, cy) }, { translate: at(cx, cy - stage.offsetWidth * 0.02) }, { translate: at(cx, cy) }], { duration: 700, easing: "ease-in-out" });
+    await sleep(900, g);
+    await clickRow("xml", g, ".fl__nm > span", 0.4);
+    sel = "xml"; layout();
+    await sleep(240, g);
+    await press(null, g);
+    await sleep(40, g);
+    await press(null, g);
+    await sleep(160, g);
+    // it opens in the editor
+    scene(3);
+    await fade(cur, 0, 200);
+    await sleep(380, g);
+    root.classList.add("is-imp");
+    await sleep(900, g);
+    root.classList.add("is-sync");
+    await sleep(2300, g);
+    await tween(1900, (p) => { view.t = p * W0; render(); }, g);
+    await sleep(500, g);
+    // the rough cut
+    const rough = T("rough");
+    const r0 = pt(rough, 0.5, 0.6);
+    curAt({ x: r0.x + stage.offsetWidth * 0.1, y: r0.y + stage.offsetWidth * 0.12 });
+    await fade(cur, 1, 200);
+    await curTo(r0, 700, g);
+    rough.classList.add("is-hover");
+    await sleep(120, g);
+    await press(rough, g);
+    rough.classList.remove("is-hover");
+    T("sync").classList.remove("is-on"); rough.classList.add("is-on");
+    root.classList.add("is-rough");
+    await sleep(500, g);
+    await fade(cur, 0, 260);
+    await sleep(1000, g);
+    // in close on 11:39, then play the next 30 seconds
+    await tween(1500, zoom, g);
+    view.now = true; render();
+    await sleep(500, g);
+    await tween(6200, (p) => { view.t = W0 + p * WIN; render(); }, g, linear);
+    await sleep(1800, g);
+    // rewind, softly
+    scene(1);
+    root.classList.remove("is-open");
+    await sleep(1100, g);
+  };
+
+  let started = false, inView = false, covered = false;
+  const loop = async () => {
+    const g = ++gen;
+    let first = root.classList.contains("is-pre");
+    root.classList.remove("is-pre");
+    try { for (;;) { await run(g, first); first = false; } } catch (e) { if (e !== STOP && g === gen) throw e; }
+  };
+  const sync = () => {
+    const go = inView && !covered && !document.hidden;
+    if (go) {
+      playAll();
+      if (!started) { started = true; loop(); }
+    } else pauseAll();
+  };
+
+  /* ---------- start ---------- */
+  measure();
+  new ResizeObserver(() => { measure(); fit(); render(); }).observe(lanes);
+  new ResizeObserver(measure).observe(app);
+  document.fonts?.ready.then(() => { measure(); fit(); render(); });
+  if (reduced) { reset(true); return; }  // the finished state: Finder open on Edit Files, the editor on All Cameras In Sync
+  reset(false);
+  root.classList.add("is-pre");
+  new IntersectionObserver(([e]) => { inView = e.isIntersecting; sync(); }, { threshold: 0.3 }).observe(stage);
+  root.closest(".hm-ch")?.addEventListener("hm-cover", (e) => { covered = !!e.detail; sync(); });
+  document.addEventListener("visibilitychange", sync);
+})();
+/* ==================== /files ==================== */
+
+/* ==================== ai ==================== */
+/* ==================== ai ==================== */
+/* 04 APPLE INTELLIGENCE (ai) · the app's Episodes screen finishing Nelson's take "2 Tonight at 7".
+   The top bar runs the app's last after-the-show jobs in their real order (Studio.swift:2424-2426):
+   Looking for more clip moments, Making suggested clips 1 of 1 (the clip appears under Vertical clips,
+   with the app's toast), Writing the report card (it fills in), Writing title ideas and show notes (the
+   drafts arrive). Then the user scrolls down, copies the clip's caption ("Copied" for 1.5 s, like the app)
+   and clicks the clip, which the Mac opens in a player. Everything in the window is the app's own words,
+   from the episode folder. The way the words sweep in, the pointer, the player window and the cards under
+   the stage are the website's: the app shows the drafts all at once.
+   Plays only while the card is on screen and not covered by the next card. Reduced motion: the finished
+   drafts, still; the clip plays (with sound) only when someone presses play. */
+(() => {
+  const root = document.querySelector(".ai-card[data-ai]");
+  if (!root) return;
+  const q = (s) => root.querySelector(s);
+  const qq = (s) => [...root.querySelectorAll(s)];
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const STOP = Symbol("stop");
+
+  const stage = q(".ai-stage"), cam = q(".ai-cam"), win = q(".ai-win"), vp = q(".ai-vp"), scroller = q(".ai-scroll");
+  const cursor = q(".ai-cursor"), video = q(".ai-qt video"), btn = q(".ai-play"), ring = q(".ai-ring__on");
+  const secTn = q(".ai-tn"), secVc = q(".ai-vc"), notesBox = q(".ai-notes"), rcBox = q(".ai-rc__box");
+  const clipRow = q(".ai-clip__row"), capCopy = q(".ai-clip__cap .ai-copy"), busyRow = q(".ai-busy"), busyTxt = q("[data-ai-busy]");
+  const peek = q("[data-peek]");
+  const stacks = qq("[data-ai-st] .ai-st");
+  const STATUS = stacks[0] ? [...stacks[0].children].map((s) => s.textContent) : [];
+  const RING = 201.06, CLIP_DUR = 18;
+
+  // what "2 Tonight at 7 / Titles and show notes (drafts).txt" says, section by section (ShowNotes.swift:40-59)
+  const PEEK = [
+    ["1. TITLE IDEAS", "AI Won't Take Your Job, But Here's How to Use It"],
+    ["2. DESCRIPTION (YouTube, Spotify, Apple Podcasts)", "Join us for a conversation on how AI is transforming the workplace. Our guest will share insights on using AI effectively and creating drafts that sound like you."],
+    ["3. KEY POINTS (show notes)", "- AI won't take your job, but knowing how to use it is important."],
+    ["4. CLIP CAPTIONS (Reels, TikTok, Shorts)", "AI skills can help you with any task. Learn how to use it in this free hour-long class."],
+  ];
+  let peekAt = -1;
+  const setPeek = (i) => {
+    if (!peek || i === peekAt) return;
+    peekAt = i;
+    const [a, b] = peek.children;
+    a.textContent = PEEK[i][0]; b.textContent = PEEK[i][1];
+    peek.classList.remove("is-tick"); void peek.offsetWidth; peek.classList.add("is-tick");
+  };
+
+  /* ---------- words: each draft is split into words once, so the website can sweep them in ---------- */
+  const split = (el) => {
+    [...el.childNodes].forEach((n) => {
+      if (n.nodeType === 3) {
+        const frag = document.createDocumentFragment();
+        n.textContent.split(/(\s+)/).forEach((p) => {
+          if (!p) return;
+          if (/^\s+$/.test(p)) frag.append(p);
+          else { const s = document.createElement("span"); s.className = "ai-wd"; s.textContent = p; frag.append(s); }
+        });
+        n.replaceWith(frag);
+      } else if (n.nodeType === 1 && n.tagName !== "BR") split(n);
+    });
+  };
+  qq(".ai-w").forEach(split);
+  const lines = (b) => {
+    const out = []; let y = null;
+    b.querySelectorAll(".ai-wd").forEach((w) => {
+      const t = w.offsetTop;
+      if (y === null || Math.abs(t - y) > 3) { y = t; out.push([]); }
+      out[out.length - 1].push(w);
+    });
+    return out;
+  };
+  // one block, line by line, left to right; `at` and `perLine` in ms; returns when its last line is done
+  const sweep = (b, at, perLine) => {
+    const W = b.offsetWidth || 1; let t = at;
+    lines(b).forEach((ws) => {
+      const x0 = ws[0].offsetLeft, last = ws[ws.length - 1];
+      const span = Math.max(1, last.offsetLeft + last.offsetWidth - x0), dur = perLine * Math.min(1, span / W);
+      ws.forEach((w) => w.style.setProperty("--d", `${Math.round(t + ((w.offsetLeft - x0) / span) * dur)}ms`));
+      t += dur * 0.8;
+    });
+    b.classList.remove("is-pre"); b.classList.add("is-go");
+    return t;
+  };
+  const fadeIn = (el, at) => { el.style.setProperty("--wl", `${Math.round(at)}ms`); el.classList.remove("is-pre"); el.classList.add("is-go"); };
+  const preReveal = () => {
+    qq(".ai-w").forEach((b) => { b.classList.remove("is-go"); b.classList.add("is-pre"); });
+    qq(".ai-notes .ai-copy, .ai-clip__cap .ai-copy").forEach((c) => { c.classList.remove("is-go"); c.classList.add("ai-fade"); });
+    qq(".ai-notes .ai-hr").forEach((h) => { h.classList.remove("is-go"); h.classList.add("is-pre"); });
+  };
+  const postReveal = () => {
+    qq(".ai-w").forEach((b) => b.classList.remove("is-pre", "is-go"));
+    qq(".ai-fade").forEach((c) => c.classList.remove("ai-fade", "is-go"));
+    qq(".ai-hr").forEach((h) => h.classList.remove("is-pre", "is-go"));
+  };
+
+  /* ---------- the app's state: which files exist yet, and the job it's on ---------- */
+  const SETS = {
+    clip: [qq(".ai-vc, .ai-n1"), qq(".ai-n0")],
+    rc: [qq(".ai-rc .ai-x1"), qq(".ai-rc .ai-x0")],
+    notes: [qq(".ai-tn .ai-x1, .ai-clip__cap, .ai-d1"), qq(".ai-tn .ai-x0, .ai-d0")],
+  };
+  const show = (k, on) => {
+    SETS[k][0].forEach((e) => e.classList.toggle("is-off", !on));
+    SETS[k][1].forEach((e) => e.classList.toggle("is-off", on));
+  };
+  const setStatus = (i) => {   // -1: the jobs are done (postStatus is nil)
+    root.classList.toggle("s-busy", i >= 0);
+    busyRow.classList.toggle("is-off", i < 0);
+    if (i < 0) return;
+    busyTxt.textContent = STATUS[i];
+    stacks.forEach((st) => [...st.children].forEach((s, k) => {
+      if (k === i) { s.classList.remove("is-out"); s.classList.add("is-on"); }
+      else if (s.classList.contains("is-on")) { s.classList.remove("is-on"); s.classList.add("is-out"); }
+      else s.classList.remove("is-out");
+    }));
+  };
+
+  /* ---------- the in-app scroll and the website's camera ---------- */
+  const phone = () => stage.clientWidth < 560;
+  const unit = () => win.offsetWidth / (phone() ? 380 : 1280);
+  let S = 0;   // how far the episode is scrolled, in app points
+  const maxS = () => Math.max(0, (scroller.offsetHeight - vp.clientHeight) / unit());
+  const scrollTo = (to, how = "") => {
+    S = Math.max(0, Math.min(maxS(), to));
+    if (how === "now") scroller.classList.add("no-tr");
+    scroller.style.transform = `translate3d(0, ${(-S * unit()).toFixed(2)}px, 0)`;
+    if (how === "now") { void scroller.offsetWidth; scroller.classList.remove("no-tr"); }
+  };
+  const box = (el) => {   // unscaled window px, after the in-app scroll
+    let x = 0, y = 0;
+    for (let e = el; e && e !== win; e = e.offsetParent) { x += e.offsetLeft; y += e.offsetTop; }
+    if (scroller.contains(el)) y -= S * unit();
+    return { x, y, w: el.offsetWidth, h: el.offsetHeight };
+  };
+  const ar = () => stage.clientHeight / stage.clientWidth;
+  const view = (x0, y0, W) => { const s = stage.clientWidth / W; return { x: -x0 * s, y: -y0 * s, s, x0, y0, W }; };
+  const clamp = (v, a, b) => Math.max(a, Math.min(b, v));
+  let notesW = 0;
+  const SHOTS = {
+    wide: () => view(0, 0, win.offsetWidth),
+    // the top bar's status and the top of the right column (the close shot: scale 1)
+    col: () => (phone() ? view(0, 0, win.offsetWidth) : view(win.offsetWidth - 620 * unit(), 0, 620 * unit())),
+    // all of Titles & show notes, kicker to footnote
+    notes: () => {
+      if (phone()) return view(0, 0, win.offsetWidth);
+      const u = unit(), b = box(secTn), m = 14 * u;
+      notesW = clamp((b.h + 2 * m) / ar(), 620 * u, 840 * u);
+      return view(win.offsetWidth - notesW, clamp(b.y - m, 0, win.offsetHeight - notesW * ar()), notesW);
+    },
+    // the same size, at the bottom of the window, where the scrolled-down clips sit
+    clips: () => {
+      if (phone()) return view(0, 0, win.offsetWidth);
+      const W = notesW || 760 * unit();
+      return view(win.offsetWidth - W, win.offsetHeight - W * ar(), W);
+    },
+  };
+  let shot = "wide";
+  const aim = (name, how = "") => {
+    shot = name;
+    const t = SHOTS[name]();
+    if (how === "now") cam.classList.add("no-tr");
+    cam.style.transform = `translate3d(${t.x.toFixed(2)}px, ${t.y.toFixed(2)}px, 0) scale(${t.s.toFixed(5)})`;
+    if (how === "now") { void cam.offsetWidth; cam.classList.remove("no-tr"); }
+    return t;
+  };
+  // the scroll that brings the suggested clip into the clips shot (phones: just above the middle)
+  const clipsS = () => {
+    const u = unit(), vc = box(secVc), y0 = vc.y + S * u;   // where it sits with the episode unscrolled
+    if (phone()) return (y0 - 52 * u) / u - vp.clientHeight / u * 0.42;
+    const t = SHOTS.clips(), frameH = t.W * ar();
+    return (y0 + vc.h / 2 - t.y0 - frameH * 0.5) / u;
+  };
+  const notesS = () => (phone() ? (box(secTn).y + S * unit() - 52 * unit()) / unit() - 10 : 0);
+
+  /* ---------- FLIP: when a section grows, the ones under it slide down instead of jumping ---------- */
+  const EASE = "cubic-bezier(.3, .7, .2, 1)";
+  const tracked = () => [
+    ...qq(".ai-right > .ai-sec, .ai-left > *, .ai-scroll > .ai-tx").map((e) => [e, null]),
+    ...qq(".ai-post > *").map((e) => [e, q(".ai-post")]),
+  ];
+  const flip = (mutate, ms = 650, ease = EASE) => {
+    const list = tracked();
+    const before = list.map(([e, b]) => (e.offsetParent ? e.offsetTop - (b ? b.offsetTop : 0) : null));
+    mutate();
+    if (reduced) return;
+    list.forEach(([e, b], i) => {
+      if (before[i] === null || !e.offsetParent) return;
+      const d = before[i] - (e.offsetTop - (b ? b.offsetTop : 0));
+      if (Math.abs(d) > 0.5) e.animate([{ transform: `translateY(${d.toFixed(1)}px)` }, { transform: "none" }], { duration: ms, easing: ease });
+    });
+  };
+  const enter = (el, delay = 0, ms = 600) => {
+    if (reduced || !el) return;
+    el.animate([{ opacity: 0, transform: `translateY(${(8 * unit()).toFixed(1)}px)` }, { opacity: 1, transform: "none" }], { duration: ms, delay, easing: EASE, fill: "backwards" });
+  };
+  const unfold = (el, ms = 650, ease = EASE) => {   // a box opening downward, as the sections under it slide
+    if (reduced || !el) return;
+    const r = (8 * unit()).toFixed(1);
+    el.animate([{ clipPath: `inset(0 0 100% 0 round ${r}px)` }, { clipPath: `inset(0 0 0 0 round ${r}px)` }], { duration: ms, easing: ease });
+  };
+  const cancelAnims = () => qq(".ai-sec, .ai-sec *, .ai-left > *, .ai-post > *, .ai-tx").forEach((e) => e.getAnimations().forEach((a) => a.cancel()));
+
+  /* ---------- the clock: runs only while the card is on screen ---------- */
+  let vt = 0, last = 0, raf = 0, running = false, gen = 0;
+  const waits = new Set();
+  const frame = (now) => {
+    vt += Math.min(64, now - last); last = now;
+    waits.forEach((w) => { if (vt >= w.at) { waits.delete(w); w.res(); } });
+    if (mode !== "auto") ring.style.strokeDashoffset = (RING * (1 - Math.min(1, (video.currentTime || 0) / CLIP_DUR))).toFixed(2);
+    raf = requestAnimationFrame(frame);
+  };
+  const sleep = (ms, g) => new Promise((res, rej) => { waits.add({ at: vt + ms, res: () => (g === gen ? res() : rej(STOP)) }); });
+  const later = (ms, g, fn) => sleep(ms, g).then(fn, () => {});
+
+  /* ---------- the pointer (the user's) ---------- */
+  const pt = (el, fx = 0.5, fy = 0.5) => {
+    const s = stage.getBoundingClientRect(), r = el.getBoundingClientRect(), k = s.width / stage.offsetWidth || 1;
+    return { x: (r.left + r.width * fx - s.left) / k, y: (r.top + r.height * fy - s.top) / k };
+  };
+  const tip = () => { const w = parseFloat(getComputedStyle(cursor).width) || 17; return { x: w * 2 / 20, y: w * 1.6 / 20 }; };
+  const place = (p) => { const t = tip(); cursor.style.transform = `translate(${(p.x - t.x).toFixed(1)}px, ${(p.y - t.y).toFixed(1)}px)`; };
+  const pointerIn = (p) => {
+    cursor.classList.add("no-tr");
+    place({ x: p.x - stage.clientWidth * 0.16, y: p.y + stage.clientHeight * 0.3 });
+    cursor.getBoundingClientRect();   // an <svg> has no offsetWidth: this commits the start point
+    cursor.classList.remove("no-tr");
+    cursor.classList.add("is-on");
+    place(p);
+  };
+  const press = async (el, g) => {
+    el.classList.add("is-down"); cursor.classList.add("is-click");
+    await sleep(130, g);
+    el.classList.remove("is-down"); cursor.classList.remove("is-click");
+  };
+  const copied = (el, g) => { el.classList.add("is-copied"); later(1500, g, () => el.classList.remove("is-copied")); }; // EpisodesView.swift:929-937
+
+  /* ---------- the clip, opened in a player ---------- */
+  const loadVideo = () => { if (!video.getAttribute("src")) { video.src = root.dataset.aiSrc; video.preload = "auto"; } };
+  const qt = q(".ai-qt");
+  const placeClip = () => {   // over the left of the shot, where the left column is cut by the frame; never over the right column
+    if (phone()) { qt.style.left = qt.style.top = qt.style.width = ""; return; }
+    const u = unit(), t = SHOTS[shot](), frameH = t.W * ar(), bar = 24 * stage.clientWidth / 620;
+    const areaL = t.x0 + 16 * u, areaR = box(q(".ai-right")).x - 40 * u;
+    let h = frameH * 0.88, w = (h - bar) * 9 / 16;
+    if (w > areaR - areaL) { w = areaR - areaL; h = w * 16 / 9 + bar; }
+    qt.style.left = `${areaL.toFixed(1)}px`;
+    qt.style.top = `${(t.y0 + (frameH - h) / 2).toFixed(1)}px`;
+    qt.style.width = `${w.toFixed(1)}px`;
+  };
+  const openClip = (fromStart = true) => {
+    loadVideo();
+    placeClip();
+    root.classList.add("is-qt");
+    if (fromStart) { try { video.currentTime = 0; } catch (_) {} }
+    if (onScreen()) video.play().catch(() => {});
+  };
+  const closeClip = () => { root.classList.remove("is-qt"); video.pause(); };
+
+  /* ---------- the two ends of the loop ---------- */
+  const files = (mp4, txt) => { root.classList.toggle("f-mp4", mp4); root.classList.toggle("f-txt", txt); };
+  const toStart = () => {
+    cancelAnims();
+    preReveal();
+    show("clip", false); show("rc", false); show("notes", false);
+    stacks.forEach((st) => [...st.children].forEach((s, k) => { s.classList.toggle("is-on", k === 0); s.classList.remove("is-out"); }));
+    setStatus(0);
+    root.classList.remove("is-toast", "is-qt");
+    qq(".is-copied, .is-hover, .is-down").forEach((e) => e.classList.remove("is-copied", "is-hover", "is-down"));
+    cursor.classList.remove("is-on", "is-click");
+    files(false, false); setPeek(0);
+    scrollTo(0, "now"); aim("wide", "now");
+  };
+  const toEnd = (where) => {   // the finished episode: no job running, every draft in
+    cancelAnims();
+    postReveal();
+    show("clip", true); show("rc", true); show("notes", true);
+    setStatus(-1);
+    root.classList.remove("is-toast");
+    qq(".is-copied, .is-hover, .is-down").forEach((e) => e.classList.remove("is-copied", "is-hover", "is-down"));
+    cursor.classList.remove("is-on", "is-click");
+    files(true, true); setPeek(0);
+    const how = reduced ? "now" : "";
+    if (where === "clips") { aim("notes", "now"); scrollTo(clipsS(), how); aim("clips", how); }
+    else { scrollTo(notesS(), "now"); aim("notes", how); }
+  };
+
+  /* ---------- the loop ---------- */
+  const run = async (g, first) => {
+    toStart();
+    await sleep(first ? 60 : 30, g);
+    root.classList.remove("is-dim");
+    await sleep(first ? 1200 : 800, g);
+    // ClipSuggestions.swift:35, 50
+    setStatus(1);
+    await sleep(1300, g);
+    // the suggested clip is made: Vertical clips appears, and the app's toast for 3.5 s (ClipSuggestions.swift:67; Studio.swift:1626-1634)
+    flip(() => show("clip", true));
+    enter(secVc);
+    if (!phone()) root.classList.add("is-toast");
+    files(true, false);
+    later(3500, g, () => root.classList.remove("is-toast"));
+    await sleep(1000, g);
+    // ReportCard.swift:36
+    setStatus(2);
+    await sleep(1400, g);
+    aim("col");   // the toast leaves as the camera lands
+    await sleep(1900, g);
+    const OPEN = "cubic-bezier(.25, .55, .25, 1)";
+    flip(() => show("rc", true), 1100, OPEN);
+    unfold(rcBox, 1100, OPEN);
+    let t = 120;
+    qq(".ai-rc .ai-w").forEach((b) => { t = sweep(b, t, 300) + 80; });
+    if (!reduced) qq(".ai-rc__ln svg").forEach((s, i) => s.animate([{ opacity: 0, transform: "scale(.6)" }, { opacity: 1, transform: "none" }], { duration: 420, delay: 120 + i * 300, easing: EASE, fill: "backwards" }));
+    await sleep(1700, g);
+    // ShowNotes.swift:88
+    setStatus(3);
+    await sleep(2300, g);
+    // the drafts are saved: the box replaces "Write title ideas", and the job is done
+    flip(() => { show("notes", true); setStatus(-1); }, 2400, OPEN);
+    unfold(notesBox, 2400, OPEN);
+    enter(q(".ai-tn > .ai-cap"), 2000);
+    files(true, true); setPeek(0);
+    if (phone()) scrollTo(notesS());
+    else aim("notes");
+    const copies = qq(".ai-notes .ai-copy"), hrs = qq(".ai-notes .ai-hr"), w = qq(".ai-notes .ai-w");
+    t = 260;
+    for (let i = 0; i < 3; i++) { fadeIn(copies[i], t + 120); t = sweep(w[i], t, 280) + 60; }
+    fadeIn(hrs[0], t);
+    const tDesc = t + 60;
+    t = sweep(w[3], tDesc, 200) + 60;
+    fadeIn(copies[3], tDesc + 160);
+    fadeIn(hrs[1], t);
+    const tPts = t + 60; t = tPts;
+    for (let i = 4; i < 7; i++) t = sweep(w[i], t, 220) + 50;
+    fadeIn(copies[4], tPts + 160);
+    later(tDesc, g, () => setPeek(1));
+    later(tPts, g, () => setPeek(2));
+    // its caption, under the clip (off screen for now)
+    sweep(q(".ai-clip__cap .ai-w"), 0, 300); fadeIn(capCopy, 0);
+    await sleep(t + 1500, g);
+    // the user scrolls down to the clip
+    scrollTo(clipsS());
+    aim("clips");
+    await sleep(1500, g);
+    // plays it: the row opens the file (EpisodesView.swift:708)
+    let p = pt(clipRow.querySelector("b"), 0.45, 0.55);
+    pointerIn(p);
+    await sleep(850, g);
+    await press(clipRow, g);
+    openClip();
+    await sleep(1400, g);
+    // and copies its caption
+    p = pt(capCopy, 0.36, 0.5);
+    place(p);
+    await sleep(850, g);
+    capCopy.classList.add("is-hover");
+    await sleep(160, g);
+    await press(capCopy, g);
+    copied(capCopy, g);
+    setPeek(3);
+    await sleep(900, g);
+    capCopy.classList.remove("is-hover");
+    cursor.classList.remove("is-on");
+    await sleep(4300, g);
+    // rewind, softly
+    closeClip();
+    await sleep(350, g);
+    root.classList.add("is-dim");
+    await sleep(520, g);
+  };
+
+  let started = false;
+  const loop = async () => {
+    const g = ++gen;
+    let first = true;
+    try { for (;;) { await run(g, first); first = false; } } catch (e) { if (e !== STOP) throw e; }
+  };
+
+  /* ---------- sound: the visitor plays the clip ---------- */
+  let mode = "auto";
+  const setMode = (m) => {
+    mode = m;
+    root.classList.toggle("is-sound", m === "sound");
+    root.classList.toggle("is-held", m === "held");
+    btn.setAttribute("aria-label", m === "sound" ? "Pause" : "Play the clip Apple Intelligence suggested, with sound");
+  };
+  btn.addEventListener("click", () => {
+    if (mode === "sound") { video.pause(); return; }
+    if (mode !== "held") {
+      gen++; waits.clear(); started = true;   // the loop stops on the finished screen
+      root.classList.add("is-in"); root.classList.remove("is-dim");
+      toEnd("clips");
+      loadVideo();
+      placeClip();
+      root.classList.add("is-qt");
+      try { video.currentTime = 0; } catch (_) {}
+    }
+    video.muted = false;
+    setMode("sound");
+    video.play().catch(() => { video.muted = true; setMode("auto"); });
+    sync();
+  });
+  video.addEventListener("pause", () => {
+    if (mode !== "sound" || video.ended) return;
+    setMode("held");
+  });
+  video.addEventListener("ended", () => {
+    if (mode === "auto") return;
+    video.muted = true;
+    setMode("auto");
+    ring.style.strokeDashoffset = RING;
+    if (reduced) { sync(); return; }
+    // after a breath, the whole thing plays again from the top
+    const g = ++gen;
+    sleep(1600, g).then(() => { root.classList.add("is-dim"); return sleep(520, g); }).then(() => { closeClip(); loop(); }, () => {});
+  });
+  // another player on the page starts with sound: this one stops
+  document.addEventListener("play", (e) => {
+    const m = e.target;
+    if (mode === "sound" && m instanceof HTMLMediaElement && m !== video && !m.muted) video.pause();
+  }, true);
+
+  /* ---------- on screen, off screen, covered by the next card ---------- */
+  let seen = false, covered = false;
+  const onScreen = () => seen && !covered && !document.hidden;
+  const sync = () => {
+    if (onScreen()) {
+      loadVideo();
+      root.classList.add("is-in");
+      if (!reduced && !started) { started = true; root.classList.add("is-dim"); loop(); }
+      if (!running && (!reduced || mode !== "auto")) { running = true; last = performance.now(); raf = requestAnimationFrame(frame); }
+      if (!reduced && mode === "auto" && root.classList.contains("is-qt") && video.paused) video.play().catch(() => {});
+    } else {
+      if (running) { running = false; cancelAnimationFrame(raf); }
+      if (!video.paused) video.pause();
+    }
+  };
+  new IntersectionObserver(([e]) => { seen = e.isIntersecting; sync(); }, { threshold: 0.3 }).observe(stage);
+  root.closest(".hm-ch")?.addEventListener("hm-cover", (e) => { covered = !!e.detail; sync(); });
+  document.addEventListener("visibilitychange", sync);
+
+  /* ---------- start ---------- */
+  if (reduced) {
+    root.classList.add("is-in");
+    toEnd("notes");
+  } else {
+    toStart();
+  }
+  const refit = () => { scrollTo(S === 0 ? 0 : (shot === "clips" ? clipsS() : S), "now"); aim(shot, "now"); if (root.classList.contains("is-qt")) placeClip(); };
+  new ResizeObserver(refit).observe(stage);
+  document.fonts?.ready.then(refit);
+})();
+/* ==================== /ai ==================== */
+
+/* ==================== reel ==================== */
+/* 01 Reels, TikTok and Shorts, on the screens of Taylormade Podcast 1.0 (4).
+   Scene 1, the Record screen: Nelson's promo "2 Tonight at 7" (the app's own show file, take 0:10.4 to 0:19.9, with
+   its real cut to Cam 1 + Cam 3 at 0:17.3 and its mic's real levels on the meter); "That was good!" is pressed right
+   after "That's why their answers come out trash." (RunSheetPanel.swift, Studio.swift markMoment).
+   Scene 2, the Episodes screen of the Auntie PB episode just after its Stop: the after-Stop jobs in their real order
+   (ClipSuggestions.swift, ReportCard.swift, ShowNotes.swift), its three real suggested clips (episode.json), and the clip
+   "The guest and host agree to take action" leaving the app for a phone, where it plays as the app made it
+   (reel-clip.mp4 = the page's pb-clip.mp4 from 0:00.1, so its first frame, a caption from the health part of
+   the conversation, never shows).
+   Runs while the card is on screen; pauses when scrolled away or covered by the next card. */
+(() => {
+  const root = document.querySelector("[data-reel]");
+  if (!root) return;
+  const q = (s) => root.querySelector(s);
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const saveData = !!(navigator.connection && navigator.connection.saveData);
+
+  const stage = q(".reel__stage"), body = q(".reel__body"), vid = q(".reel__vid"), pvid = q(".reel__pvid");
+  const meter = q(".reel__meter"), micRow = q(".reel__mic"), good = q("[data-good]"), cur = q(".reel__cur");
+  const fly = q(".reel__fly"), phone = q(".reel__phone"), screen = q(".reel__phone .mu-iphone__screen");
+  const clips = [...root.querySelectorAll(".reel__clip")];
+  const tabs = [...root.querySelectorAll("[data-tab]")];
+  const el = { t: q("[data-t]"), layout: q("[data-layout]"), mic: q("[data-mic]"), topic: q("[data-topic]"), count: q("[data-count]"),
+    toast: q("[data-toast]"), st: q("[data-status]"), ep: q("[data-ep]") };
+  const set = (node, text) => { if (node && node.textContent !== text) node.textContent = text; };
+  const flag = (cls, on) => root.classList.toggle(cls, on);
+  const clock = (s) => { s = Math.max(0, Math.floor(s)); return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`; };
+  const later = (fn) => requestAnimationFrame(() => requestAnimationFrame(fn));
+
+  /* "Mic 1 - Host.wav" peak levels, 20 a second from 0:10.4, on the app's -60…0 dBFS meter scale */
+  const LV = [.424,.187,.217,0,0,0,.675,.707,.604,.613,.55,.616,.67,.624,.339,.5,.62,.632,.646,.599,.515,.549,.563,.536,.568,.586,.562,.472,.453,.518,.528,.453,.467,.356,.011,.009,.009,0,0,.363,.544,.573,.332,.216,.734,.739,.738,.612,.608,.574,.175,.57,.596,.619,.544,.435,.152,.106,0,0,0,.495,.627,.612,.548,.466,.605,.523,.406,.577,.594,.604,.486,.652,.625,.52,.484,.143,.465,.664,.655,.605,.537,.517,.42,.408,.482,.54,.575,.584,.551,.568,.567,.559,.494,.528,.533,.524,.504,.39,.161,.284,.267,.23,.104,0,.379,.655,.646,.574,.57,.457,.409,.508,.587,.626,.577,.465,.581,.55,.445,.597,.601,.576,.427,.444,.48,.48,.38,.512,.468,.539,.539,.526,.291,.508,.482,.653,.655,.65,.545,.514,.478,.389,.416,.315,0,0,0,0,.28,.411,.566,.512,.454,.491,.518,.44,.61,.646,.668,.632,.34,.185,.536,.532,.496,.509,.644,.594,.495,.467,.494,.512,.571,.581,.526,.438,.496,.534,.628,.614,.537,.502,.594,.599,.518,.18,.24,.035];
+  const T0 = 10.4, FILE = 9.5, CUT = 17.317;                 // reel-take.mp4 = take 0:10.4 to 0:19.9; the show cuts at 0:17.317
+  const MARK = 7.5;                                           // take 0:17.9, right after "…come out trash." (ends 0:17.52)
+  const SCENE2 = 9.7, LAND = 17.45, CLIP = 13.05, LOOP = 31.3;          // reel-clip.mp4 = pb-clip.mp4 from 0:00.1, 13.05 s
+  const STATUS = ["Looking for more clip moments…", "Making suggested clips… 1 of 3", "Making suggested clips… 2 of 3",
+    "Making suggested clips… 3 of 3", "Writing the report card…", "Writing title ideas and show notes…"];
+
+  let scene = "rec", recording = true;
+  const setStatus = (s) => { if (el.st.textContent === s) return; el.st.textContent = s; el.st.classList.remove("is-new"); void el.st.offsetWidth; el.st.classList.add("is-new"); };
+  const toast = (text) => { if (text) set(el.toast, text); flag("is-toast", !!text); };
+  const setScene = (s) => {
+    scene = s; root.dataset.scene = s;
+    tabs.forEach((t) => t.classList.toggle("on", (t.dataset.tab === "eps") === (s === "eps")));
+  };
+
+  /* ---------- the pointer ---------- */
+  const place = (target, fx = 0.5, fy = 0.5, instant = false) => {
+    const b = body.getBoundingClientRect(), k = b.width / body.offsetWidth || 1;
+    const r = target.getBoundingClientRect();
+    const x = (r.left - b.left + r.width * fx) / k, y = (r.top - b.top + r.height * fy) / k;
+    if (instant) { cur.style.transition = "none"; void cur.offsetWidth; }
+    cur.style.setProperty("--cx", `${x.toFixed(1)}px`); cur.style.setProperty("--cy", `${y.toFixed(1)}px`);
+    if (instant) later(() => { cur.style.transition = ""; });
+  };
+  const click = (on) => flag("is-click", on);
+
+  /* ---------- the clip flies out of the row and onto the phone ---------- */
+  const offsetIn = (node, upTo) => { let x = 0, y = 0; while (node && node !== upTo) { x += node.offsetLeft; y += node.offsetTop; node = node.offsetParent; } return { x, y }; };
+  const launch = () => {
+    const s = stage.getBoundingClientRect(), k = s.width / stage.offsetWidth || 1;
+    const icon = clips[1].querySelector(".reel__tall").getBoundingClientRect();
+    const h0 = icon.height / k, w0 = h0 * 9 / 16;
+    const x0 = (icon.left - s.left) / k + (icon.width / k - w0) / 2, y0 = (icon.top - s.top) / k;
+    // where the 9:16 picture sits on the phone's screen once the phone has risen (offsets ignore its transform)
+    const p = offsetIn(screen, stage), sw = screen.offsetWidth, sh = screen.offsetHeight;
+    const w1 = sw, h1 = sw * 16 / 9, x1 = p.x, y1 = p.y + (sh - h1) / 2;
+    Object.assign(fly.style, { left: `${x1}px`, top: `${y1}px`, width: `${w1}px`, height: `${h1}px`, transition: "none", opacity: "1",
+      transform: `translate(${x0 - x1}px, ${y0 - y1}px) scale(${w0 / w1})`, borderRadius: `${Math.max(2, w1 * 0.06)}px` });
+    void fly.offsetWidth;
+    later(() => { fly.style.transition = ""; fly.classList.add("is-go"); fly.style.transform = "none"; fly.style.borderRadius = `${w1 * 0.12}px`; });
+  };
+  const landFly = () => { flag("is-landed", true); fly.style.opacity = "0"; };
+  const resetFly = () => { fly.classList.remove("is-go"); Object.assign(fly.style, { transition: "none", opacity: "0", transform: "none" }); };
+
+  /* ---------- the script (seconds) ---------- */
+  const cues = [];
+  const cue = (at, fn) => cues.push([at, fn]);
+  // Scene 1: recording, then "That was good!" (Pro shows its M key cap)
+  cue(0, () => { setScene("rec"); playFrom(0); });
+  cue(6.3, () => { place(good, 1.25, 2.6, true); flag("is-cur", true); });
+  cue(6.45, () => place(good, 0.42, 0.55));
+  cue(7.3, () => { click(true); good.classList.add("is-down"); });
+  cue(MARK, () => {
+    const at = clock(T0 + MARK);
+    root.querySelector(".reel__mark time").textContent = at;
+    set(el.count, "1"); flag("is-marked", true);
+    toast(`★ Clip moment 1 saved at ${at}`);                           // Studio.swift:3130
+  });
+  cue(7.62, () => { click(false); good.classList.remove("is-down"); });
+  cue(8.2, () => flag("is-cur", false));
+  cue(9.35, () => toast(""));
+  // Scene 2: the Auntie PB episode, just after its Stop
+  cue(SCENE2, () => { recording = false; flag("is-swap", true); setStatus(STATUS[0]); setScene("eps"); });
+  cue(SCENE2 + 0.3, () => { set(el.ep, "Episode 1"); flag("is-swap", false); });
+  cue(10.6, () => setStatus(STATUS[1]));
+  cue(11.5, () => setStatus(STATUS[2]));
+  cue(12.4, () => setStatus(STATUS[3]));
+  // all three are written to the episode at once, then the toast (ClipSuggestions.swift:64-68)
+  cue(13.4, () => {
+    flag("is-vc", true); flag("is-clips", true); setStatus(STATUS[4]);
+    toast("Found 3 more moments for clips. They're in Clips › Suggested.");
+  });
+  cue(13.45, () => clips[0].classList.add("is-in"));
+  cue(13.53, () => clips[1].classList.add("is-in"));
+  cue(13.61, () => clips[2].classList.add("is-in"));
+  cue(14.9, () => { place(clips[1], 1.05, 2.4, true); flag("is-cur", true); });
+  cue(15.05, () => place(clips[1], 0.36, 0.55));
+  cue(16.1, () => { click(true); clips[1].classList.add("is-down"); });
+  cue(16.25, () => { click(false); clips[1].classList.remove("is-down"); });
+  cue(16.9, () => toast(""));
+  cue(16.4, () => { launch(); flag("is-phone", true); flag("is-cur", false); });
+  cue(LAND - 0.05, landFly);
+  cue(LAND, () => playPhone());
+  cue(19.5, () => setStatus(STATUS[5]));
+  cue(LAND + CLIP - 0.25, () => { flag("is-reset", true); flag("is-phone", false); });
+  cues.sort((x, y) => x[0] - y[0]);
+
+  /* ---------- state ---------- */
+  const resetState = () => {
+    setScene("rec"); recording = true; toast(""); setStatus(STATUS[0]);
+    ["is-marked", "is-cur", "is-click", "is-vc", "is-clips", "is-phone", "is-landed", "is-pplay", "is-swap"].forEach((c) => flag(c, false));
+    clips.forEach((c) => c.classList.remove("is-in", "is-down"));
+    good.classList.remove("is-down");
+    set(el.count, "0"); set(el.ep, "2 Tonight at 7"); set(el.t, clock(T0)); set(el.topic, `${clock(T0)} on this topic`); set(el.layout, "Cam 1");
+    resetFly(); meterTo(0, 0); hold = 0;
+    if (vid.getAttribute("src")) { vid.pause(); try { vid.currentTime = 0; } catch (_) {} }
+    if (pvid.getAttribute("src")) { pvid.pause(); try { pvid.currentTime = 0; } catch (_) {} }
+  };
+
+  let hold = 0, holdUntil = 0, talkUntil = -1;
+  const meterTo = (lvl, f) => {
+    meter.style.setProperty("--m", lvl.toFixed(3));
+    meter.classList.toggle("loud", lvl > 0.8);
+    if (lvl >= hold) { hold = lvl; holdUntil = f + 1; } else if (f > holdUntil) hold = Math.max(lvl, hold - 0.02);
+    meter.style.setProperty("--h", hold.toFixed(3));
+    meter.style.setProperty("--ho", hold > 0.02 ? 1 : 0);
+    if (lvl > 0.3) talkUntil = f + 0.45;
+    const talking = recording && f < talkUntil;
+    micRow.classList.toggle("talk", talking);
+    set(el.mic, talking ? "Talking" : "Ready");
+  };
+
+  /* ---------- the videos ---------- */
+  let wantVideo = !saveData;
+  const load = () => {
+    if (!wantVideo) return;
+    for (const v of [vid, pvid]) if (!v.getAttribute("src")) { v.src = v.dataset.src; v.preload = "auto"; v.load(); }
+  };
+  const novid = () => { wantVideo = false; flag("is-novid", true); };
+  vid.addEventListener("error", novid); pvid.addEventListener("error", novid);
+  vid.addEventListener("playing", () => flag("is-playing", true));
+  pvid.addEventListener("playing", () => flag("is-pplay", true));
+  if (!wantVideo) flag("is-novid", true);
+  const go = (v, f) => { try { v.currentTime = f; } catch (_) {} const p = v.play(); if (p && p.catch) p.catch(() => {}); };
+  const playFrom = (f) => { if (!wantVideo) return; load(); go(vid, f); };
+  const playPhone = () => { if (!wantVideo) return; load(); go(pvid, 0); };
+
+  /* ---------- the clock: runs only while the card is on screen ---------- */
+  let t = 0, ci = 0, raf = 0, last = 0, seen = false, covered = false, away = 0, began = false;
+  const frame = (now) => {
+    const dt = Math.min(0.1, (now - last) / 1000); last = now;
+    t += dt;
+    if (t >= LOOP) { t = 0; ci = 0; resetState(); flag("is-reset", false); }
+    while (ci < cues.length && cues[ci][0] <= t) cues[ci++][1]();
+    if (scene === "rec") {
+      const f = Math.min(FILE - 0.04, t), take = T0 + f;
+      set(el.t, clock(take));
+      set(el.topic, `${clock(take)} on this topic`);
+      set(el.layout, take < CUT ? "Cam 1" : "Cam 1 + Cam 3");
+      meterTo(LV[Math.floor(f * 20)] || 0, f);
+      if (wantVideo && vid.readyState >= 2 && t < FILE) {
+        if (Math.abs(vid.currentTime - f) > 0.3) { try { vid.currentTime = f; } catch (_) {} }
+        if (vid.paused) { const p = vid.play(); if (p && p.catch) p.catch(() => {}); }
+      }
+    }
+    if (t >= LAND && t < LAND + CLIP - 0.3 && wantVideo && pvid.readyState >= 2) {
+      const f = t - LAND;
+      if (Math.abs(pvid.currentTime - f) > 0.35) { try { pvid.currentTime = f; } catch (_) {} }
+      if (pvid.paused) { const p = pvid.play(); if (p && p.catch) p.catch(() => {}); }
+    }
+    raf = requestAnimationFrame(frame);
+  };
+  const running = () => seen && !covered && !document.hidden;
+  const update = () => {
+    if (running()) {
+      if (raf) return;
+      if (!began) { flag("is-in", true); requestAnimationFrame(() => flag("is-pre", false)); }
+      if (!began || (away && performance.now() - away > 1500)) { t = 0; ci = 0; resetState(); flag("is-reset", false); began = true; }
+      away = 0; last = performance.now(); raf = requestAnimationFrame(frame);
+    } else if (raf) {
+      cancelAnimationFrame(raf); raf = 0; away = performance.now(); vid.pause(); pvid.pause();
+    }
+  };
+
+  /* ---------- reduced motion: the finished frame, nothing moves ---------- */
+  if (reduced) {
+    wantVideo = false; flag("is-novid", true);
+    recording = false; setScene("eps"); set(el.ep, "Episode 1"); setStatus(STATUS[4]);
+    ["is-vc", "is-clips", "is-phone", "is-landed"].forEach((c) => flag(c, true));
+    clips.forEach((c) => c.classList.add("is-in"));
+    root.classList.add("is-still");
+    // the phone sits where it lands, showing the clip's first frame
+    return;
+  }
+
+  resetState();
+  flag("is-pre", true);
+  new IntersectionObserver(([e]) => { if (e.isIntersecting) load(); }, { rootMargin: "900px 0px" }).observe(root);
+  new IntersectionObserver(([e]) => { seen = e.isIntersecting; update(); }, { threshold: 0.3 }).observe(root);
+  const card = root.closest(".hm-ch");
+  if (card) card.addEventListener("hm-cover", (e) => { covered = !!e.detail; update(); });
+  document.addEventListener("visibilitychange", update);
+})();
+/* ==================== /reel ==================== */
+
+/* ==================== script ==================== */
+/* 08 Scripts and a teleprompter: Scripts mode in Taylormade Podcast 1.0 (4), acted out with Nelson's real take
+   "2 Tonight at 7". Every line in the window is the app's own text (RunSheetPanel.swift, ScriptsColumn.swift,
+   PrompterView.swift, Teleprompter.swift, TakeReplayPanel.swift, StudioView.swift, Studio.swift,
+   TaylormadePodcastApp.swift). The teleprompter's lines are the take's Script.txt split the way PromptAligner.swift
+   splits it, and the highlight moves on the take's real word times (its transcript.json). The meter is the take's
+   "Mic 1 - Host.wav". Plays while the card is on screen; pauses when it's scrolled away or covered by the next card. */
+(() => {
+  const root = document.querySelector("[data-script]");
+  if (!root) return;
+  const q = (s) => root.querySelector(s);
+  const reduced = matchMedia("(prefers-reduced-motion: reduce)").matches;
+  const saveData = !!(navigator.connection && navigator.connection.saveData);
+
+  const vid = q(".script__vid"), rvid = q(".script__rvid"), meter = q(".script__meter"), micRow = q(".script__mic");
+  const view = q(".script__view"), lines = [...root.querySelectorAll("[data-roll] p")];
+  const recBtn = q('[data-press="rec"]'), retakeBtn = q('[data-press="retake"]');
+  const el = { t: q("[data-t]"), chip: q("[data-chip]"), layout: q("[data-layout]"), n: q("[data-n]"), btn: q("[data-btn]"), space: q("[data-space]"), mic: q("[data-mic]") };
+  const set = (node, text) => { if (node && node.textContent !== text) node.textContent = text; };
+  const flag = (cls, on) => root.classList.toggle(cls, on);
+  const clock = (s) => { s = Math.max(0, Math.floor(s)); return `${String(Math.floor(s / 60)).padStart(2, "0")}:${String(s % 60).padStart(2, "0")}`; };
+
+  /* "Mic 1 - Host.wav" peak levels, 20 a second from the take's start, on the app's -60…0 dBFS meter scale */
+  const LV = [0,0,0,0,0,.131,.149,.167,.101,.318,.55,.606,.613,.622,.677,.654,.6,.574,.506,.437,.576,.766,.815,.757,.536,.681,.695,.655,.598,.495,.555,.674,.65,.291,.58,.592,.544,.51,.639,.652,.621,.57,.466,.049,0,0,0,0,.313,.52,.607,.624,.522,.697,.659,.603,.597,.59,.671,.65,.535,.474,.576,.568,.548,.495,.558,.604,.669,.607,.531,.478,.542,.556,.55,.567,.574,.579,.337,.141,.043,.049,.148,.447,.641,.65,.71,.637,.605,.529,.537,.565,.532,.46,.298,0,0,0,0,0,0,0,0,0,.373,.649,.536,.586,.696,.631,.591,.511,.416,.237,.603,.598,.512,.106,.499,.481,.484,.21,.468,.551,.498,.486,.454,.454,.387,.509,.523,.49,.449,.199,.274,.148,0,.268,.572,.531,.191,.506,.594,.603,.585,.587,.483,.439,.395,.541,.689,.729,.675,.589,.488,.497,.491,.495,.461,.452,.414,.542,.575,.487,.546,.563,.578,.558,.411,.136,.219,.108,0,0,.162,.513,.459,.403,.568,.64,.529,.544,.212,.565,.513,.493,.201,.517,.579,.55,.52,.559,.533,.501,.505,.472,.472,.118,.538,.565,.584,.573,.558,.532,.5,.473,.498,.447,.424,.178,.203,0,0,0,.676,.706,.606,.616,.546,.616,.666,.613,.331,.498,.618,.638,.644,.591,.514,.555,.571,.537,.567,.59,.566,.467,.467,.521,.528,.447,.498,.384,.01,.005,.001,0,0,.425,.55,.572,.333,.215,.733,.743,.735,.614,.653,.561,.191,.559,.603,.619,.544,.447,.138,.106,0,0,0,.495,.622,.606,.56,.533,.605,.521,.401,.568,.592,.605,.489,.643,.627,.523,.501,.135,.464,.653,.649,.604,.564,.532,.425,.407,.482,.536,.579,.584,.549,.576,.566,.558,.494,.53,.535,.52,.503,.389,.154,.289,.263,.229,.08,0,.375,.649,.624,.577,.594,.47,.41,.508,.584,.624,.586,.462,.576,.554,.443,.593,.601,.572,.45,.479,.48,.511,.373,.503,.465,.543,.536,.525,.289,.488,.489,.653,.658,.652,.549,.511,.474,.381,.454,.295];
+  const levelAt = (s) => LV[Math.floor(s * 20)] || 0;
+  /* When each prompter line becomes the current one: just after its first word is heard (transcript.json word starts:
+     "Somebody" 2.28, "3" 4.98, "but" 8.70, "So" 12.18, "you" 14.64, "That's" 15.30, "So" 17.58…) */
+  const LINE_AT = [0, 2.5, 5.2, 8.9, 12.4, 14.85, 15.5, 17.8, 20.1, 22.2, 24.8];
+  const lineAt = (s) => { let i = 0; while (i + 1 < LINE_AT.length && s >= LINE_AT[i + 1]) i++; return i; };
+
+  /* ---------- the script (seconds) ---------- */
+  const PRESS = 1.6, REC = 4.6, LEN = 17.5, STOP = REC + LEN, SAVED = 23.0, RETAKE = 27.45, REC2 = RETAKE + 3.15, CYCLE = REC2 - REC;
+  const REPLAY_FROM = 1.3;                       // the replay plays the Host close-up camera (no stacked opening)
+  let phase = "idle", line = -1, undoLeft = 0;
+
+  const setPhase = (p) => {
+    phase = p; root.dataset.phase = p;
+    set(el.chip, p === "rec" ? "● RECORDING" : "PREVIEW");
+    set(el.btn, { idle: "Record", replay: "Record", count: "Cancel", rec: "Stop", saving: "Saving" }[p]);
+    set(el.space, p === "saving" ? "Saving your files…" : "12.4 hrs of space left");
+  };
+  const tick = (n) => { set(el.n, String(n)); el.n.classList.remove("is-tick"); void el.n.offsetWidth; el.n.classList.add("is-tick"); };
+  const press = (node, at, fn) => { cue(at - 0.2, () => node.classList.add("is-down")); cue(at, () => { node.classList.remove("is-down"); fn(); }); };
+
+  /* the prompter: the line he's on sits near the top (anchor 8%); past lines fade to 30%, the rest are at 75% */
+  const setLine = (i) => {
+    if (i === line) return;
+    line = i;
+    lines.forEach((p, k) => { p.classList.toggle("is-past", k < i); p.classList.toggle("is-cur", k === i); });
+    const p = lines[i], vh = view.clientHeight;
+    const y = Math.min(0, vh * 0.08 - p.offsetTop - p.offsetHeight * 0.08);
+    q("[data-roll]").style.setProperty("--y", `${y.toFixed(1)}px`);
+  };
+
+  const cues = [];
+  const cue = (at, fn) => cues.push([at, fn]);
+  // 1. Record, then 3-2-1
+  press(recBtn, PRESS, () => { setPhase("count"); tick(3); });
+  cue(PRESS + 1, () => tick(2));
+  cue(PRESS + 2, () => tick(1));
+  // 2. Recording: the prompter starts by itself from the top and follows his voice (Teleprompter.swift:89-99, 134)
+  cue(REC, () => { setPhase("rec"); flag("is-run", true); line = -1; setLine(0); playFrom(0); });
+  // 3. Stop (one press in Scripts mode): saving, then the take replays with Retake · Keep · Next
+  press(recBtn, STOP, () => { setPhase("saving"); flag("is-run", false); vid.pause(); });
+  cue(SAVED, () => { setPhase("replay"); flag("is-taken", true); flag("is-toast", true); replay(); });
+  cue(SAVED + 3.5, () => flag("is-toast", false));
+  // 4. Retake: the take goes to the Trash (Undo for 10 seconds) and the same script starts again after 3-2-1
+  press(retakeBtn, RETAKE, () => {
+    flag("is-toss", true); flag("is-taken", false); flag("is-undo", true); undoLeft = 10;
+    setPhase("count"); tick(3);
+  });
+  cue(RETAKE + 0.45, () => flag("is-back", true));
+  cue(RETAKE + 0.6, () => rvid.pause());
+  cue(RETAKE + 1.0, () => { flag("is-toss", false); flag("is-back", false); });
+  cue(RETAKE + 1.15, () => tick(2));
+  cue(RETAKE + 2.15, () => tick(1));
+  cues.sort((x, y) => x[0] - y[0]);
+
+  /* ---------- state ---------- */
+  const resetState = () => {
+    setPhase("idle"); undoLeft = 0;
+    ["is-run", "is-taken", "is-toast", "is-undo", "is-toss", "is-back"].forEach((c) => flag(c, false));
+    set(el.t, "00:00"); set(el.layout, "Cam 1"); tick(3);
+    line = -1; setLine(0); meterTo(0, 0); hold = 0;
+    [recBtn, retakeBtn].forEach((b) => b.classList.remove("is-down"));
+    [vid, rvid].forEach((v) => { if (v.getAttribute("src")) { v.pause(); try { v.currentTime = 0; } catch (_) {} } });
+  };
+
+  let hold = 0, holdUntil = 0, talkUntil = -1;
+  const meterTo = (lvl, s) => {
+    meter.style.setProperty("--m", lvl.toFixed(3));
+    meter.classList.toggle("loud", lvl > 0.8);
+    if (lvl >= hold) { hold = lvl; holdUntil = s + 1; } else if (s > holdUntil) hold = Math.max(lvl, hold - 0.02);
+    meter.style.setProperty("--h", hold.toFixed(3));
+    meter.style.setProperty("--ho", hold > 0.02 ? 1 : 0);
+    if (lvl > 0.3) talkUntil = s + 0.45;
+    const talking = phase === "rec" && s < talkUntil;
+    micRow.classList.toggle("talk", talking);
+    set(el.mic, talking ? "Talking" : "Ready");
+  };
+
+  /* ---------- the video ---------- */
+  let wantVideo = !saveData;
+  const load = () => {
+    if (!wantVideo) return;
+    [vid, rvid].forEach((v) => { if (!v.getAttribute("src")) { v.src = v.dataset.src; v.preload = "auto"; v.load(); } });
+  };
+  [vid, rvid].forEach((v) => v.addEventListener("error", () => { wantVideo = false; flag("is-novid", true); }));
+  if (!wantVideo) flag("is-novid", true);
+  const go = (v, at) => {
+    if (!wantVideo) return;
+    load();
+    try { v.currentTime = at; } catch (_) {}
+    const p = v.play(); if (p && p.catch) p.catch(() => {});
+  };
+  const playFrom = (s) => go(vid, s);
+  const replay = () => go(rvid, REPLAY_FROM);
+
+  /* ---------- the clock: runs only while the card is on screen ---------- */
+  let t = 0, ci = 0, raf = 0, last = 0, seen = false, covered = false, away = 0, began = false;
+  const frame = (now) => {
+    const dt = Math.min(0.1, (now - last) / 1000); last = now;
+    t += dt;
+    if (undoLeft > 0) { undoLeft -= dt; if (undoLeft <= 0) flag("is-undo", false); }
+    if (t >= REC2) { t -= CYCLE; ci = cues.findIndex((c) => c[0] >= REC); }   // the retake's take is the next loop's take
+    while (ci < cues.length && cues[ci][0] <= t) cues[ci++][1]();
+    if (phase === "rec") {
+      const s = Math.min(LEN, t - REC);
+      set(el.t, clock(s));
+      set(el.layout, s < 1.218 ? "Cam 1 + Cam 3" : "Cam 1");   // the take's real cuts (episode.json)
+      setLine(lineAt(s));
+      meterTo(levelAt(s), s);
+      if (wantVideo && vid.readyState >= 2) {
+        if (Math.abs(vid.currentTime - s) > 0.3) { try { vid.currentTime = s; } catch (_) {} }
+        if (vid.paused) { const p = vid.play(); if (p && p.catch) p.catch(() => {}); }
+      }
+    } else if (phase !== "idle") meterTo(0, t);
+    raf = requestAnimationFrame(frame);
+  };
+  const restart = () => { t = 0; ci = 0; resetState(); };
+  const running = () => seen && !covered && !document.hidden;
+  const update = () => {
+    if (running()) {
+      if (raf) return;
+      if (!began) { requestAnimationFrame(() => flag("is-pre", false)); }
+      if (!began || (away && performance.now() - away > 1500)) { restart(); began = true; }
+      else {
+        if (phase === "rec" && wantVideo) { const p = vid.play(); if (p && p.catch) p.catch(() => {}); }
+        if (phase === "replay" && wantVideo) { const p = rvid.play(); if (p && p.catch) p.catch(() => {}); }
+      }
+      away = 0; last = performance.now(); raf = requestAnimationFrame(frame);
+    } else if (raf) {
+      cancelAnimationFrame(raf); raf = 0; away = performance.now(); vid.pause(); rvid.pause();
+    }
+  };
+
+  /* ---------- reduced motion: one finished frame, nothing moves ---------- */
+  if (reduced) {
+    wantVideo = false; flag("is-novid", true);
+    setPhase("replay"); flag("is-taken", true);
+    line = -1; setLine(6);
+    return;
+  }
+
+  resetState();
+  flag("is-pre", true);
+  new IntersectionObserver(([e]) => { if (e.isIntersecting) load(); }, { rootMargin: "900px 0px" }).observe(root);
+  new IntersectionObserver(([e]) => { seen = e.isIntersecting; update(); }, { threshold: 0.3 }).observe(root);
+  const card = root.closest(".hm-ch");
+  if (card) card.addEventListener("hm-cover", (e) => { covered = !!e.detail; update(); });
+  document.addEventListener("visibilitychange", update);
+  const deck = q(".script__deck");
+  const fit = () => { root.style.setProperty("--deck-h", `${deck.offsetHeight}px`); const i = line; line = -1; setLine(Math.max(0, i)); };
+  fit();
+  addEventListener("resize", fit);
+})();
+/* ==================== /script ==================== */

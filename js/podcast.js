@@ -146,12 +146,19 @@
     const chip = $("[data-layout]", auto), clock = $("[data-rec-time]", auto), now = $("[data-now]", auto);
     const mics = { host: $('[data-who="host"]', auto), guest: $('[data-who="guest"]', auto) };
     const CAM = { wide: 0, host: 1, guest: 2 };
-    const LINE = {
-      wide: "After 16 seconds on one close-up, it shows the room for a moment.",
-      host: "<b>Latasha is talking</b>, so her close-up is on the show.",
-      guest: "<b>Samantha is talking</b>, so her close-up is on the show.",
+    // what's on the show, read together with who is talking (the director's own talking flags), so the
+    // line never says one thing while the meters show another
+    const WHO = { host: '<b class="ho">The host</b>', guest: '<b class="gu">The guest</b>' };
+    const say = (cam, h, g) => {
+      if (cam === "wide") return "After 16 seconds on one close-up, it shows the room for a moment.";
+      const other = cam === "host" ? "guest" : "host";
+      const me = cam === "host" ? h : g, them = cam === "host" ? g : h;
+      if (me && them) return "Both talking. A short overlap doesn't move the shot.";
+      if (them) return `${WHO[other]} starts talking. It cuts once she's talked for 0.7 seconds and this shot has had its 2.5.`;
+      if (me) return `${WHO[cam]} is talking, so her close-up is on the show.`;
+      return "A pause. The shot holds; 3 seconds of quiet would show the room.";
     };
-    let shown = "";
+    let shown = "", line = "", pend = "", pendAt = 0;
     const draw = () => {
       if (feeds.readyState < 2) return;
       const w = feeds.videoWidth / 3, h = feeds.videoHeight;
@@ -163,12 +170,17 @@
         let cam = data.cuts[0][1];
         for (const [at, c] of data.cuts) if (t >= at) cam = c;
         if (cam !== shown) {
+          const first = !shown;
           shown = cam;
-          tiles.forEach((tile, i) => tile.classList.toggle("is-on", i === CAM[cam]));
+          tiles.forEach((tile, i) => { tile.classList.toggle("is-on", i === CAM[cam]); tile.classList.remove("go"); });
+          if (!first && !reduced) { const tl = tiles[CAM[cam]]; void tl.offsetWidth; tl.classList.add("go"); }
           chip.textContent = `Cam ${CAM[cam] + 1}`;
-          now.innerHTML = LINE[cam];
         }
         const i = Math.min(data.host.m.length - 1, Math.max(0, Math.round(t * 10)));
+        // the line changes only after a state has held 0.4 s (or at once on a cut), so it doesn't flicker
+        const next = say(cam, !!data.host.on[i], !!data.guest.on[i]);
+        if (next !== pend) { pend = next; pendAt = t; }
+        if (pend !== line && (t - pendAt >= 0.4 || t < pendAt || line === "" || next.startsWith("After") || (now.dataset.cam !== cam))) { line = pend; now.innerHTML = line; now.dataset.cam = cam; }
         for (const who of ["host", "guest"]) {
           const m = mics[who], d = data[who];
           m.style.setProperty("--m", d.m[i]);
@@ -228,7 +240,7 @@
       };
       const full = { s: 1, x: 0, y: 0 };
       const cams = fit(rel($(".tmw__cams", mover), base), 1, 2.6);
-      const micsF = fit(rel($(".tmw__mics", mover), base), 0.74, 2.4);
+      const micsF = fit(rel($(".tmw__mics", mover), base), 0.9, 2.4);
       // [progress, view]: rise in, the cameras, the mics, then the whole screen
       F = [[0, { s: 0.94, x: vw * 0.03, y: vh * 0.08 }], [0.06, full], [0.16, cams], [0.3, cams], [0.4, micsF], [0.54, micsF], [0.66, full], [1, full]];
     };

@@ -401,10 +401,11 @@
 @media (min-width: 1000px) { .pa-fin__reels { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: clamp(44px, 5vw, 104px); align-items: end; } }
 .pa-fin__h3 { font-family: var(--cond); font-weight: 800; text-transform: uppercase; font-size: clamp(34px, 3vw, 48px); line-height: .9; }
 .pa-fin__reels-copy p { margin-top: 18px; max-width: 40ch; font-size: clamp(16.5px, 1.2vw, 18px); line-height: 1.6; color: var(--mute-on-paper); }
-.pa-fin__phones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 2.2vw, 36px); width: 100%; max-width: 600px; justify-self: end; }
+.pa-fin__phones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(10px, 1.4vw, 20px); width: 100%; max-width: 400px; margin-top: 30px; }
 .pa-fin__phones figure { margin: 0; }
 .pa-fin__phones .mu-iphone { filter: drop-shadow(0 30px 40px rgba(70, 34, 32, .3)); }
-.pa-fin .pa-cap { color: var(--mute-on-paper); font-variant-numeric: tabular-nums; }
+.pa-fin .pa-cap { color: var(--mute-on-paper); font-variant-numeric: tabular-nums; font-size: 12.5px; }
+.pa-fin__rcap { margin-top: 12px; font-size: 14px; color: var(--mute-on-paper); }
 .pa-fin .pa-cap b { color: var(--ink); }
 @media (max-width: 599px) { .pa-fin .pa-cap { font-size: 12.5px; } }
 
@@ -442,7 +443,7 @@
 .pa-auto__ctrls .pa-ep__btn.is-on { background: var(--gold); }
 
 @media (min-width: 1000px) and (prefers-reduced-motion: no-preference) {
-  .pa-auto__track { height: 330vh; }
+  .pa-auto__track { height: 270vh; }
   .pa-auto__pin { position: sticky; top: var(--nav-h); height: calc(100svh - var(--nav-h)); grid-template-columns: minmax(0, 4fr) minmax(0, 9fr); grid-template-rows: minmax(0, 1fr) auto; column-gap: clamp(32px, 3.6vw, 72px); row-gap: 14px; align-content: center; padding-block: 28px 22px; }
   .pa-auto__steps { grid-row: 1 / span 2; position: relative; display: block; align-self: stretch; }
   .pa-auto__step { position: absolute; left: 0; right: 0; top: 50%; opacity: 0; filter: blur(8px); transform: translateY(calc(-50% + 22px)); transition: opacity .55s var(--ease-out), filter .55s var(--ease-out), transform .7s var(--ease-out); }
@@ -514,11 +515,20 @@
 .tmw__stop i { width: calc(14 * var(--u)); height: calc(14 * var(--u)); border-radius: calc(3 * var(--u)); background: #f5f2ea; }
 .tmw__preview, .tmw__head, .tmw__cams, .tmw__who, .tmw__stop, .tmw__mics, .tmw__bar { transition: opacity .6s var(--ease-out); }
 .tmw.f-cams .tmw__preview, .tmw.f-cams .tmw__dock, .tmw.f-cams .tmw__bar { opacity: .28; }
-.tmw.f-mics .tmw__preview, .tmw.f-mics .tmw__head, .tmw.f-mics .tmw__cams, .tmw.f-mics .tmw__who, .tmw.f-mics .tmw__stop, .tmw.f-mics .tmw__bar { opacity: .28; }
+.tmw.f-mics .tmw__preview, .tmw.f-mics .tmw__cams, .tmw.f-mics .tmw__bar { opacity: .28; }
+.tmw.f-mics .tmw__head, .tmw.f-mics .tmw__who, .tmw.f-mics .tmw__stop { opacity: 0; }
+/* the tile that just went on the show gives a small nod */
+.tmw__tile.go { animation: tmw-go .34s cubic-bezier(.2, .8, .2, 1); }
+@keyframes tmw-go { 40% { transform: scale(1.04); } }
+.pa-auto__now b.ho { color: #9ec2ed; }
+.pa-auto__now b.gu { color: var(--gold); }
 
 /* narrow screens: a phone-sized cut of the same screen */
 @container (max-width: 640px) {
-  .tmw > * { --u: calc(100cqw / 600); }
+  .tmw > * { --u: calc(100cqw / 440); }
+  .tmw__bar { gap: calc(10 * var(--u)); }
+  .tmw__chips .tmw__chip:nth-child(3), .tmw__chips .tmw__chip:nth-child(4) { display: none; }
+  .tmw__tile small { display: none; }
   .tmw__logo, .tmw__ep, .tmw__tabs { display: none; }
   .tmw__preview { width: 100%; }
   .tmw__cams { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: calc(12 * var(--u)); }
@@ -526,7 +536,9 @@
   .tmw__dock { grid-template-columns: minmax(0, 1fr); gap: calc(12 * var(--u)); }
   .tmw__who, .tmw__stop { display: none; }
   .tmw__mics { width: 100%; }
-  .tmw__mic { grid-template-columns: calc(9 * var(--u)) calc(64 * var(--u)) minmax(0, 1fr) calc(70 * var(--u)); }
+  .tmw__mic { grid-template-columns: calc(9 * var(--u)) calc(56 * var(--u)) minmax(0, 1fr) calc(58 * var(--u)); }
+  .tmw__main { padding: calc(12 * var(--u)); gap: calc(10 * var(--u)); }
+  .tmw__dock { padding: calc(10 * var(--u)) calc(12 * var(--u)); }
 }
 
 /* after the pinned screen: the rules, then every cut in the episode */
