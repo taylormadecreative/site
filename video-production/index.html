@@ -773,16 +773,18 @@
       </div>
     </section>
 
-    <!-- FACTS -->
-    <section class="vp-facts" aria-label="At a glance">
-      <div class="hm-wrap">
-        <p class="vp-clients" data-fade><span class="vp-clients__k">Films for</span> <span>TONI&amp;GUY Academy</span><i aria-hidden="true">/</i> <span>It’s a Secret Med Spa</span><i aria-hidden="true">/</i> <span>Marviano Cosmetics</span><i aria-hidden="true">/</i> <span>Juices &amp; Botanics</span><i aria-hidden="true">/</i> <span>La Supreme Hair</span><i aria-hidden="true">/</i> <span>Mariah.B</span></p>
-        <ul class="vp-facts__list">
-          <li data-fade><b>1 day</b><span>To a real quote, every inquiry</span></li>
-          <li data-fade><b>2 rounds</b><span>Of edits, about two weeks from shoot to delivery</span></li>
-          <li data-fade><b>NDA</b><span>Signed for unreleased product and private launches</span></li>
-          <li data-fade><b>14 yrs</b><span>Of creative direction and design</span></li>
-        </ul>
+    <!-- CLIENTS · a scrolling bar of names (Magic UI Marquee from home.js) -->
+    <section class="vp-facts" aria-label="Clients">
+      <div class="hm-wrap vp-facts__in">
+        <div class="vp-facts__side">
+          <p class="vp-facts__stat"><b>14 yrs</b><span>Of creative direction and design</span></p>
+          <button class="vp-mq-toggle" type="button" data-mq-toggle aria-label="Pause the moving client names">Pause</button>
+        </div>
+        <div class="mq vp-clients" data-mq>
+          <ul class="mq__g">
+            <li>TONI&amp;GUY Academy</li><li>Hoodies+Stripes</li><li>It’s a Secret Med Spa</li><li>Oribe</li><li>Marviano Cosmetics</li><li>Juices &amp; Botanics</li><li>La Supreme Hair</li>
+          </ul>
+        </div>
       </div>
     </section>
 
