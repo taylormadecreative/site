@@ -147,6 +147,11 @@
       case "web-design":
         // app projects ride the web-design lane (no separate service row); ?type=app opens the app brief
         if (params.get("type") === "app") return "App project.\nWhat the app should do and who it's for:\niPhone, Apple Watch, Mac (or Android too):\nDo people sign in or pay in the app:\nLaunch date:";
+        // platform deep links from /web-design/{shopify,wordpress,squarespace,wix}/
+        {
+          const platform = { shopify: "Shopify", wordpress: "WordPress", squarespace: "Squarespace", wix: "Wix" }[params.get("platform")];
+          if (platform) return `Website on ${platform}.\nYour current site (link):\nRedesign, new build, or fixes:\nWhat isn't working now:\nLaunch date:`;
+        }
         return "";
       case "event-coverage":
         return `${params.get("type") === "photo" ? "Event photography." : "Event coverage.\nPhotos, video, or both:"}\nEvent and date:\nLocation:\nHours of coverage:`;
