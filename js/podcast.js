@@ -1,8 +1,8 @@
 /* TAYLORMADE PODCAST · the Mac app's page
    The live examples come from two real takes recorded with the app: Nelson's solo promo
    ("Tonight at 7") and Auntie PB's first episode (two people, two cameras). For Auntie PB:
-   the finished video with a cut strip that follows it, and the two cameras lit by the
-   app's real cuts. For "Tonight at 7":
+   the app's video with a cut strip that follows it, the two cameras lit by the app's real
+   cuts, and moments from the episode as we finished it. For "Tonight at 7":
    clips that play only while on screen, the podcast audio with its waveform, the
    transcript lighting up word by word, the voice steps, the prompter, the 16:9 to 9:16
    turn and the camera switch. Plus the download counter, the beta's version from
@@ -168,20 +168,24 @@
     });
   }
 
-  /* ---------- Auntie PB: the strip that follows the episode video ----------
-     13 seconds of the episode; its blocks are the app's real cuts. The playhead and the
-     lit block follow the video's own clock; a click on a block jumps the video there. */
+  /* ---------- Auntie PB: strips that follow a video ----------
+     The episode band: 13 seconds of the app's video, its blocks the app's real cuts.
+     The finished band: six moments from the edited episode; the lit one fills as it plays.
+     The playhead and the lit block follow the video's own clock; a click jumps there. */
   $$("[data-zoom]").forEach((z) => {
     const v = $(z.dataset.zoom);
     if (!v) return;
     const len = +z.dataset.len;
     const blocks = $$(".pa-cuts__b", z);
+    const label = $("[data-now-label]", z.parentElement);
     let raf = 0;
     const paint = () => {
       const t = Math.min(v.currentTime, len - 0.001);
       z.style.setProperty("--t", (t / len).toFixed(4));
       const on = blocks.find((b) => t >= +b.dataset.s && t < +b.dataset.e) || blocks[0];
       blocks.forEach((b) => b.classList.toggle("on", b === on));
+      if (label) { const name = $("b", on).textContent; if (label.textContent !== name) label.textContent = name; }
+      on.style.setProperty("--p", ((t - on.dataset.s) / (on.dataset.e - on.dataset.s)).toFixed(3));
       if (!v.paused) raf = requestAnimationFrame(paint);
     };
     v.addEventListener("play", () => { cancelAnimationFrame(raf); paint(); });
@@ -216,7 +220,8 @@
     sound.addEventListener("click", () => {
       load();
       v.muted = !v.muted;
-      if (!v.muted) { delete fig.dataset.held; v.currentTime = 0; v.play().catch(() => {}); }
+      // the app's 13 seconds restart for sound; the finished cut keeps its place (a visitor may have jumped to a moment)
+      if (!v.muted) { delete fig.dataset.held; if (!fig.classList.contains("pa-fin__film")) v.currentTime = 0; v.play().catch(() => {}); }
       sync();
     });
     ["play", "pause", "volumechange"].forEach((e) => v.addEventListener(e, sync));

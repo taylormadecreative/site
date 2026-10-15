@@ -48,6 +48,8 @@
 
 /* videos in device frames fill the screen */
 .mu-iphone__screen video, .pa-shape video { display: block; width: 100%; height: 100%; object-fit: cover; background: #050506; }
+/* client and app output is shown whole, edge captions and logo included */
+.pa-phones .mu-iphone__screen video, .pa-fin__phones .mu-iphone__screen video { object-fit: contain; }
 
 /* ---------- requirement notes and small labels inside a chapter ---------- */
 .pa-req { margin-top: 16px; font-size: 14px; font-weight: 600; }
@@ -272,13 +274,13 @@
 .pa-ep__after span { font-size: 15.5px; line-height: 1.4; color: var(--soft-on-ink); }
 .pa-ep__after li:last-child span { color: var(--paper); font-weight: 600; }
 @media (min-width: 1000px) {
-  .pa-ep__after { position: relative; display: block; height: 252px; margin-top: 26px; border-top: 1px solid color-mix(in srgb, var(--paper) 34%, transparent); }
+  .pa-ep__after { position: relative; display: block; height: 376px; margin-top: 26px; border-top: 1px solid color-mix(in srgb, var(--paper) 34%, transparent); }
   .pa-ep__after li, .pa-ep__after li:last-child { position: absolute; top: 0; left: var(--x); display: block; width: 23ch; padding: 0 0 0 16px; border: 0; }
   .pa-ep__after li::before { content: ""; position: absolute; left: 0; top: 0; width: 2px; height: 100%; background: linear-gradient(var(--gold), var(--gold)) 0 0 / 2px 16px no-repeat, linear-gradient(var(--hair-ink), var(--hair-ink)); }
-  .pa-ep__after li:nth-child(odd) { padding-top: 30px; height: 132px; z-index: 2; }
-  .pa-ep__after li:nth-child(odd) > * { position: relative; background: var(--ink); padding-right: 12px; }
-  .pa-ep__after li:last-child > * { padding-left: 12px; padding-right: 0; }
-  .pa-ep__after li:nth-child(even) { padding-top: 142px; height: 252px; }
+  /* three tiers, earliest lowest: every caption sits clear of the later items' lines */
+  .pa-ep__after li:nth-child(3), .pa-ep__after li:nth-child(5) { padding-top: 30px; height: 132px; }
+  .pa-ep__after li:nth-child(2), .pa-ep__after li:nth-child(4) { padding-top: 142px; height: 254px; }
+  .pa-ep__after li:nth-child(1) { padding-top: 266px; height: 376px; }
   .pa-ep__after li:last-child { left: auto; right: 0; padding: 30px 16px 0 0; text-align: right; }
   .pa-ep__after li:last-child::before { left: auto; right: 0; }
   .pa-ep__after time { display: block; font-size: clamp(44px, 3.6vw, 60px); line-height: .85; }
@@ -336,6 +338,9 @@
 .pa-cuts__head { position: absolute; inset: 0; pointer-events: none; transform: translateX(calc(var(--t, 0) * 100%)); }
 .pa-cuts__head { top: 7px; }
 .pa-cuts__head::before { content: ""; position: absolute; left: -1px; top: -8px; bottom: -8px; width: 2px; border-radius: 2px; background: var(--paper); box-shadow: 0 0 0 1px rgba(8, 8, 10, .45); }
+/* above the labels, so the needle never strikes through a block's name */
+@media (min-width: 600px) { .pa-cuts__head::before { bottom: auto; height: calc(40% + 8px); } }
+@media (max-width: 599px) { .pa-cuts__head::before { bottom: 0; } }
 @media (max-width: 599px) {
   .pa-cuts__top { flex-direction: column; gap: 10px; }
   .pa-cuts__b b { display: none; }
@@ -350,3 +355,63 @@
 .pa-cams--wide figure.is-air figcaption b { color: var(--paper); }
 .pa-cams--wide figure.is-air .pa-cams__now { opacity: 1; }
 @media (max-width: 599px) { .pa-cams--wide { grid-template-columns: minmax(0, 1fr); } }
+
+/* ============================================================
+   FINISHED · the same Auntie PB episode, edited in her own brand
+   Our paper, her rose: the band borrows the show's colors so the work reads as hers.
+   A 41-second cut of six moments from the finished episode, a strip that follows it
+   (and jumps to a moment on click), then three of her five reels.
+   ============================================================ */
+.pa-fin { --rose: #a9625e; --rose-deep: #8f4f4c; --label: var(--mute-on-paper); background: color-mix(in srgb, #b8706c 8%, var(--paper)); color: var(--ink); padding: clamp(96px, 11vw, 168px) 0 clamp(80px, 9vw, 128px); overflow: clip; }
+.pa-fin__in { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--g); display: grid; grid-template-columns: minmax(0, 1fr); gap: 36px; }
+@media (min-width: 1000px) {
+  .pa-fin__in { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: clamp(44px, 5vw, 104px); row-gap: clamp(56px, 6vw, 88px); align-items: end; }
+  .pa-fin__viewer, .pa-fin__reels { grid-column: 1 / -1; }
+  .pa-fin__side { padding-bottom: .4em; }
+}
+.pa-fin__k { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin-bottom: 22px; font-size: 14px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--label); }
+.pa-fin__k b { font-weight: 700; color: var(--rose-deep); }
+.pa-fin__h { font-size: clamp(64px, 9vw, 168px); line-height: .82; color: var(--ink); }
+.pa-fin__l { display: block; }
+.pa-fin__l--2 { color: var(--rose); }
+.hm-ready .pa-fin__l--2.is-in .w { animation-delay: calc(var(--i) * 70ms + 210ms); }
+.pa-fin__lede { max-width: 44ch; font-size: clamp(17px, 1.35vw, 20px); line-height: 1.6; color: var(--mute-on-paper); }
+
+/* the film, sized like the episode viewer above so it and its strip fit one screen */
+.pa-fin__viewer { width: 100%; }
+@media (min-width: 1000px) { .pa-fin__viewer { width: min(100%, max(680px, calc((100svh - var(--nav-h) - 300px) * 16 / 9))); margin-inline: auto; } }
+.pa-fin .pa-ep__screen { box-shadow: 0 40px 80px -48px rgba(70, 34, 32, .4), 0 0 0 1px var(--hair-paper); }
+.pa-fin .pa-ep__cap b { color: var(--ink); }
+/* the controls sit under the film, so nothing covers the name card, handles or location tag */
+.pa-fin .pa-ep__cap { flex-wrap: nowrap; justify-content: flex-start; align-items: center; gap: 16px; margin-top: 14px; }
+.pa-fin .pa-ep__ctrls { position: static; flex: none; }
+.pa-fin .pa-ep__btn { background: color-mix(in srgb, var(--ink) 8%, transparent); color: var(--ink); -webkit-backdrop-filter: none; backdrop-filter: none; }
+.pa-fin .pa-ep__btn.is-on { background: var(--rose-deep); color: var(--paper); }
+@media (hover: hover) { .pa-fin .pa-ep__btn:hover { background: color-mix(in srgb, var(--ink) 14%, transparent); } .pa-fin .pa-ep__btn.is-on:hover { background: var(--ink); } }
+
+/* six moments: navigation, not data, so equal chips; the lit one fills as its moment plays */
+.pa-moments { margin-top: clamp(22px, 2.4vw, 34px); }
+.pa-moments__top { font-size: 12.5px; font-weight: 600; letter-spacing: .07em; text-transform: uppercase; color: var(--label); }
+.pa-moments .pa-cuts__track { display: grid; grid-template-columns: repeat(6, minmax(0, 1fr)); gap: 4px; height: auto; margin-top: 12px; }
+.pa-moments .pa-cuts__b { --c: var(--rose-deep); --on: var(--rose-deep); --on-text: var(--paper); position: relative; left: auto !important; width: auto !important; min-height: 56px; padding: 0 12px 11px; border: 0; background: none; font: inherit; color: inherit; text-align: left; }
+.pa-moments .pa-cuts__b::before { inset: 0; }
+.pa-moments .pa-cuts__b.on::after { content: ""; position: absolute; left: 10px; right: 10px; bottom: 6px; height: 2px; border-radius: 2px; background: var(--paper); transform-origin: left; transform: scaleX(var(--p, 0)); opacity: .9; }
+.pa-moments .pa-cuts__b b { overflow: hidden; text-overflow: ellipsis; }
+.pa-moments .pa-cuts__b:focus-visible { outline: 2px solid var(--ink); outline-offset: 2px; border-radius: 10px; }
+@media (max-width: 599px) {
+  .pa-moments .pa-cuts__track { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 6px; }
+  .pa-moments .pa-cuts__b { min-height: 48px; padding: 0 10px 10px; }
+  .pa-moments .pa-cuts__b b { display: block; font-size: 11.5px; }
+}
+
+/* three of the five reels */
+.pa-fin__reels { margin-top: clamp(24px, 4vw, 48px); display: grid; grid-template-columns: minmax(0, 1fr); gap: 36px; }
+@media (min-width: 1000px) { .pa-fin__reels { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: clamp(44px, 5vw, 104px); align-items: end; } }
+.pa-fin__h3 { font-family: var(--cond); font-weight: 800; text-transform: uppercase; font-size: clamp(40px, 4.2vw, 68px); line-height: .9; }
+.pa-fin__reels-copy p { margin-top: 18px; max-width: 40ch; font-size: clamp(16.5px, 1.2vw, 18px); line-height: 1.6; color: var(--mute-on-paper); }
+.pa-fin__phones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 2.6vw, 44px); width: 100%; max-width: 760px; justify-self: center; }
+.pa-fin__phones figure { margin: 0; }
+.pa-fin__phones .mu-iphone { filter: drop-shadow(0 30px 40px rgba(70, 34, 32, .3)); }
+.pa-fin .pa-cap { color: var(--mute-on-paper); font-variant-numeric: tabular-nums; }
+.pa-fin .pa-cap b { color: var(--ink); }
+@media (max-width: 599px) { .pa-fin .pa-cap { font-size: 12.5px; } }

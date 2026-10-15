@@ -38,7 +38,7 @@
   <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&amp;family=Unbounded:wght@900&amp;display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/site.css">
   <link rel="stylesheet" href="../css/home.css?v=1">
-  <link rel="stylesheet" href="../css/podcast.css?v=3">
+  <link rel="stylesheet" href="../css/podcast.css?v=5">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PS0H5W3ZX7"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -295,7 +295,7 @@
               <button class="pa-ep__btn" type="button" data-sound><svg class="i-on" aria-hidden="true"><use href="#pa-i-sound"/></svg><svg class="i-off" aria-hidden="true"><use href="#pa-i-muted"/></svg><span class="pa-ep__btn-t">Hear it</span></button>
             </div>
           </div>
-          <figcaption class="pa-ep__cap"><span><b>The finished video, straight from the app.</b> Nothing added after.</span><span>12:24 to 12:37</span></figcaption>
+          <figcaption class="pa-ep__cap"><span><b>The app's cut, frame for frame.</b> The color grade was added after.</span></figcaption>
         </figure>
         <div class="pa-cuts" data-fade>
           <p class="pa-cuts__top"><span>Every cut in the episode · 0:00 to 22:22</span><span class="pa-cuts__key"><i class="cu"></i>Close-up <i class="tw"></i>Two-shot</span></p>
@@ -309,7 +309,7 @@
         </div>
         </div>
         <div class="pa-ep__stop">
-          <p class="pa-ep__stop-h" data-fade><span>After they pressed Stop</span><span>Times from this episode, on the Mac it was recorded on</span></p>
+          <p class="pa-ep__stop-h" data-fade><span>After they pressed Stop</span><span>Timed on the Mac that recorded it</span></p>
           <ol class="pa-ep__after" aria-label="What the app finished, and how long after Stop">
             <li data-fade style="--x:2.299%"><time>0:08</time><span>The podcast, ready for Spotify and Apple Podcasts</span></li>
             <li data-fade style="--x:13.506%"><time>0:47</time><span>The transcript, all 3,316 words</span></li>
@@ -325,7 +325,7 @@
     <section class="hm-deck" id="make" aria-labelledby="make-h">
       <div class="hm-deck__head">
         <h2 class="hm-h2" id="make-h" data-words>What one take makes</h2>
-        <p class="hm-deck__sub" data-fade>Every example here is real, from two takes recorded with the app: a one-minute solo promo, and the Auntie PB episode above.</p>
+        <p class="hm-deck__sub" data-fade>Every example here is real, from two takes recorded with the app: a one-minute solo promo, and the Auntie PB episode above, shown with its color grade.</p>
       </div>
 
       <article class="hm-ch hm-ch--paper" aria-labelledby="f1-h">
@@ -581,6 +581,57 @@
       </article>
     </section>
 
+    <!-- ============ Finished · the same episode, edited in Auntie PB's own brand ============ -->
+    <section class="pa-fin" id="finished" aria-labelledby="fin-h">
+      <div class="pa-fin__in">
+        <div class="pa-fin__head">
+          <p class="pa-fin__k" data-fade><b>Edited by Taylormade Creative</b><span>Auntie PB · Episode 1</span></p>
+          <h2 class="hm-h2 pa-fin__h" id="fin-h"><span class="pa-fin__l" data-words>Same episode.</span> <span class="pa-fin__l pa-fin__l--2" data-words>Her brand.</span></h2>
+        </div>
+        <div class="pa-fin__side">
+          <p class="pa-fin__lede" data-fade>Our editors took the same session's camera and mic files, color graded them, and finished the show in Auntie PB's own logo, colors and type: a cold open, name cards, captions on every word, chapter titles and an end card.</p>
+        </div>
+        <div class="pa-fin__viewer">
+          <figure class="pa-ep__film pa-fin__film" data-play>
+            <div class="pa-ep__screen">
+              <video id="pa-fin-video" muted loop playsinline preload="none" poster="../assets/img/podcast-app/pb-finished-poster.webp" data-src="../assets/video/podcast-app/pb-finished.mp4" data-src-hd="../assets/video/podcast-app/pb-finished-1080.mp4" aria-label="41 seconds from the finished Auntie PB episode: the guest's name card, the pink-brick title that becomes her logo, the host's handles card, a Jenel Studios location tag, a chapter title and the end card, with captions throughout"></video>
+            </div>
+            <figcaption class="pa-ep__cap">
+              <div class="pa-ep__ctrls">
+                <button class="pa-ep__btn pa-ep__btn--icon" type="button" data-pause><svg class="i-pause" aria-hidden="true"><use href="#pa-i-pause"/></svg><svg class="i-play" aria-hidden="true"><use href="#pa-i-play"/></svg><span class="sr-only">Pause the video</span></button>
+                <button class="pa-ep__btn" type="button" data-sound><svg class="i-on" aria-hidden="true"><use href="#pa-i-sound"/></svg><svg class="i-off" aria-hidden="true"><use href="#pa-i-muted"/></svg><span class="pa-ep__btn-t">Hear it</span></button>
+              </div>
+              <span><b>Six moments from the finished episode</b>, which runs 21:47.</span>
+            </figcaption>
+          </figure>
+          <div class="pa-moments" data-fade>
+            <p class="pa-moments__top">Jump to a moment</p>
+            <div class="pa-cuts__zoom pa-moments__zoom" data-zoom="#pa-fin-video" data-len="41.458"><div class="pa-cuts__track"><button class="pa-cuts__b" type="button" data-s="0" data-e="5.76" style="left:0.000%;width:13.894%"><b>Name card</b><span class="sr-only">: jump to this moment</span></button><button class="pa-cuts__b" type="button" data-s="5.76" data-e="17.23" style="left:13.894%;width:27.667%"><b>Her logo</b><span class="sr-only">: jump to this moment</span></button><button class="pa-cuts__b" type="button" data-s="17.23" data-e="23.73" style="left:41.560%;width:15.679%"><b>Handles</b><span class="sr-only">: jump to this moment</span></button><button class="pa-cuts__b" type="button" data-s="23.73" data-e="30.13" style="left:57.239%;width:15.437%"><b>Location</b><span class="sr-only">: jump to this moment</span></button><button class="pa-cuts__b" type="button" data-s="30.13" data-e="33.95" style="left:72.676%;width:9.214%"><b>Chapters</b><span class="sr-only">: jump to this moment</span></button><button class="pa-cuts__b" type="button" data-s="33.95" data-e="41.458" style="left:81.890%;width:18.110%"><b>End card</b><span class="sr-only">: jump to this moment</span></button></div></div>
+          </div>
+        </div>
+        <div class="pa-fin__reels">
+          <div class="pa-fin__reels-copy">
+            <h3 class="pa-fin__h3" data-fade>Five reels, cut by our editors.</h3>
+            <p data-fade>Each opens on one of her own lines with a title card, keeps her captions word by word, and ends on a card that sends people to the full episode.</p>
+          </div>
+          <div class="pa-fin__phones">
+            <figure data-play>
+              <div class="mu-iphone"><div class="mu-iphone__screen"><video muted loop playsinline preload="none" poster="../assets/img/podcast-app/pb-reel-1-poster.webp" data-src="../assets/video/podcast-app/pb-reel-1.mp4" aria-label="The opening of the reel No Longer the Hard Pink Brick: her title card, then the guest talking, with word-by-word captions"></video></div><svg class="mu-iphone__frame" viewBox="0 0 433 882" aria-hidden="true" focusable="false"><use href="#mu-phone"/></svg></div>
+              <figcaption class="pa-cap"><b>No longer the hard pink brick</b>1:04</figcaption>
+            </figure>
+            <figure data-play>
+              <div class="mu-iphone"><div class="mu-iphone__screen"><video muted loop playsinline preload="none" poster="../assets/img/podcast-app/pb-reel-2-poster.webp" data-src="../assets/video/podcast-app/pb-reel-2.mp4" aria-label="The opening of the reel Seasoned Auntie Wisdom: the host's close-up with her title card and word-by-word captions"></video></div><svg class="mu-iphone__frame" viewBox="0 0 433 882" aria-hidden="true" focusable="false"><use href="#mu-phone"/></svg></div>
+              <figcaption class="pa-cap"><b>Seasoned auntie wisdom</b>0:46</figcaption>
+            </figure>
+            <figure data-play>
+              <div class="mu-iphone"><div class="mu-iphone__screen"><video muted loop playsinline preload="none" poster="../assets/img/podcast-app/pb-reel-3-poster.webp" data-src="../assets/video/podcast-app/pb-reel-3.mp4" aria-label="The opening of the reel If Not This Economy: the guest's close-up with the title card and word-by-word captions"></video></div><svg class="mu-iphone__frame" viewBox="0 0 433 882" aria-hidden="true" focusable="false"><use href="#mu-phone"/></svg></div>
+              <figcaption class="pa-cap"><b>If not this economy</b>0:25</figcaption>
+            </figure>
+          </div>
+        </div>
+      </div>
+    </section>
+
     <!-- ============ Install ============ -->
     <section class="pa-install" id="download" aria-labelledby="dl-h">
       <div class="hm-wrap">
@@ -736,6 +787,6 @@
   <script type="application/json" id="pa-take">{"dur":64.17,"peaks":[0.327,0.896,0.765,0.574,0.87,0.736,0.815,0.478,0.736,0.556,0.635,0.639,0.432,0.58,0.638,0.541,0.779,0.619,0.608,0.732,0.734,0.592,0.743,0.484,0.609,0.618,0.366,0.611,0.69,0.714,1.0,0.819,0.388,0.584,0.636,0.675,0.627,0.618,0.717,0.5,0.538,0.622,0.54,0.595,0.377,0.645,0.536,0.673,0.679,0.434,0.624,0.534,0.487,0.531,0.396,0.649,0.433,0.604,0.579,0.56,0.41,0.498,0.379,0.559,0.511,0.289,0.647,0.65,0.502,0.419,0.696,0.548,0.475,0.209,0.49,0.258,0.503,0.475,0.469,0.237,0.632,0.585,0.553,0.487,0.65,0.637,0.365,0.566,0.308,0.823,0.557,0.357,0.389,0.105,0.105,0.105],"lines":[{"s":0,"e":2.22,"w":[["AI",0,0.84],["is",0.84,1.14],["not",1.14,1.26],["going",1.26,1.38],["to",1.38,1.5],["take",1.5,1.62],["your",1.62,1.8],["job.",1.8,2.22]]},{"s":2.28,"e":4.92,"w":[["Somebody",2.28,2.76],["that",2.76,3],["knows",3,3.18],["how",3.18,3.42],["to",3.42,3.54],["use",3.54,3.66],["it",3.66,3.84],["wheels,",3.84,4.68],["though.",4.68,4.92]]},{"s":4.98,"e":10.02,"w":[["3",4.98,5.4],["out",5.4,5.64],["of",5.64,5.76],["4",5.76,5.88],["people",5.88,6.12],["at",6.12,6.36],["work",6.36,6.54],["are",6.54,7.08],["already",7.08,7.74],["using",7.74,7.92],["AI,",7.92,8.7],["but",8.7,8.88],["less",8.88,9.06],["than",9.06,9.24],["4",9.24,9.54],["out",9.54,9.78],["of",9.78,9.9],["10",9.9,10.02]]},{"s":10.02,"e":12.12,"w":[["of",10.02,10.26],["them",10.26,10.38],["ever",10.38,10.86],["got",10.86,11.1],["trained",11.1,11.4],["on",11.4,11.64],["how",11.64,11.76],["to",11.76,11.82],["use",11.82,11.94],["it.",11.94,12.12]]},{"s":12.18,"e":15.24,"w":[["So",12.18,12.48],["basically,",12.48,13.14],["most",13.14,13.5],["people",13.5,13.74],["are",13.74,13.98],["just",13.98,14.1],["guessing,",14.1,14.64],["you",14.64,14.76],["know",14.76,14.88],["what",14.88,14.94],["I",14.94,15.06],["mean?",15.06,15.24]]},{"s":15.3,"e":17.52,"w":[["That's",15.3,15.96],["why",15.96,16.08],["their",16.08,16.32],["answers",16.32,16.74],["come",16.74,16.92],["out",16.92,17.1],["trash.",17.1,17.52]]},{"s":17.58,"e":22.38,"w":[["So",17.58,18.06],["tonight",18.06,18.3],["at",18.3,18.66],["7",18.66,18.9],["p.m.",18.9,19.44],["Central,",19.44,19.92],["your",19.92,20.04],["boy",20.04,20.28],["is",20.28,20.46],["teaching",20.46,20.76],["a",20.76,20.94],["free",20.94,21.06],["AI",21.06,21.48],["class,",21.48,21.96],["it's",21.96,22.38]]},{"s":22.38,"e":24.54,"w":[["one",22.38,22.62],["hour,",22.62,23.16],["it's",23.16,23.46],["live,",23.46,23.82],["and",23.82,23.94],["it's",23.94,24.24],["online.",24.24,24.54]]},{"s":24.6,"e":27.66,"w":[["If",24.6,25.14],["y'all",25.14,25.44],["want",25.44,25.56],["to",25.56,25.68],["bring",25.68,25.74],["something",25.74,25.98],["that's",25.98,26.4],["been",26.4,26.52],["eating",26.52,26.7],["up",26.7,27.06],["your",27.06,27.18],["time",27.18,27.3],["every",27.3,27.48],["week.",27.48,27.66]]},{"s":27.72,"e":31.62,"w":[["Maybe",27.72,28.2],["it's",28.2,28.5],["an",28.5,28.56],["email",28.56,28.8],["you",28.8,29.04],["keep",29.04,29.22],["putting",29.22,29.34],["off,",29.34,29.76],["a",29.76,30.12],["post",30.12,30.24],["for",30.24,30.54],["your",30.54,30.6],["business,",30.6,31.14],["or",31.14,31.44],["a",31.44,31.62]]},{"s":31.62,"e":35.46,"w":[["flyer",31.62,31.92],["for",31.92,32.04],["your",32.04,32.16],["church,",32.16,32.46],["and",32.46,33.12],["before",33.12,33.3],["class",33.3,33.6],["is",33.6,33.84],["over,",33.84,34.2],["AI",34.2,34.68],["is",34.68,34.86],["gonna",34.86,34.98],["write",34.98,35.16],["the",35.16,35.28],["1st",35.28,35.46]]},{"s":35.46,"e":36.06,"w":[["draft",35.46,35.64],["for",35.64,35.88],["you.",35.88,36.06]]},{"s":36.12,"e":37.56,"w":[["And",36.12,36.48],["it's",36.48,36.78],["gonna",36.78,36.84],["sound",36.84,37.02],["just",37.02,37.2],["like",37.2,37.32],["you.",37.32,37.56]]},{"s":37.62,"e":42.18,"w":[["I'm",37.62,38.58],["gonna",38.58,38.64],["show",38.64,38.88],["you",38.88,39],["which",39,39.18],["AI",39.18,39.66],["to",39.66,39.84],["use,",39.84,40.2],["how",40.2,40.56],["to",40.56,40.74],["talk",40.74,40.86],["to",40.86,40.98],["it,",40.98,41.34],["and",41.34,41.64],["how",41.64,41.88],["to",41.88,42.06],["check",42.06,42.18]]},{"s":42.18,"e":43.5,"w":[["it",42.18,42.42],["so",42.42,42.6],["it's",42.6,42.84],["not",42.84,42.9],["making",42.9,43.02],["stuff",43.02,43.26],["up.",43.26,43.5]]},{"s":43.56,"e":45.9,"w":[["And",43.56,44.16],["you're",44.16,44.4],["gonna",44.4,44.46],["leave",44.46,44.7],["with",44.7,45],["my",45,45.18],["prompt",45.18,45.48],["kit.",45.48,45.9]]},{"s":45.9,"e":48.54,"w":[["And",45.9,46.44],["if",46.44,46.56],["you've",46.56,46.86],["never",46.86,46.92],["used",46.92,47.16],["AI",47.16,47.64],["before,",47.64,48.06],["that's",48.06,48.3],["perfect.",48.3,48.54]]},{"s":48.6,"e":50.16,"w":[["This",48.6,49.32],["class",49.32,49.5],["is",49.5,49.74],["for",49.74,49.98],["you.",49.98,50.16]]},{"s":50.22,"e":52.62,"w":[["If",50.22,50.82],["you",50.82,50.94],["can",50.94,51.06],["send",51.06,51.24],["a",51.24,51.48],["text,",51.48,51.84],["you",51.84,52.14],["can",52.14,52.26],["do",52.26,52.38],["this.",52.38,52.62]]},{"s":52.68,"e":56.46,"w":[["So",52.68,53.28],["go",53.28,53.46],["ahead,",53.46,54],["tap",54,54.42],["the",54.42,54.6],["link",54.6,54.72],["in",54.72,54.96],["my",54.96,55.08],["bio,",55.08,55.68],["sign",55.68,55.98],["up.",55.98,56.46]]},{"s":56.52,"e":59.04,"w":[["Your",56.52,56.88],["room",56.88,57.06],["link",57.06,57.3],["is",57.3,57.66],["gonna",57.66,57.78],["come",57.78,58.02],["straight",58.02,58.2],["into",58.2,58.5],["your",58.5,58.68],["email.",58.68,59.04]]},{"s":59.1,"e":60.48,"w":[["Don't",59.1,59.82],["get",59.82,59.94],["left",59.94,60.06],["behind.",60.06,60.48]]},{"s":60.54,"e":62.1,"w":[["Now",60.54,61.2],["see",61.2,61.56],["y'all",61.56,61.8],["at",61.8,61.92],["seven.",61.92,62.1]]}]}</script>
   <script src="../js/site.js" defer></script>
   <script src="../js/home.js?v=1" defer></script>
-  <script src="../js/podcast.js?v=3" defer></script>
+  <script src="../js/podcast.js?v=5" defer></script>
 </body>
 </html>
