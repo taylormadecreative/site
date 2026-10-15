@@ -29,6 +29,47 @@
     $$("video[data-src-hd]").forEach((v) => { v.dataset.src = v.dataset.srcHd; });
   }
 
+
+  /* ---------- the promise: the homepage's pinned word reveal on desktop; on phones and tablets it
+     isn't pinned, and the words light up as the line moves up the screen ---------- */
+  const promise = $("[data-pa-reveal]");
+  if (promise) {
+    const para = $(".hm-reveal__text", promise);
+    const words = para.textContent.trim().split(/\s+/);
+    para.textContent = "";
+    const spans = words.map((w, i) => {
+      const s = document.createElement("span");
+      s.className = "rw"; s.textContent = w;
+      para.append(s);
+      if (i < words.length - 1) para.append(" ");
+      return s;
+    });
+    if (!reduced) {
+      const wide = matchMedia("(min-width: 1000px)");
+      let on = false, tick = false;
+      const paint = () => {
+        tick = false;
+        let prog;
+        if (wide.matches) {
+          const r = promise.getBoundingClientRect(), span = r.height - innerHeight;
+          prog = span > 0 ? Math.min(1, Math.max(0, -r.top / span)) / 0.7 : 1;
+        } else {
+          // from the line's top at 85% of the screen to 30%: the whole sentence, word by word
+          const top = para.getBoundingClientRect().top;
+          prog = Math.min(1, Math.max(0, (innerHeight * 0.85 - top) / (innerHeight * 0.55)));
+        }
+        const n = spans.length;
+        spans.forEach((s, i) => s.style.setProperty("--o", (0.16 + Math.min(1, Math.max(0, prog * n - i)) * 0.84).toFixed(3)));
+      };
+      const mode = () => { promise.classList.toggle("is-live", wide.matches); promise.classList.toggle("is-flow", !wide.matches); paint(); };
+      mode();
+      wide.addEventListener("change", mode);
+      addEventListener("scroll", () => { if (on && !tick) { tick = true; requestAnimationFrame(paint); } }, { passive: true });
+      addEventListener("resize", paint, { passive: true });
+      new IntersectionObserver(([e]) => { on = e.isIntersecting; if (on) paint(); }).observe(promise);
+    }
+  }
+
   /* ---------- clips: muted loops that load and play only while on screen ---------- */
   $$("[data-play]").forEach((box) => {
     const v = $("video", box);

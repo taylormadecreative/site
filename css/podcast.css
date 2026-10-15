@@ -442,10 +442,29 @@
 @media (hover: hover) { .pa-auto__ctrls .pa-ep__btn:hover { background: rgba(245, 242, 234, .18); } .pa-auto__ctrls .pa-ep__btn.is-on:hover { background: var(--gold-hi); } }
 .pa-auto__ctrls .pa-ep__btn.is-on { background: var(--gold); }
 
+/* phones, tablets and reduced motion: the live screen comes first, right under the headline,
+   and the three steps sit under it as one tight row instead of a screen of text */
+@media (max-width: 999.98px), (prefers-reduced-motion: reduce) {
+  .pa-auto { padding-top: clamp(64px, 14vw, 104px); }
+  .pa-auto__intro .pa-auto__k { margin-bottom: 14px; }
+  .pa-auto__track { margin-top: 24px; }
+  .pa-auto__pin { gap: 14px; }
+  .pa-auto__view { order: 1; }
+  .pa-auto__under { order: 2; }
+  .pa-auto__steps { order: 3; margin-top: 18px; padding-top: 18px; border-top: 1px solid var(--hair-ink); grid-template-columns: repeat(3, minmax(0, 1fr)); gap: 16px; }
+  .pa-auto__step { max-width: none; font-size: 14.5px; line-height: 1.45; }
+  .pa-auto__step b { margin-bottom: 6px; font-size: clamp(22px, 4.6vw, 34px); }
+  .pa-auto__more { margin-top: 40px; }
+}
+@media (max-width: 519.98px) {
+  .pa-auto__steps { grid-template-columns: minmax(0, 1fr); gap: 12px; }
+  .pa-auto__step b { display: inline; margin: 0 6px 0 0; font-size: 22px; }
+}
 @media (min-width: 1000px) and (prefers-reduced-motion: no-preference) {
   .pa-auto__track { height: 270vh; }
   .pa-auto__pin { position: sticky; top: var(--nav-h); height: calc(100svh - var(--nav-h)); grid-template-columns: minmax(0, 4fr) minmax(0, 9fr); grid-template-rows: minmax(0, 1fr) auto; column-gap: clamp(32px, 3.6vw, 72px); row-gap: 14px; align-content: center; padding-block: 28px 22px; }
-  .pa-auto__steps { grid-row: 1 / span 2; position: relative; display: block; align-self: stretch; }
+  .pa-auto__steps { grid-column: 1; grid-row: 1 / span 2; position: relative; display: block; align-self: stretch; }
+  .pa-auto__view, .pa-auto__under { grid-column: 2; }
   .pa-auto__step { position: absolute; left: 0; right: 0; top: 50%; opacity: 0; filter: blur(8px); transform: translateY(calc(-50% + 22px)); transition: opacity .55s var(--ease-out), filter .55s var(--ease-out), transform .7s var(--ease-out); }
   .pa-auto__step.on { opacity: 1; filter: none; transform: translateY(-50%); }
   .pa-auto__view { align-self: end; justify-self: center; width: min(100%, calc((100svh - var(--nav-h) - 128px) * 1.405)); }
@@ -546,7 +565,9 @@
 .pa-auto__rules { list-style: none; margin: 0 0 clamp(40px, 5vw, 72px); padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); }
 .pa-auto__rules li { padding: 16px 0; border-top: 1px solid var(--hair-ink); font-size: 16px; line-height: 1.45; color: var(--soft-on-ink); }
 .pa-auto__rules b { display: block; margin-bottom: 6px; font-family: var(--cond); font-weight: 800; text-transform: uppercase; font-size: clamp(30px, 2.6vw, 44px); line-height: .9; color: var(--gold); }
-@media (min-width: 700px) { .pa-auto__rules { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; } }
+.pa-auto__rules { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 20px; }
+@media (max-width: 699.98px) { .pa-auto__rules li { padding: 12px 0 14px; font-size: 14.5px; } .pa-auto__rules b { font-size: 26px; } }
+@media (min-width: 700px) { .pa-auto__rules { column-gap: 32px; } }
 @media (min-width: 1100px) { .pa-auto__rules { grid-template-columns: repeat(4, minmax(0, 1fr)); } .pa-auto__rules li { padding-right: 24px; } }
 .pa-cuts--3 .gu, .pa-cuts--3 .pa-cuts__key .gu { fill: var(--gold); background: var(--gold); }
 .pa-cuts--3 .ho, .pa-cuts--3 .pa-cuts__key .ho { fill: #9ec2ed; background: #9ec2ed; }
@@ -554,3 +575,14 @@
 .pa-auto__note { margin-top: 16px; max-width: 78ch; font-size: 14px; line-height: 1.55; color: var(--label); text-wrap: pretty; }
 .pa-auto .pa-ep__stop { margin-top: clamp(56px, 6vw, 88px); }
 @media (max-width: 599px) { .pa-auto__under { flex-direction: column-reverse; align-items: flex-start; } }
+
+/* ============================================================
+   THE PROMISE · "Press Record. Talk. Press Stop."
+   Desktop keeps the homepage's pinned word reveal. Phones and tablets get no pinned screen:
+   a tight block, set big, that lights up word by word as it passes (js/podcast.js).
+   ============================================================ */
+.hm-reveal__track.is-flow .hm-reveal__text .rw { --o: .16; }
+@media (max-width: 999.98px) {
+  .pa-promise .hm-reveal__pin { padding: clamp(56px, 13vw, 96px) var(--g) clamp(52px, 12vw, 88px); }
+  .pa-promise .hm-reveal__text { font-size: clamp(42px, 11.2vw, 88px); line-height: .88; }
+}
