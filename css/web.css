@@ -709,7 +709,7 @@ html:not(.js) .wd-pick__b[aria-selected="true"] { background: #fbf9f4; color: va
 @media (prefers-reduced-motion: reduce) { .wd-show__pause { display: none; } }
 
 /* every screen: a shorter pin now that it closes the page's proof */
-.wd-morph__track.is-live { height: 190vh; }
+.wd-morph__track.is-live { height: 170vh; }
 
 /* links in the feature captions open that site in The work */
 .wd-b p a { color: var(--paper); text-decoration: underline; text-decoration-color: rgba(233, 185, 73, .55); text-underline-offset: 3px; }
@@ -760,17 +760,6 @@ html:not(.js) .wd-show__panel { display: block; margin-bottom: 40px; }
 @media (max-width: 999px) { .wd-show__media { position: static; margin: 0; padding: 0 0 8px; background: none; } }
 /* one control for everything that moves in the gallery */
 .wd-show .wd-duo__ctl { display: none; }
-/* more sites on paper: the page alternates light and dark all the way down */
-.wd-more { background: var(--paper); color: var(--ink); }
-.wd-more :focus-visible { outline-color: var(--ink); }
-.wd-more__h { color: var(--ink); }
-.wd-more__bar p { color: var(--mute-on-paper); }
-.wd-more .wd-tile { color: var(--ink); }
-.wd-more .wd-tile__m { color: var(--mute-on-paper); }
-.wd-more .wd-tile__m em, .wd-more .wd-tile__t i { color: var(--gold-ink); }
-.wd-more .wd-tile__win { box-shadow: 0 22px 40px -26px rgba(8, 8, 10, .45); }
-.wd-more .hm-round { border-color: var(--hair-paper); color: var(--ink); }
-@media (hover: hover) and (pointer: fine) { .wd-more .wd-tile:hover .wd-tile__t { color: var(--gold-ink); } .wd-more .hm-round:hover { background: var(--ink); color: var(--paper); border-color: var(--ink); } }
 /* the hero chips land on the cards, not the section's top padding */
 .wd-pick { scroll-margin-top: calc(var(--nav-h) + 24px); }
 /* small phones: the platform illustrations step aside; real-site proofs stay */
@@ -791,7 +780,6 @@ html:not(.js) .wd-show__panel { display: block; margin-bottom: 40px; }
   .wd-bento .wd-dash__list li:nth-child(3) { display: none; }
 }
 /* phones: the morph repeats what the hero and the work already show, so it steps aside */
-@media (max-width: 699px) { .wd-morph { display: none; } }
 /* phones: the four steps as a compact numbered list */
 @media (max-width: 699px) {
   .wd .hm-steps { gap: 0; }
@@ -808,3 +796,65 @@ html:not(.js) .wd-show__panel { display: block; margin-bottom: 40px; }
   .wd-where__q { flex: none; flex-basis: auto; margin: 0 4px 0 0; white-space: nowrap; }
   .wd-where a { flex: none; }
 }
+
+/* the every-screen section on paper: dark devices on a light page, and the page alternates light and dark all the way down */
+.wd-morph { background: var(--paper); color: var(--ink); }
+.wd-morph :focus-visible { outline-color: var(--ink); }
+.wd-morph .hm-h2 { color: var(--ink); }
+.wd-morph__sub { color: var(--mute-on-paper); }
+.wd-morph__steps { border-top-color: var(--hair-paper); }
+.wd-morph__steps li { border-bottom-color: var(--hair-paper); }
+.wd-morph__steps b { color: var(--ink); }
+.wd-morph__steps small { color: var(--gold-ink); }
+.wd-morph__steps span { color: var(--mute-on-paper); }
+.wd-morph__track.is-live .wd-morph__steps li.is-on span { color: var(--ink); }
+.wd-morph__px { color: var(--mute-on-paper); }
+.wd-morph__px b { color: var(--gold-ink); }
+.wd-morph__dev { box-shadow: inset 0 0 0 1.5px #4a4a52, 0 50px 90px -40px rgba(8, 8, 10, .55); }
+.wd-lineup figcaption { color: var(--mute-on-paper); }
+.wd-lineup__win { box-shadow: 0 0 0 1px var(--hair-paper), 0 30px 60px -30px rgba(8, 8, 10, .45); }
+.wd-lineup .mu-iphone { filter: drop-shadow(0 20px 30px rgba(8, 8, 10, .35)); }
+@media (max-width: 699px) { .wd-morph__pin { padding: 64px 0 72px; } }
+/* hero chips: the row never grows past the screen */
+@media (max-width: 640px) { .wd-where { justify-self: stretch; min-width: 0; max-width: 100%; } }
+/* phones: the five features as chips above their swipe row, so all five are in view */
+.wd-bchips { display: none; }
+@media (max-width: 759px) {
+  .wd-bchips {
+    display: flex; gap: 8px; overflow-x: auto; scrollbar-width: none; margin: 0 calc(-1 * var(--g)) 14px; padding: 2px var(--g);
+  }
+  .wd-bchips::-webkit-scrollbar { display: none; }
+  .wd-bchips button {
+    flex: none; display: inline-flex; align-items: center; min-height: 44px; padding: 0 16px; border-radius: 999px;
+    border: 1px solid var(--hair-ink); font-weight: 700; font-size: 15px; color: var(--soft-on-ink); -webkit-tap-highlight-color: transparent;
+    transition: background-color .2s ease, color .2s ease, border-color .2s ease;
+  }
+  .wd-bchips button[aria-pressed="true"] { background: var(--paper); border-color: var(--paper); color: var(--ink); }
+}
+
+/* ============================================================
+   MORPH, layout-stable: the frame is one fixed box the size of the stage.
+   Its shape is a clip-path (ring, body, screen), the pictures move by transform,
+   so scrolling through it never shifts layout. (web.js sets the variables.)
+   ============================================================ */
+.wd-morph__track.is-live .wd-morph__dev {
+  --ct: 0px; --cr: 0px; --cb: 0px; --cl: 0px; --r: 12px; --b: 2px; --sr: 10px;
+  left: 0; top: 0; transform: none; display: block; width: var(--W0, 900px); height: var(--H0, 590px);
+  padding: 0; border-radius: 0; background: none; box-shadow: none;
+}
+.wd-morph__ring, .wd-morph__body { position: absolute; inset: 0; }
+.wd-morph__ring { background: #4a4a52; clip-path: inset(var(--ct) var(--cr) var(--cb) var(--cl) round var(--r)); }
+.wd-morph__body { background: #0b0b0d; clip-path: inset(calc(var(--ct) + 1.5px) calc(var(--cr) + 1.5px) calc(var(--cb) + 1.5px) calc(var(--cl) + 1.5px) round max(0px, calc(var(--r) - 1.5px))); }
+.wd-morph__track.is-live .wd-morph__screen {
+  position: absolute; inset: 0; border-radius: 0; background: #fdf3f2;
+  clip-path: inset(calc(var(--ct) + var(--b)) calc(var(--cr) + var(--b)) calc(var(--cb) + var(--b)) calc(var(--cl) + var(--b)) round var(--sr));
+}
+.wd-morph__track.is-live .wd-morph__bar {
+  position: absolute; left: 0; top: 0; width: var(--W0, 900px); height: 30px; border-radius: 0;
+  transform: translate(calc(var(--cl) + var(--b)), calc(var(--ct) + var(--b)));
+}
+.wd-morph__track.is-live .wd-morph__screen img {
+  left: 0; top: 0; width: var(--W0, 900px); height: auto !important; object-fit: fill; transform-origin: 0 0; will-change: transform, opacity;
+}
+.wd-morph__track.is-live .wd-morph__island { left: 0; top: 0; width: 92px; height: 27px; max-height: none; transform: translate(var(--ix, 0px), var(--iy, 0px)); }
+.wd-morph__track.is-live .wd-morph__px { top: 0; bottom: auto; transform: translateY(var(--py, 0px)); }

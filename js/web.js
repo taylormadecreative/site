@@ -147,14 +147,20 @@
     const mq = matchMedia("(min-width: 1000px) and (min-height: 600px)");
     let live = false, geo = null, mTick = false, lastStep = -1;
     const BAR = 30;
+    const imgs = { d: $(".is-d", dev), t: $(".is-t", dev), m: $(".is-m", dev) };
+    const island = $(".wd-morph__island", dev);
+    let W0 = 0, H0 = 0;
+    // the frame is one fixed box; only its clip and the pictures' transforms change while scrolling (no layout shift)
     const measure = () => {
-      const sw = mStage.clientWidth, sh = mStage.clientHeight;
-      let wd = Math.min(sw, 1000), hd = wd * 0.625 + BAR;
+      W0 = mStage.clientWidth; H0 = Math.max(200, mStage.clientHeight - 40);
+      dev.style.setProperty("--W0", `${W0}px`); dev.style.setProperty("--H0", `${H0}px`);
+      const sh = H0;
+      let wd = Math.min(W0, 1000), hd = wd * 0.625 + BAR;
       if (hd > sh) { hd = sh; wd = (sh - BAR) / 0.625; }
       const bt = 14, ht = Math.min(sh, 780), wt = (ht - 2 * bt) * (834 / 1194) + 2 * bt;
       const bp = 11, hph = Math.min(sh, 700), wp = (hph - 2 * bp) * (390 / 844) + 2 * bp;
       // the phone gets a status bar strip at the top, as Safari on an iPhone does
-      geo = { d: { w: wd, h: hd, r: 12, b: 0, bar: BAR, sr: 10, st: 0 }, t: { w: wt, h: ht, r: 34, b: bt, bar: 0, sr: 20, st: 0 }, m: { w: wp, h: hph, r: 54, b: bp, bar: 0, sr: 43, st: (wp - 2 * bp) * 0.134 } };
+      geo = { d: { w: wd, h: hd, r: 12, b: 2, bar: BAR, sr: 10, st: 0 }, t: { w: wt, h: ht, r: 34, b: bt, bar: 0, sr: 20, st: 0 }, m: { w: wp, h: hph, r: 54, b: bp, bar: 0, sr: 43, st: (wp - 2 * bp) * 0.134 } };
     };
     const seg = (p, a, b) => ease(clamp((p - a) / (b - a)));
     const apply = (p) => {
@@ -162,21 +168,24 @@
       const A = geo.d, B = geo.t, C = geo.m;
       const mix = (k) => (e2 > 0 ? lerp(B[k], C[k], e2) : lerp(A[k], B[k], e1));
       const w = mix("w"), h = mix("h"), r = mix("r"), b = mix("b"), bar = mix("bar"), sr = mix("sr"), st = mix("st");
-      dev.style.setProperty("--st", `${st.toFixed(1)}px`);
-      dev.style.width = `${w.toFixed(1)}px`;
-      dev.style.height = `${h.toFixed(1)}px`;
-      dev.style.setProperty("--r", `${r.toFixed(1)}px`);
-      dev.style.setProperty("--b", `${b.toFixed(1)}px`);
-      dev.style.setProperty("--bar", `${bar.toFixed(1)}px`);
-      dev.style.setProperty("--barO", clamp(1 - e1 * 2.2).toFixed(3));
-      dev.style.setProperty("--sr", e1 < 0.05 ? `0 0 ${sr}px ${sr}px` : `${sr.toFixed(1)}px`);
+      const ct = (H0 - h) / 2, cl = (W0 - w) / 2;
+      const set = (k, v) => dev.style.setProperty(k, v);
+      set("--ct", `${ct.toFixed(1)}px`); set("--cb", `${ct.toFixed(1)}px`); set("--cl", `${cl.toFixed(1)}px`); set("--cr", `${cl.toFixed(1)}px`);
+      set("--r", `${r.toFixed(1)}px`); set("--b", `${b.toFixed(1)}px`); set("--sr", `${sr.toFixed(1)}px`);
+      set("--barO", clamp(1 - e1 * 2.2).toFixed(3));
       // each layout hands over in a short window, so two layouts are never on screen together for long
       const fT = clamp((e1 - 0.42) / 0.16), fM = clamp((e2 - 0.42) / 0.16);
-      const oT = fT * (1 - fM), oM = fM;
-      dev.style.setProperty("--oD", (1 - fT).toFixed(3));
-      dev.style.setProperty("--oT", oT.toFixed(3));
-      dev.style.setProperty("--oM", oM.toFixed(3));
-      dev.style.setProperty("--isl", clamp((e2 - 0.55) / 0.3).toFixed(3));
+      set("--oD", (1 - fT).toFixed(3)); set("--oT", (fT * (1 - fM)).toFixed(3)); set("--oM", fM.toFixed(3));
+      set("--isl", clamp((e2 - 0.55) / 0.3).toFixed(3));
+      set("--ix", `${(cl + w / 2 - 46).toFixed(1)}px`); set("--iy", `${(ct + b + 9).toFixed(1)}px`);
+      // every layout covers the screen below the browser bar (desktop) or the status bar (phone), pinned to its top
+      const x0 = cl + b, y0 = ct + b + bar + st, aw = w - 2 * b, ah = h - 2 * b - bar - st;
+      for (const im of Object.values(imgs)) {
+        const ratio = (+im.getAttribute("height")) / (+im.getAttribute("width"));
+        const sc = Math.max(aw / W0, ah / (W0 * ratio));
+        im.style.transform = `translate(${(x0 + (aw - W0 * sc) / 2).toFixed(1)}px, ${y0.toFixed(1)}px) scale(${sc.toFixed(4)})`;
+      }
+      $(".wd-morph__px", mTrack).style.setProperty("--py", `${(ct + h + 12).toFixed(1)}px`);
       const px = e2 > 0 ? lerp(834, 390, e2) : lerp(1440, 834, e1);
       pxEl.textContent = Math.round(px).toLocaleString("en-US");
       const step = p < 0.29 ? 0 : p < 0.69 ? 1 : 2;
@@ -193,7 +202,7 @@
       if (want !== live) {
         live = want;
         mTrack.classList.toggle("is-live", live);
-        if (!live) { dev.removeAttribute("style"); steps.forEach((li, k) => li.classList.toggle("is-on", k === 0)); lastStep = -1; }
+        if (!live) { dev.removeAttribute("style"); Object.values(imgs).forEach((im) => im.style.removeProperty("transform")); steps.forEach((li, k) => li.classList.toggle("is-on", k === 0)); lastStep = -1; }
       }
       if (live) { measure(); paint(); }
     };
@@ -404,6 +413,24 @@
   if (strip) $$("[data-strip]").forEach((b) => b.addEventListener("click", () => {
     strip.scrollBy({ left: Number(b.dataset.strip) * strip.clientWidth * 0.8, behavior: reduced ? "auto" : "smooth" });
   }));
+
+  /* ---------- BENTO · phones: chips above the swipe row jump to a card and follow the swipe ---------- */
+  const bchips = $$(".wd-bchips button");
+  const bentoRow = $("[data-bento]");
+  if (bchips.length && bentoRow) {
+    const card = (k) => $(".wd-b--" + k, bentoRow);
+    const mark = (k) => bchips.forEach((c) => c.setAttribute("aria-pressed", c.dataset.b === k ? "true" : "false"));
+    bchips.forEach((c) => c.addEventListener("click", () => {
+      const el = card(c.dataset.b);
+      if (!el) return;
+      bentoRow.scrollTo({ left: el.offsetLeft - bentoRow.offsetLeft - parseFloat(getComputedStyle(bentoRow).paddingLeft || 0), behavior: reduced ? "auto" : "smooth" });
+      mark(c.dataset.b);
+    }));
+    const seen = new IntersectionObserver((es) => es.forEach((e) => {
+      if (e.isIntersecting && e.intersectionRatio > 0.6) mark([...e.target.classList].find((x) => x.startsWith("wd-b--")).slice(6));
+    }), { root: bentoRow, threshold: [0.6] });
+    $$(".wd-b", bentoRow).forEach((el) => seen.observe(el));
+  }
 
   /* ---------- BENTO · each part plays once when it comes into view; the pointer on a card plays it again ---------- */
   const bento = $("[data-bento]");
