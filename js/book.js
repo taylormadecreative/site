@@ -124,10 +124,12 @@
         }[where] || "Team headshots (on-site at our office, or at your studio)."}\nHow many people:\nPreferred date(s):${where === "studio" ? "" : "\nOffice address:"}`;
       case "corporate-video": {
         const type = {
-          leadership: "a leadership or company message", training: "training and onboarding",
+          leadership: "a leadership or company message",
           testimonials: "customer testimonials", explainers: "explainer and FAQ videos",
           recruiting: "recruiting", social: "social clips",
         }[params.get("type")];
+        if (params.get("type") === "training") return "Training videos.\nWhat the training covers:\nHow many videos in the series:\nWho teaches it on camera:\nAt our office or your studio:\nPreferred date(s):";
+        if (params.get("type") === "interviews") return "Interview videos.\nWho we're interviewing (leaders, employees, customers, experts):\nWhat the videos are for:\nHow many people on camera:\nAt our office or your studio:\nPreferred date(s):";
         return `Talking-head video${type ? ` for ${type}.` : ".\nWhat the videos are for:"}\nHow many people on camera:\nAt our office or your studio:\nPreferred date(s):`;
       }
       case "brand-content":
