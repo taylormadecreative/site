@@ -42,105 +42,6 @@
     }, { threshold: 0.25 }).observe(box);
   });
 
-  /* ---------- the take: one audio file drives the player and the transcript ---------- */
-  let take = null;
-  try { take = JSON.parse($("#pa-take").textContent); } catch (_) {}
-  const audio = new Audio();
-  audio.preload = "none";
-  const AUDIO = "../assets/video/podcast-app/tonight-podcast.m4a";
-  const boxes = $$("[data-player], [data-tx]");
-  const setPlaying = (on) => boxes.forEach((b) => b.classList.toggle("is-playing", on));
-  const toggle = () => {
-    if (!audio.getAttribute("src")) audio.src = AUDIO;
-    if (audio.paused) audio.play().catch(() => {}); else audio.pause();
-  };
-  audio.addEventListener("play", () => { setPlaying(true); loop(); });
-  audio.addEventListener("pause", () => setPlaying(false));
-  audio.addEventListener("ended", () => { setPlaying(false); audio.currentTime = 0; paint(0); });
-  $$("[data-toggle]").forEach((b) => b.addEventListener("click", toggle));
-  // pause when the visitor scrolls well away from both examples
-  const near = new Set();
-  boxes.forEach((b) => new IntersectionObserver(([e]) => {
-    e.isIntersecting ? near.add(b) : near.delete(b);
-    if (!near.size && !audio.paused) audio.pause();
-  }).observe(b));
-
-  // waveform bars, from the real audio's loudness
-  const wave = $("[data-wave]");
-  const bars = [];
-  if (wave && take) {
-    take.peaks.forEach((h) => { const i = document.createElement("i"); i.style.setProperty("--h", h); wave.append(i); bars.push(i); });
-    const seek = (x) => {
-      const r = wave.getBoundingClientRect();
-      if (!audio.getAttribute("src")) audio.src = AUDIO;
-      const go = () => { audio.currentTime = Math.max(0, Math.min(1, (x - r.left) / r.width)) * take.dur; paint(audio.currentTime); };
-      audio.readyState ? go() : audio.addEventListener("loadedmetadata", go, { once: true });
-      if (!audio.readyState) audio.load();
-    };
-    wave.addEventListener("click", (e) => seek(e.clientX));
-    wave.addEventListener("keydown", (e) => {
-      if (e.key !== "ArrowRight" && e.key !== "ArrowLeft") return;
-      e.preventDefault();
-      if (!audio.getAttribute("src")) { audio.src = AUDIO; audio.load(); }
-      audio.currentTime = Math.max(0, Math.min(take.dur, audio.currentTime + (e.key === "ArrowRight" ? 5 : -5)));
-      paint(audio.currentTime);
-    });
-  }
-  const now = $("[data-now]");
-
-  // the transcript, as the app wrote it, with each word's time
-  const roll = $("[data-tx] [data-roll]");
-  const words = [], lines = [];
-  if (roll && take) {
-    take.lines.forEach((l) => {
-      const row = document.createElement("div");
-      row.className = "pa-tx__line";
-      row.innerHTML = `<span class="pa-tx__time">${mmss(l.s)}</span><p><span class="pa-tx__who">Host</span><span class="pa-tx__words"></span></p>`;
-      const holder = $(".pa-tx__words", row);
-      l.w.forEach(([text, s], k) => {
-        const sp = document.createElement("span");
-        sp.textContent = text;
-        holder.append(sp);
-        if (k < l.w.length - 1) holder.append(" ");
-        words.push({ sp, s });
-      });
-      roll.append(row);
-      lines.push({ row, s: l.s });
-    });
-  }
-  let lastLine = -1;
-  const paint = (t) => {
-    const p = take ? t / take.dur : 0;
-    bars.forEach((b, i) => b.classList.toggle("on", i / bars.length < p));
-    wave?.setAttribute("aria-valuenow", String(Math.round(t)));
-    if (now) now.textContent = mmss(t);
-    words.forEach((w) => w.sp.classList.toggle("said", w.s <= t && t > 0));
-    let cur = 0;
-    lines.forEach((l, i) => { if (l.s <= t) cur = i; });
-    if (cur !== lastLine && roll) {
-      lastLine = cur;
-      const row = lines[cur]?.row;
-      if (row) roll.style.transform = `translateY(${-(row.offsetTop - 110)}px)`;
-    }
-  };
-  let raf = 0;
-  const loop = () => { cancelAnimationFrame(raf); const f = () => { paint(audio.currentTime); if (!audio.paused) raf = requestAnimationFrame(f); }; f(); };
-
-  /* ---------- 06 voice: say it, it records, say stop, it saves ---------- */
-  const voice = $("[data-voice]");
-  if (voice) {
-    const steps = $$(".pa-voice__step", voice), clock = $("[data-clock]", voice);
-    let i = 0, secs = 0;
-    const show = () => {
-      steps.forEach((s, k) => s.classList.toggle("on", k === i));
-      voice.classList.toggle("is-rec", i === 1 || i === 2);
-      if (i === 0) secs = 0;
-      clock.textContent = mmss(secs);
-    };
-    whileSeen(voice, 2600, () => { i = (i + 1) % steps.length; show(); });
-    whileSeen(voice, 1000, () => { if (voice.classList.contains("is-rec")) { secs++; clock.textContent = mmss(secs); } });
-  }
-
   /* ---------- 09 prompter: the lines move up as you read, then Keep / Retake / Next ---------- */
   const pr = $("[data-prompt]");
   if (pr) {
@@ -201,7 +102,7 @@
 
   /* the episode video's controls: pause / play, and "Hear it" (sound on starts it from the top) */
   $$(".pa-ep__film").forEach((fig) => {
-    const v = $("video", fig);
+    const v = fig.dataset.video ? $(fig.dataset.video) : $("video", fig);
     const pause = $("[data-pause]", fig);
     const sound = $("[data-sound]", fig);
     const load = () => { if (!v.getAttribute("src")) { v.src = v.dataset.src; v.load(); } };
@@ -227,6 +128,138 @@
     ["play", "pause", "volumechange"].forEach((e) => v.addEventListener(e, sync));
     sync();
   });
+
+  /* ---------- Auto-switch: the app's Record screen, live ----------
+     The program video is the show; the feeds video holds the three cameras side by side and is
+     drawn into the three tiles, so they can never drift apart. Which tile is on the show, the
+     chip, both mic meters and the REC clock all follow the program's own clock and the app's
+     real cut list and mic data (pa-auto-data). On desktop the section pins and the view moves
+     into the cameras, then the mics, then pulls back, as you scroll. */
+  const auto = $("[data-auto]");
+  if (auto) {
+    let data = null;
+    try { data = JSON.parse($("#pa-auto-data").textContent); } catch (_) {}
+    const prog = $("#pa-auto-prog"), feeds = $("#pa-auto-feeds");
+    const ctrls = $("[data-auto-ctrls]");
+    const tiles = $$(".tmw__tile", auto);
+    const cv = tiles.map((t) => $("canvas", t)), cx = cv.map((c) => c.getContext("2d"));
+    const chip = $("[data-layout]", auto), clock = $("[data-rec-time]", auto), now = $("[data-now]", auto);
+    const mics = { host: $('[data-who="host"]', auto), guest: $('[data-who="guest"]', auto) };
+    const CAM = { wide: 0, host: 1, guest: 2 };
+    const LINE = {
+      wide: "After 16 seconds on one close-up, it shows the room for a moment.",
+      host: "<b>Latasha is talking</b>, so her close-up is on the show.",
+      guest: "<b>Samantha is talking</b>, so her close-up is on the show.",
+    };
+    let shown = "";
+    const draw = () => {
+      if (feeds.readyState < 2) return;
+      const w = feeds.videoWidth / 3, h = feeds.videoHeight;
+      cv.forEach((c, i) => { if (c.width !== w) { c.width = w; c.height = h; } cx[i].drawImage(feeds, i * w, 0, w, h, 0, 0, w, h); });
+    };
+    const paint = () => {
+      const t = prog.currentTime;
+      if (data) {
+        let cam = data.cuts[0][1];
+        for (const [at, c] of data.cuts) if (t >= at) cam = c;
+        if (cam !== shown) {
+          shown = cam;
+          tiles.forEach((tile, i) => tile.classList.toggle("is-on", i === CAM[cam]));
+          chip.textContent = `Cam ${CAM[cam] + 1}`;
+          now.innerHTML = LINE[cam];
+        }
+        const i = Math.min(data.host.m.length - 1, Math.max(0, Math.round(t * 10)));
+        for (const who of ["host", "guest"]) {
+          const m = mics[who], d = data[who];
+          m.style.setProperty("--m", d.m[i]);
+          $(".tmw__meter", m).classList.toggle("loud", d.m[i] > 0.8);
+          const talk = !!d.on[i];
+          if (m.classList.contains("talk") !== talk) { m.classList.toggle("talk", talk); $("em", m).textContent = talk ? "Talking" : "Ready"; }
+          $(".tmw__meter i", m).style.width = `${(d.m[i] * 100).toFixed(1)}%`;
+        }
+        const s = Math.floor(data.t0 + t);
+        clock.textContent = `${Math.floor(s / 60)}:${String(s % 60).padStart(2, "0")}`;
+      }
+      if (!feeds.paused && Math.abs(feeds.currentTime - t) > 0.1) feeds.currentTime = t;
+      draw();
+    };
+    let raf = 0;
+    const loop = () => { paint(); if (!prog.paused) raf = requestAnimationFrame(loop); };
+    prog.addEventListener("play", () => { if (feeds.getAttribute("src")) feeds.play().catch(() => {}); cancelAnimationFrame(raf); loop(); });
+    prog.addEventListener("pause", () => { feeds.pause(); cancelAnimationFrame(raf); paint(); });
+    prog.addEventListener("seeked", () => { feeds.currentTime = prog.currentTime; paint(); });
+    feeds.addEventListener("loadeddata", draw);
+    const load = () => {
+      [prog, feeds].forEach((v) => { if (!v.getAttribute("src")) { v.src = v.dataset.src; v.load(); } });
+    };
+    if (!reduced && !saveData) {
+      new IntersectionObserver(([e]) => {
+        if (e.isIntersecting) {
+          load();
+          if (ctrls?.dataset.held) return;
+          prog.play().catch(() => {});
+        } else if (!prog.paused) prog.pause();
+      }, { threshold: 0.2 }).observe($(".pa-auto__view", auto));
+    } else {
+      // reduced motion: the screen still loads its first frame, so the tiles aren't empty
+      new IntersectionObserver(([e], o) => { if (e.isIntersecting) { load(); o.disconnect(); } }, { threshold: 0.1 }).observe($(".pa-auto__view", auto));
+      feeds.addEventListener("loadeddata", () => { draw(); paint(); }, { once: true });
+    }
+    paint();
+
+    // the camera move (desktop, motion allowed)
+    const pinMQ = matchMedia("(min-width: 1000px) and (prefers-reduced-motion: no-preference)");
+    const pin = $(".pa-auto__pin", auto), view = $(".pa-auto__view", auto), mover = $("[data-cam-move]", auto);
+    const steps = $$(".pa-auto__step", auto);
+    const win = $(".tmw", auto);
+    let F = null, ticking = false;
+    const rel = (el, base) => { const b = el.getBoundingClientRect(); return { x: b.left - base.left, y: b.top - base.top, w: b.width, h: b.height }; };
+    const measure = () => {
+      mover.style.transform = "none";
+      const base = mover.getBoundingClientRect();
+      const vw = view.clientWidth, vh = view.clientHeight;
+      const W = base.width, H = base.height;
+      // zoom so a region fills the view, never past the window's own edges
+      const fit = (r, frac, max) => {
+        const s = Math.max(1, Math.min(max, vw * frac / r.w, vh * frac / r.h));
+        const x = Math.min(0, Math.max(vw - W * s, vw / 2 - (r.x + r.w / 2) * s));
+        const y = Math.min(0, Math.max(vh - H * s, vh / 2 - (r.y + r.h / 2) * s));
+        return { s, x, y };
+      };
+      const full = { s: 1, x: 0, y: 0 };
+      const cams = fit(rel($(".tmw__cams", mover), base), 1, 2.6);
+      const micsF = fit(rel($(".tmw__mics", mover), base), 0.74, 2.4);
+      // [progress, view]: rise in, the cameras, the mics, then the whole screen
+      F = [[0, { s: 0.94, x: vw * 0.03, y: vh * 0.08 }], [0.06, full], [0.16, cams], [0.3, cams], [0.4, micsF], [0.54, micsF], [0.66, full], [1, full]];
+    };
+    const ease = (k) => (k < 0.5 ? 4 * k * k * k : 1 - Math.pow(-2 * k + 2, 3) / 2);
+    const frame = () => {
+      ticking = false;
+      if (!pinMQ.matches || !F) return;
+      const r = auto.getBoundingClientRect();
+      const top = parseFloat(getComputedStyle(pin).top) || 0;
+      const p = Math.min(1, Math.max(0, (top - r.top) / Math.max(1, r.height - pin.offsetHeight)));
+      let k = 0;
+      while (k < F.length - 2 && p > F[k + 1][0]) k++;
+      const [p0, a] = F[k], [p1, b] = F[k + 1];
+      const e = ease(Math.min(1, Math.max(0, (p - p0) / Math.max(1e-6, p1 - p0))));
+      const s = a.s + (b.s - a.s) * e, x = a.x + (b.x - a.x) * e, y = a.y + (b.y - a.y) * e;
+      mover.style.transform = `translate3d(${x.toFixed(1)}px, ${y.toFixed(1)}px, 0) scale(${s.toFixed(4)})`;
+      const on = p < 0.3 ? 0 : p < 0.6 ? 1 : 2;
+      steps.forEach((st, i) => st.classList.toggle("on", i === on));
+      // the part being explained stays lit; the rest of the screen steps back
+      win.classList.toggle("f-cams", p > 0.1 && p < 0.33);
+      win.classList.toggle("f-mics", p >= 0.33 && p < 0.6);
+    };
+    const onScroll = () => { if (!ticking) { ticking = true; requestAnimationFrame(frame); } };
+    const setup = () => {
+      if (pinMQ.matches) { measure(); frame(); addEventListener("scroll", onScroll, { passive: true }); }
+      else { removeEventListener("scroll", onScroll); mover.style.transform = ""; steps.forEach((st) => st.classList.remove("on")); win.classList.remove("f-cams", "f-mics"); }
+    };
+    pinMQ.addEventListener("change", setup);
+    addEventListener("resize", () => { if (pinMQ.matches) { measure(); frame(); } });
+    if (document.readyState === "complete") setup(); else addEventListener("load", setup, { once: true });
+  }
 
   /* ---------- 08 auto-switch, two-person: the camera on the show follows the app's real cuts ---------- */
   const live = $("[data-cams][data-cuts]");

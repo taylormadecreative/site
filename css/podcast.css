@@ -134,17 +134,7 @@
 .pa-chap b { font-weight: 600; color: var(--gold-ink); }
 
 /* ---------- 06 voice: the words you say, and the take starting ---------- */
-.pa-voice { position: relative; min-height: 340px; display: grid; align-content: center; }
-.pa-voice__say { font-family: var(--cond); font-weight: 900; text-transform: uppercase; font-size: clamp(54px, 6.4vw, 112px); line-height: .86; letter-spacing: -.01em; }
-.pa-voice__say .q { color: var(--gold); }
-.pa-voice__line { display: block; }
-.pa-voice__rec { margin-top: 30px; display: inline-flex; align-items: center; gap: 12px; font-size: 16px; font-weight: 600; font-variant-numeric: tabular-nums; color: var(--soft-on-ink); }
-.pa-voice__rec i { width: 14px; height: 14px; border-radius: 50%; background: #e5484d; box-shadow: 0 0 0 0 rgba(229, 72, 77, .6); }
-.pa-voice.is-rec .pa-voice__rec i { animation: pa-rec 1.4s ease-out infinite; }
 @keyframes pa-rec { to { box-shadow: 0 0 0 14px rgba(229, 72, 77, 0); } }
-.pa-voice__step { transition: opacity .5s var(--ease-out), filter .5s var(--ease-out), transform .5s var(--ease-out); }
-.pa-voice__step:not(.on) { position: absolute; opacity: 0; filter: blur(8px); transform: translateY(10px); pointer-events: none; }
-.pa-voice__note { margin-top: 26px; font-size: 14px; color: var(--mute-on-ink); max-width: 46ch; }
 
 /* ---------- 07 scripts: the script on the prompter, then Keep, Retake or Next ---------- */
 .pa-prompt { max-width: 620px; margin: 0 auto; }
@@ -362,24 +352,26 @@
    A 41-second cut of six moments from the finished episode, a strip that follows it
    (and jumps to a moment on click), then three of her five reels.
    ============================================================ */
-.pa-fin { --rose: #a9625e; --rose-deep: #8f4f4c; --label: var(--mute-on-paper); background: color-mix(in srgb, #b8706c 8%, var(--paper)); color: var(--ink); padding: clamp(96px, 11vw, 168px) 0 clamp(80px, 9vw, 128px); overflow: clip; }
+.pa-fin { --rose: #a9625e; --rose-deep: #8f4f4c; --label: var(--mute-on-paper); background: color-mix(in srgb, #b8706c 8%, var(--paper)); color: var(--ink); padding: clamp(72px, 8vw, 120px) 0 clamp(64px, 7vw, 104px); overflow: clip; }
 .pa-fin__in { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--g); display: grid; grid-template-columns: minmax(0, 1fr); gap: 36px; }
+/* compact: the story beside the film, not a poster above it */
 @media (min-width: 1000px) {
-  .pa-fin__in { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); column-gap: clamp(44px, 5vw, 104px); row-gap: clamp(56px, 6vw, 88px); align-items: end; }
-  .pa-fin__viewer, .pa-fin__reels { grid-column: 1 / -1; }
-  .pa-fin__side { padding-bottom: .4em; }
+  .pa-fin__in { grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); column-gap: clamp(40px, 4.4vw, 88px); row-gap: clamp(48px, 5vw, 72px); align-items: center; }
+  .pa-fin__reels { grid-column: 1 / -1; }
 }
 .pa-fin__k { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin-bottom: 22px; font-size: 14px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--label); }
 .pa-fin__k b { font-weight: 700; color: var(--rose-deep); }
-.pa-fin__h { font-size: clamp(64px, 9vw, 168px); line-height: .82; color: var(--ink); }
+.pa-fin__h { font-family: var(--cond); font-weight: 900; text-transform: uppercase; font-size: clamp(46px, 5vw, 88px); line-height: .86; letter-spacing: -.005em; color: var(--ink); }
 .pa-fin__l { display: block; }
 .pa-fin__l--2 { color: var(--rose); }
 .hm-ready .pa-fin__l--2.is-in .w { animation-delay: calc(var(--i) * 70ms + 210ms); }
-.pa-fin__lede { max-width: 44ch; font-size: clamp(17px, 1.35vw, 20px); line-height: 1.6; color: var(--mute-on-paper); }
+.pa-fin__lede { margin-top: 22px; max-width: 44ch; font-size: clamp(16.5px, 1.2vw, 18.5px); line-height: 1.6; color: var(--mute-on-paper); }
+.pa-fin__more { display: inline-block; margin-top: 20px; font-size: 15px; font-weight: 600; color: var(--ink); text-decoration: underline; text-decoration-color: var(--rose); text-underline-offset: 4px; text-decoration-thickness: 1.5px; }
+@media (hover: hover) { .pa-fin__more:hover { color: var(--rose-deep); } }
 
 /* the film, sized like the episode viewer above so it and its strip fit one screen */
 .pa-fin__viewer { width: 100%; }
-@media (min-width: 1000px) { .pa-fin__viewer { width: min(100%, max(680px, calc((100svh - var(--nav-h) - 300px) * 16 / 9))); margin-inline: auto; } }
+
 .pa-fin .pa-ep__screen { box-shadow: 0 40px 80px -48px rgba(70, 34, 32, .4), 0 0 0 1px var(--hair-paper); }
 .pa-fin .pa-ep__cap b { color: var(--ink); }
 /* the controls sit under the film, so nothing covers the name card, handles or location tag */
@@ -405,13 +397,148 @@
 }
 
 /* three of the five reels */
-.pa-fin__reels { margin-top: clamp(24px, 4vw, 48px); display: grid; grid-template-columns: minmax(0, 1fr); gap: 36px; }
+.pa-fin__reels { margin-top: clamp(8px, 2vw, 24px); display: grid; grid-template-columns: minmax(0, 1fr); gap: 32px; }
 @media (min-width: 1000px) { .pa-fin__reels { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); column-gap: clamp(44px, 5vw, 104px); align-items: end; } }
-.pa-fin__h3 { font-family: var(--cond); font-weight: 800; text-transform: uppercase; font-size: clamp(40px, 4.2vw, 68px); line-height: .9; }
+.pa-fin__h3 { font-family: var(--cond); font-weight: 800; text-transform: uppercase; font-size: clamp(34px, 3vw, 48px); line-height: .9; }
 .pa-fin__reels-copy p { margin-top: 18px; max-width: 40ch; font-size: clamp(16.5px, 1.2vw, 18px); line-height: 1.6; color: var(--mute-on-paper); }
-.pa-fin__phones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 2.6vw, 44px); width: 100%; max-width: 760px; justify-self: center; }
+.pa-fin__phones { display: grid; grid-template-columns: repeat(3, minmax(0, 1fr)); gap: clamp(12px, 2.2vw, 36px); width: 100%; max-width: 600px; justify-self: end; }
 .pa-fin__phones figure { margin: 0; }
 .pa-fin__phones .mu-iphone { filter: drop-shadow(0 30px 40px rgba(70, 34, 32, .3)); }
 .pa-fin .pa-cap { color: var(--mute-on-paper); font-variant-numeric: tabular-nums; }
 .pa-fin .pa-cap b { color: var(--ink); }
 @media (max-width: 599px) { .pa-fin .pa-cap { font-size: 12.5px; } }
+
+/* ============================================================
+   AUTO-SWITCH · the lead feature, Apple-style
+   The app's Record screen rebuilt in HTML (tokens and strings from the app's own source),
+   playing a real episode on three cameras. The cuts are the app's auto-switch code run on
+   the episode's two mic recordings; the tiles, meters and chips follow them live.
+   On desktop the section pins and the view moves into the cameras, then the mics, then
+   pulls back to the whole screen as you scroll.
+   ============================================================ */
+.pa-auto { --label: var(--mute-on-ink); background: var(--ink); color: var(--paper); padding: clamp(88px, 10vw, 152px) 0 clamp(64px, 7vw, 112px); overflow: clip; }
+.pa-auto__in { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--g); }
+.pa-auto__k { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 14px; margin-bottom: 22px; font-size: 14px; font-weight: 600; letter-spacing: .08em; text-transform: uppercase; color: var(--label); }
+.pa-auto__k b { font-weight: 700; color: var(--gold); }
+.pa-auto__h { font-size: clamp(64px, 9vw, 168px); line-height: .82; }
+.pa-auto__l { display: block; }
+.pa-auto__l--2 { color: var(--gold); }
+.hm-ready .pa-auto__l--2.is-in .w { animation-delay: calc(var(--i) * 70ms + 210ms); }
+
+.pa-auto__track { margin-top: clamp(36px, 4vw, 64px); }
+.pa-auto__pin { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--g); display: grid; grid-template-columns: minmax(0, 1fr); gap: 22px; }
+.pa-auto__steps { list-style: none; margin: 0; padding: 0; display: grid; gap: 18px; }
+.pa-auto__step { max-width: 30ch; font-size: clamp(17px, 1.45vw, 22px); line-height: 1.4; color: var(--soft-on-ink); }
+.pa-auto__step b { display: block; margin-bottom: 8px; font-family: var(--cond); font-weight: 900; text-transform: uppercase; font-size: clamp(34px, 3.4vw, 60px); line-height: .9; letter-spacing: -.005em; color: var(--paper); }
+.pa-auto__step:nth-child(3) b { color: var(--gold); }
+.pa-auto__view { position: relative; border-radius: 16px; overflow: hidden; background: #050506; box-shadow: 0 0 0 1px var(--hair-ink), 0 70px 120px -60px rgba(0, 0, 0, .95); }
+.pa-auto__cam { transform-origin: 0 0; }
+.pa-auto__under { display: flex; align-items: center; justify-content: space-between; gap: 16px; min-height: 44px; }
+.pa-auto__now { font-size: 15.5px; line-height: 1.4; color: var(--soft-on-ink); text-wrap: pretty; }
+.pa-auto__now b { color: var(--paper); font-weight: 600; }
+.pa-auto__ctrls { display: flex; gap: 8px; flex: none; }
+.pa-auto__ctrls .pa-ep__btn { background: rgba(245, 242, 234, .1); }
+@media (hover: hover) { .pa-auto__ctrls .pa-ep__btn:hover { background: rgba(245, 242, 234, .18); } .pa-auto__ctrls .pa-ep__btn.is-on:hover { background: var(--gold-hi); } }
+.pa-auto__ctrls .pa-ep__btn.is-on { background: var(--gold); }
+
+@media (min-width: 1000px) and (prefers-reduced-motion: no-preference) {
+  .pa-auto__track { height: 330vh; }
+  .pa-auto__pin { position: sticky; top: var(--nav-h); height: calc(100svh - var(--nav-h)); grid-template-columns: minmax(0, 4fr) minmax(0, 9fr); grid-template-rows: minmax(0, 1fr) auto; column-gap: clamp(32px, 3.6vw, 72px); row-gap: 14px; align-content: center; padding-block: 28px 22px; }
+  .pa-auto__steps { grid-row: 1 / span 2; position: relative; display: block; align-self: stretch; }
+  .pa-auto__step { position: absolute; left: 0; right: 0; top: 50%; opacity: 0; filter: blur(8px); transform: translateY(calc(-50% + 22px)); transition: opacity .55s var(--ease-out), filter .55s var(--ease-out), transform .7s var(--ease-out); }
+  .pa-auto__step.on { opacity: 1; filter: none; transform: translateY(-50%); }
+  .pa-auto__view { align-self: end; justify-self: center; width: min(100%, calc((100svh - var(--nav-h) - 128px) * 1.405)); }
+  .pa-auto__under { width: min(100%, calc((100svh - var(--nav-h) - 128px) * 1.405)); justify-self: center; }
+  .pa-auto__cam { will-change: transform; }
+}
+
+/* ---------- the app window (tmw): sized in units of a 1280-wide window ---------- */
+.tmw { container-type: inline-size; background: #08080a; color: #f5f2ea; font-family: -apple-system, BlinkMacSystemFont, "SF Pro Text", "Helvetica Neue", system-ui, sans-serif; -webkit-font-smoothing: antialiased; line-height: 1.2; text-align: left; }
+.tmw > * { --u: calc(100cqw / 1280); }
+.tmw__bar { position: relative; display: flex; align-items: center; gap: calc(14 * var(--u)); height: calc(52 * var(--u)); padding: 0 calc(16 * var(--u)); background: #101014; border-bottom: 1px solid #2e2d32; }
+.tmw__lights { display: flex; gap: calc(8 * var(--u)); margin-right: calc(10 * var(--u)); }
+.tmw__lights b { width: calc(12 * var(--u)); height: calc(12 * var(--u)); border-radius: 50%; background: #ff5f57; }
+.tmw__lights b:nth-child(2) { background: #febc2e; }
+.tmw__lights b:nth-child(3) { background: #28c840; }
+.tmw__logo { position: relative; display: grid; padding-left: calc(13 * var(--u)); padding-right: calc(14 * var(--u)); border-right: 1px solid #2e2d32; font-size: calc(11 * var(--u)); font-weight: 800; letter-spacing: .2em; text-transform: uppercase; }
+.tmw__logo::before { content: ""; position: absolute; left: 0; top: 50%; width: calc(6 * var(--u)); height: calc(18 * var(--u)); margin-top: calc(-9 * var(--u)); border-radius: calc(3 * var(--u)); background: #e9b949; }
+.tmw__logo small { font-size: calc(9 * var(--u)); font-weight: 700; letter-spacing: .36em; color: #e9b949; }
+.tmw__ep { font-size: calc(14 * var(--u)); font-weight: 600; }
+.tmw__tabs { position: absolute; left: 50%; transform: translateX(-50%); display: flex; gap: calc(2 * var(--u)); padding: calc(3 * var(--u)); border: 1px solid #2e2d32; border-radius: 999px; background: #08080a; }
+.tmw__tabs span { display: grid; place-items: center; height: calc(30 * var(--u)); padding: 0 calc(16 * var(--u)); border-radius: 999px; font-size: calc(13 * var(--u)); font-weight: 600; color: rgba(245, 242, 234, .8); }
+.tmw__tabs .on { background: #f5f2ea; color: #08080a; }
+.tmw__rec { margin-left: auto; display: flex; align-items: center; gap: calc(8 * var(--u)); height: calc(30 * var(--u)); padding: 0 calc(12 * var(--u)); border-radius: 999px; background: rgba(234, 72, 66, .14); font-size: calc(11 * var(--u)); font-weight: 800; letter-spacing: .13em; color: #ea4842; }
+.tmw__rec i { width: calc(9 * var(--u)); height: calc(9 * var(--u)); border-radius: 50%; background: #ea4842; animation: tmw-pulse 1.6s ease-in-out infinite; }
+.tmw__rec time { font: 500 calc(15 * var(--u)) / 1 ui-monospace, "SF Mono", Menlo, monospace; letter-spacing: 0; color: #f5f2ea; font-variant-numeric: tabular-nums; }
+@keyframes tmw-pulse { 50% { opacity: .35; } }
+.tmw__main { display: grid; gap: calc(14 * var(--u)); padding: calc(18 * var(--u)) calc(20 * var(--u)) calc(18 * var(--u)); }
+.tmw__preview { position: relative; justify-self: center; width: calc(900 * var(--u)); aspect-ratio: 16 / 9; border-radius: calc(10 * var(--u)); overflow: hidden; background: #08080a; box-shadow: 0 0 0 1px #2e2d32; }
+.tmw__preview video { display: block; width: 100%; height: 100%; object-fit: cover; }
+.tmw__preview .tmw__feeds { position: absolute; width: 1px; height: 1px; opacity: 0; pointer-events: none; }
+.tmw__chips { position: absolute; left: calc(14 * var(--u)); top: calc(14 * var(--u)); display: flex; gap: calc(8 * var(--u)); }
+.tmw__state, .tmw__chip { display: inline-flex; align-items: center; gap: calc(5 * var(--u)); padding: calc(4 * var(--u)) calc(8 * var(--u)); border-radius: calc(5 * var(--u)); background: rgba(8, 8, 10, .72); font-size: calc(12 * var(--u)); font-weight: 600; white-space: nowrap; }
+.tmw__state { background: #b82926; font-size: calc(11 * var(--u)); font-weight: 800; letter-spacing: .145em; text-transform: uppercase; }
+.tmw__chip--gold { color: #e9b949; font-size: calc(11.5 * var(--u)); }
+.tmw__chip--gold:nth-child(3) { border-radius: 999px; }
+.tmw__chip svg, .tmw__auto svg { width: calc(13 * var(--u)); height: calc(13 * var(--u)); }
+.tmw__head { display: flex; align-items: baseline; gap: calc(12 * var(--u)); font-size: calc(11 * var(--u)); color: #99948a; }
+.tmw__kick { font-size: calc(10.5 * var(--u)); font-weight: 700; letter-spacing: .133em; text-transform: uppercase; color: #99948a; }
+.tmw__cams { display: grid; grid-template-columns: repeat(3, calc(296 * var(--u))); justify-content: center; gap: calc(28 * var(--u)); }
+.tmw__tile { position: relative; margin: 0; aspect-ratio: 16 / 9; border-radius: calc(8 * var(--u)); overflow: hidden; background: #101014; box-shadow: inset 0 0 0 1px #2e2d32; }
+.tmw__tile canvas { display: block; width: 100%; height: 100%; }
+.tmw__tile::after { content: ""; position: absolute; inset: 0; border-radius: inherit; box-shadow: inset 0 0 0 1px #2e2d32; transition: box-shadow .15s ease-out; }
+.tmw__tile.is-on::after { box-shadow: inset 0 0 0 calc(3 * var(--u)) #ea4842; }
+.tmw__tile figcaption { position: absolute; left: calc(8 * var(--u)); bottom: calc(8 * var(--u)); display: flex; align-items: center; gap: calc(7 * var(--u)); text-shadow: 0 0 calc(3 * var(--u)) rgba(0, 0, 0, .9), 0 1px 2px rgba(0, 0, 0, .8); }
+.tmw__tile figcaption > b { display: grid; place-items: center; width: calc(20 * var(--u)); height: calc(20 * var(--u)); border-radius: calc(4 * var(--u)); background: rgba(8, 8, 10, .72); font-size: calc(11 * var(--u)); font-weight: 700; text-shadow: none; }
+.tmw__tile.is-on figcaption > b { background: #e9b949; color: #08080a; }
+.tmw__tile figcaption span { display: grid; }
+.tmw__tile strong { font-size: calc(12 * var(--u)); font-weight: 600; }
+.tmw__tile small { font-size: calc(10.5 * var(--u)); color: #c9c4b9; }
+.tmw__dock { display: grid; grid-template-columns: auto minmax(0, 1fr) auto; align-items: center; gap: calc(36 * var(--u)); padding: calc(12 * var(--u)) calc(20 * var(--u)); border-radius: calc(10 * var(--u)); background: #101014; box-shadow: inset 0 0 0 1px #2e2d32; }
+.tmw__who { display: grid; gap: calc(8 * var(--u)); justify-items: start; }
+.tmw__auto { display: inline-flex; align-items: center; gap: calc(7 * var(--u)); height: calc(32 * var(--u)); padding: 0 calc(12 * var(--u)); border-radius: calc(8 * var(--u)); background: #e9b949; color: #08080a; font-size: calc(13 * var(--u)); font-weight: 600; }
+.tmw__mics { display: grid; gap: calc(7 * var(--u)); width: calc(400 * var(--u)); }
+.tmw__mic { display: grid; grid-template-columns: calc(8 * var(--u)) calc(70 * var(--u)) minmax(0, 1fr) calc(64 * var(--u)); align-items: center; gap: calc(8 * var(--u)); margin: 0; }
+.tmw__mic > i { width: calc(8 * var(--u)); height: calc(8 * var(--u)); border-radius: 50%; background: #212026; transition: background-color .12s ease-out; }
+.tmw__mic b { font-size: calc(12 * var(--u)); font-weight: 600; }
+.tmw__meter { position: relative; height: calc(10 * var(--u)); border-radius: calc(3 * var(--u)); overflow: hidden; background: linear-gradient(90deg, transparent 70%, rgba(233, 185, 73, .16) 70%, rgba(233, 185, 73, .16) 90%, transparent 90%), #212026; }
+.tmw__meter i { position: absolute; left: 0; top: 0; bottom: 0; width: calc(var(--m, 0) * 100%); border-radius: calc(3 * var(--u)); background: var(--c); opacity: .75; transition: width .08s linear; }
+.tmw__meter.loud i { opacity: 1; }
+.tmw__mic em { font-style: normal; font-size: calc(10.5 * var(--u)); font-weight: 500; color: #99948a; }
+/* the app colors people by seat: this episode's Guest is person 0 (gold), the Host person 1 (blue) */
+.tmw__mic[data-who="guest"] { --c: #e9b949; }
+.tmw__mic[data-who="host"] { --c: #9ec2ed; }
+.tmw__mic.talk > i { background: var(--c); }
+.tmw__mic.talk em { color: var(--c); }
+.tmw__stop { display: inline-flex; align-items: center; gap: calc(10 * var(--u)); height: calc(52 * var(--u)); padding: 0 calc(26 * var(--u)); border-radius: 999px; background: #212026; font-size: calc(17 * var(--u)); font-weight: 600; }
+.tmw__stop i { width: calc(14 * var(--u)); height: calc(14 * var(--u)); border-radius: calc(3 * var(--u)); background: #f5f2ea; }
+.tmw__preview, .tmw__head, .tmw__cams, .tmw__who, .tmw__stop, .tmw__mics, .tmw__bar { transition: opacity .6s var(--ease-out); }
+.tmw.f-cams .tmw__preview, .tmw.f-cams .tmw__dock, .tmw.f-cams .tmw__bar { opacity: .28; }
+.tmw.f-mics .tmw__preview, .tmw.f-mics .tmw__head, .tmw.f-mics .tmw__cams, .tmw.f-mics .tmw__who, .tmw.f-mics .tmw__stop, .tmw.f-mics .tmw__bar { opacity: .28; }
+
+/* narrow screens: a phone-sized cut of the same screen */
+@container (max-width: 640px) {
+  .tmw > * { --u: calc(100cqw / 600); }
+  .tmw__logo, .tmw__ep, .tmw__tabs { display: none; }
+  .tmw__preview { width: 100%; }
+  .tmw__cams { grid-template-columns: repeat(3, minmax(0, 1fr)); gap: calc(12 * var(--u)); }
+  .tmw__head span:last-child { display: none; }
+  .tmw__dock { grid-template-columns: minmax(0, 1fr); gap: calc(12 * var(--u)); }
+  .tmw__who, .tmw__stop { display: none; }
+  .tmw__mics { width: 100%; }
+  .tmw__mic { grid-template-columns: calc(9 * var(--u)) calc(64 * var(--u)) minmax(0, 1fr) calc(70 * var(--u)); }
+}
+
+/* after the pinned screen: the rules, then every cut in the episode */
+.pa-auto__more { margin-top: clamp(48px, 6vw, 96px); }
+.pa-auto__rules { list-style: none; margin: 0 0 clamp(40px, 5vw, 72px); padding: 0; display: grid; grid-template-columns: minmax(0, 1fr); }
+.pa-auto__rules li { padding: 16px 0; border-top: 1px solid var(--hair-ink); font-size: 16px; line-height: 1.45; color: var(--soft-on-ink); }
+.pa-auto__rules b { display: block; margin-bottom: 6px; font-family: var(--cond); font-weight: 800; text-transform: uppercase; font-size: clamp(30px, 2.6vw, 44px); line-height: .9; color: var(--gold); }
+@media (min-width: 700px) { .pa-auto__rules { grid-template-columns: repeat(2, minmax(0, 1fr)); column-gap: 32px; } }
+@media (min-width: 1100px) { .pa-auto__rules { grid-template-columns: repeat(4, minmax(0, 1fr)); } .pa-auto__rules li { padding-right: 24px; } }
+.pa-cuts--3 .gu, .pa-cuts--3 .pa-cuts__key .gu { fill: var(--gold); background: var(--gold); }
+.pa-cuts--3 .ho, .pa-cuts--3 .pa-cuts__key .ho { fill: #9ec2ed; background: #9ec2ed; }
+.pa-cuts--3 .wd, .pa-cuts--3 .pa-cuts__key .wd { fill: color-mix(in srgb, var(--paper) 38%, var(--ink)); background: color-mix(in srgb, var(--paper) 38%, var(--ink)); }
+.pa-auto__note { margin-top: 16px; max-width: 78ch; font-size: 14px; line-height: 1.55; color: var(--label); text-wrap: pretty; }
+.pa-auto .pa-ep__stop { margin-top: clamp(56px, 6vw, 88px); }
+@media (max-width: 599px) { .pa-auto__under { flex-direction: column-reverse; align-items: flex-start; } }
