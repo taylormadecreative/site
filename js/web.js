@@ -317,6 +317,92 @@
     document.addEventListener("visibilitychange", () => players.forEach((pl) => pl.tab()));
   }
 
+  /* ---------- THE WORK · one stage: pick a site, the devices switch; it moves on by itself until touched ---------- */
+  const show = $("[data-show]");
+  if (show) {
+    const items = $$(".wd-show__item", show), panels = $$("[data-show-panel]", show);
+    const btns = items.map((it) => $(".wd-show__btn", it)), bodies = items.map((it) => $(".wd-show__body", it));
+    const STEP = 9000;
+    // every site's write-up is in the page for no-JS readers; with the script, only the open one shows
+    bodies.forEach((bd, k) => { bd.hidden = !items[k].classList.contains("is-on"); });
+    let cur = 0, auto = !reduced, t0 = 0, acc = 0, ticking = false;
+    const holds = new Set(["offscreen"]);
+    const running = () => auto && !holds.size;
+    const elapsed = () => acc + (running() ? performance.now() - t0 : 0);
+    function go(i, user = false) {
+      i = (i + items.length) % items.length;
+      if (user) { auto = false; show.classList.add("is-held"); }
+      if (i === cur) return;
+      items.forEach((it, k) => { const on = k === i; it.classList.toggle("is-on", on); btns[k].setAttribute("aria-expanded", on ? "true" : "false"); bodies[k].hidden = !on; it.style.removeProperty("--p"); });
+      panels.forEach((pn, k) => pn.classList.toggle("is-on", k === i));
+      cur = i; acc = 0; t0 = performance.now();
+      if (user && matchMedia("(max-width: 999px)").matches) {
+        // phones: the list item just opened stays where the thumb is; the devices above already switched
+        const r = items[i].getBoundingClientRect();
+        if (r.top < 0 || r.top > innerHeight * 0.75) items[i].scrollIntoView({ block: "center", behavior: reduced ? "auto" : "smooth" });
+      }
+      tick();
+    }
+    function tick() {
+      if (ticking || !running()) return;
+      ticking = true;
+      const f = () => {
+        const p = clamp(elapsed() / STEP);
+        items[cur].style.setProperty("--p", p.toFixed(4));
+        if (p >= 1) go(cur + 1);
+        if (running()) requestAnimationFrame(f); else ticking = false;
+      };
+      requestAnimationFrame(f);
+    }
+    const hold = (why) => { if (holds.has(why)) return; acc = elapsed(); holds.add(why); };
+    const release = (why) => { if (!holds.delete(why)) return; t0 = performance.now(); tick(); };
+    btns.forEach((b, k) => b.addEventListener("click", () => { go(k, true); track("web_work_pick", { site: $(".wd-show__n", b).textContent }); }));
+    $(".wd-show__list", show).addEventListener("keydown", (e) => {
+      const k = btns.indexOf(document.activeElement);
+      if (k < 0) return;
+      const n = { ArrowDown: k + 1, ArrowUp: k - 1, Home: 0, End: btns.length - 1 }[e.key];
+      if (n === undefined) return;
+      e.preventDefault(); btns[(n + btns.length) % btns.length].focus();
+    });
+    // the pointer over the list or the devices holds the clock, so nothing moves while someone is reading
+    show.addEventListener("pointerenter", (e) => { if (e.pointerType === "mouse") hold("hover"); });
+    show.addEventListener("pointerleave", () => release("hover"));
+    show.addEventListener("focusin", () => hold("focus"));
+    show.addEventListener("focusout", (e) => { if (!show.contains(e.relatedTarget)) release("focus"); });
+    new IntersectionObserver(([e]) => (e.isIntersecting ? release("offscreen") : hold("offscreen")), { threshold: 0.35 }).observe(show);
+    document.addEventListener("visibilitychange", () => (document.hidden ? hold("tab") : release("tab")));
+    if (!auto) show.classList.add("is-held");
+    const pauseBtn = $("[data-show-pause]", show);
+    const paintPause = () => {
+      pauseBtn.innerHTML = (auto ? '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg><span>Pause the tour</span>' : '<svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M8 5.5v13l10.5-6.5z"/></svg><span>Play the tour</span>');
+      pauseBtn.setAttribute("aria-label", auto ? "Pause the tour of sites" : "Play the tour of sites");
+    };
+    pauseBtn.addEventListener("click", () => {
+      auto = !auto;
+      show.classList.toggle("is-held", !auto);
+      if (auto) { acc = 0; t0 = performance.now(); holds.delete("focus"); tick(); }
+      paintPause();
+    });
+    // any pick by hand ends the tour: the button says so
+    btns.forEach((b) => b.addEventListener("click", paintPause));
+    paintPause();
+    // "Sitting Pretty Rashae's" in a feature caption opens that site here
+    const order = items.map((it) => $(".wd-show__btn", it).id.replace(/^show-|-btn$/g, ""));
+    $$("[data-show-go]").forEach((a) => a.addEventListener("click", (e) => {
+      const k = order.indexOf(a.dataset.showGo);
+      if (k < 0) return;
+      e.preventDefault();
+      go(k, true); paintPause();
+      document.getElementById("work").scrollIntoView({ behavior: reduced ? "auto" : "smooth" });
+    }));
+  }
+
+  /* ---------- MORE SITES · the arrows page the row ---------- */
+  const strip = $("[data-strip-row]");
+  if (strip) $$("[data-strip]").forEach((b) => b.addEventListener("click", () => {
+    strip.scrollBy({ left: Number(b.dataset.strip) * strip.clientWidth * 0.8, behavior: reduced ? "auto" : "smooth" });
+  }));
+
   /* ---------- BENTO · each part plays once when it comes into view; the pointer on a card plays it again ---------- */
   const bento = $("[data-bento]");
   if (bento && !reduced) {
@@ -327,36 +413,50 @@
     }));
   }
 
-  /* ---------- PLATFORMS · segmented control (tabs) ---------- */
+  /* ---------- PLATFORMS · five cards (a tablist); the chosen one's detail opens below ----------
+     The hero's "Where's your site now?" chips and links like #platforms-squarespace open the matching card. */
   const plat = $("[data-plat]");
   if (plat) {
     const tabs = $$('[role="tab"]', plat);
     const panels = tabs.map((t) => document.getElementById(t.getAttribute("aria-controls")));
-    const thumb = $(".wd-seg__thumb", plat);
-    const seg = $(".wd-seg", plat);
-    const place = () => {
-      const t = tabs.find((x) => x.getAttribute("aria-selected") === "true");
-      thumb.style.setProperty("--tx", `${t.offsetLeft}px`);
-      thumb.style.setProperty("--tw", `${t.offsetWidth}px`);
-    };
+    const ids = tabs.map((t) => t.id.replace(/^tab-/, ""));
     const select = (i, focus = false) => {
       tabs.forEach((t, k) => { const on = k === i; t.setAttribute("aria-selected", on ? "true" : "false"); t.tabIndex = on ? 0 : -1; panels[k].hidden = !on; panels[k].classList.remove("is-in"); });
       void panels[i].offsetWidth; panels[i].classList.add("is-in");
       if (focus) tabs[i].focus();
-      const t = tabs[i];
-      if (t.offsetLeft < seg.scrollLeft || t.offsetLeft + t.offsetWidth > seg.scrollLeft + seg.clientWidth) seg.scrollTo({ left: t.offsetLeft - 24, behavior: reduced ? "auto" : "smooth" });
-      place();
     };
-    tabs.forEach((t, i) => t.addEventListener("click", () => { select(i); track("web_platform_tab", { platform: t.textContent.trim() }); }));
-    seg.addEventListener("keydown", (e) => {
+    tabs.forEach((t, i) => t.addEventListener("click", () => { select(i); track("web_platform_tab", { platform: ids[i] }); }));
+    $(".wd-pick", plat).addEventListener("keydown", (e) => {
       const i = tabs.indexOf(document.activeElement);
       if (i < 0) return;
-      const k = { ArrowRight: i + 1, ArrowLeft: i - 1, Home: 0, End: tabs.length - 1 }[e.key];
+      const k = { ArrowRight: i + 1, ArrowDown: i + 1, ArrowLeft: i - 1, ArrowUp: i - 1, Home: 0, End: tabs.length - 1 }[e.key];
       if (k === undefined) return;
       e.preventDefault(); select((k + tabs.length) % tabs.length, true);
     });
-    place();
-    addEventListener("resize", place, { passive: true });
-    if (document.fonts?.ready) document.fonts.ready.then(place);
+    const open = (id, how) => {
+      const i = ids.indexOf(id);
+      if (i < 0) return false;
+      select(i);
+      document.getElementById("platforms").scrollIntoView({ behavior: reduced || how === "load" ? "auto" : "smooth" });
+      track("web_platform_tab", { platform: id, how });
+      return true;
+    };
+    $$("[data-plat-go]").forEach((a) => a.addEventListener("click", (e) => { if (open(a.dataset.platGo, "hero")) { e.preventDefault(); history.replaceState(null, "", "#platforms-" + a.dataset.platGo); } }));
+    const fromHash = () => { const m = location.hash.match(/^#platforms-([a-z]+)$/); if (m) open(m[1], "load"); };
+    fromHash();
+    addEventListener("hashchange", fromHash);
+  }
+
+  /* ---------- PHONES · a quote button stays in reach between the hero and the closing call ---------- */
+  const qbar = $("[data-qbar]");
+  if (qbar && matchMedia("(max-width: 699px)").matches) {
+    qbar.hidden = false;
+    const seen = { hero: true, end: false };
+    const paint = () => qbar.classList.toggle("is-on", !seen.hero && !seen.end);
+    new IntersectionObserver(([e]) => { seen.hero = e.isIntersecting; paint(); }).observe($(".wd-hero"));
+    const ends = [$(".hm-cta"), $(".footer")].filter(Boolean);
+    const vis = new Set();
+    const endIO = new IntersectionObserver((es) => { es.forEach((e) => (e.isIntersecting ? vis.add(e.target) : vis.delete(e.target))); seen.end = vis.size > 0; paint(); });
+    ends.forEach((el) => endIO.observe(el));
   }
 })();
