@@ -183,7 +183,7 @@
     box.innerHTML = `
       <div class="bk-summary" style="max-width:560px; margin-bottom:26px;">
         <div class="row"><span>You're booked</span><b>${fmtLong(bk.starts_at)} · ${fmtTime(bk.starts_at)} CT</b></div>
-        <p class="bk-note" style="margin-top:4px;">That payment already went through — nothing else to do. I'll email your confirmation and the studio address. If it hasn't landed, check spam, then DM <a href="https://www.instagram.com/taylormade_creative/" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:underline;">@taylormade_creative</a> and I'll resend it.</p>
+        <p class="bk-note" style="margin-top:4px;">That payment already went through — nothing else to do. I'll email your confirmation and where we're shooting. If it hasn't landed, check spam, then DM <a href="https://www.instagram.com/taylormade_creative/" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:underline;">@taylormade_creative</a> and I'll resend it.</p>
       </div>`;
   }
 
@@ -439,7 +439,7 @@
               ${USES.map((u) => `<option value="${esc(u)}"${d.use === u ? " selected" : ""}>${esc(u || "Pick one — helps me plan the set")}</option>`).join("")}
             </select></div>
           <div class="bk-field"><label for="fNotes">Anything I should know? (optional)</label>
-            <textarea id="fNotes" name="notes" rows="4" maxlength="3000" placeholder="Your vibe or colors, props you're bringing (balloons, crown, cake), outfit ideas, Pinterest links, questions…">${esc(d.notes)}</textarea></div>
+            <textarea id="fNotes" name="notes" rows="4" maxlength="3000" placeholder="Studio or on location (and where), your vibe or colors, props you're bringing (balloons, crown, cake), outfit ideas, Pinterest links, questions…">${esc(d.notes)}</textarea></div>
           <label style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--smoke);cursor:pointer;">
             <input type="checkbox" name="subscribe" ${d.subscribe ? "checked" : ""} style="margin-top:3px;accent-color:var(--gold);">
             <span>Keep me in the loop — occasional studio news, new work, and open dates. No spam, unsubscribe anytime.</span>
@@ -516,7 +516,7 @@
           ${balance > 0 ? `<div class="row"><span>Balance</span><b>${money(balance)} ${balanceDay}</b></div>` : ""}
         </div>
         ${balance > 0 ? `<p class="bk-note" style="margin:16px 0 0; max-width:56ch;">Your deposit holds the date. The remaining <b style="color:var(--paper);">${money(balance)}</b> is charged automatically to the same card <b style="color:var(--paper);">${balanceDay}</b>${soon ? ", since your shoot is less than a day away" : ", the day before your shoot"}. Nothing else to remember.</p>` : ""}
-        <p class="bk-note" style="margin:16px 0 22px; max-width:56ch;">Secure payment by Stripe. Once it clears I'll email your confirmation, the studio address, and what to bring — well before shoot day. Nothing in your inbox? Check spam, then DM <a href="https://www.instagram.com/taylormade_creative/" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:underline;">@taylormade_creative</a> and I'll resend it.</p>
+        <p class="bk-note" style="margin:16px 0 22px; max-width:56ch;">Secure payment by Stripe. Once it clears I'll email your confirmation, where we're shooting, and what to bring — well before shoot day. Nothing in your inbox? Check spam, then DM <a href="https://www.instagram.com/taylormade_creative/" target="_blank" rel="noopener" style="color:var(--gold);text-decoration:underline;">@taylormade_creative</a> and I'll resend it.</p>
         <p class="bk-err" id="payErr" role="alert" hidden></p>
         <div style="display:flex; gap:12px; flex-wrap:wrap;">
           <button class="btn btn-gold" id="goBtn">Pay ${money(amount)}${balance > 0 ? " deposit" : ""} &amp; lock it in</button>

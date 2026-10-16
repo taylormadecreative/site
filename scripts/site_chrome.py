@@ -12,6 +12,9 @@ same markup, with the right relative paths and the current page marked.
 Each page keeps its own gold button (the nav's .btn-gold) and its own first
 footer column (logo + newsletter form). Pages with a bespoke bar
 (creator-workshop, success) are left alone.
+
+Service pages also get the "On location in" band right above the footer
+(between <!-- chrome:where --> and <!-- /chrome:where -->), worded for what the page sells.
 """
 import pathlib
 import re
@@ -117,6 +120,60 @@ FOOTER = [
         (JENEL, "Studio rental: Jenel Studios"), (INSTAGRAM, "Instagram"),
     ]),
 ]
+
+# ---------- the "On location in" band above the footer ----------
+# Every service page names the same cities (his best-paying clients are north and
+# west of Dallas) and says he travels. Studio-only sessions say "Serving" instead,
+# so the band never promises a location shoot the page doesn't sell.
+CITIES = ["Plano", "Frisco", "Irving", "Allen", "McKinney", "Southlake", "Westlake", "Fort Worth"]
+WHERE_SKIP = {"book/", "store/", "podcast-app/", "privacy/camera/", "privacy/podcast/", "success/", "studio-rental/", "404.html"}
+WHERE_STUDIO = {"headshots/", "headshots/cost/"}
+WHERE_WEB = {"web-design/", "web-design/shopify/", "web-design/wordpress/", "web-design/squarespace/", "web-design/wix/", "app-design/", "ai-creative/"}
+WHERE_ONSITE = {"workshops/"}
+# project work is quoted, so its travel lands in the quote rather than as a fee
+WHERE_QUOTED = {"video-production/", "video-production/commercials/", "video-production/podcasts/", "video-production/social-ads/",
+                "video-production/music-videos/", "corporate-video/", "corporate-headshots/", "branding-photography/",
+                "product-photography/", "social-media/"}
+TRAVEL = "Based in Downtown Dallas and available to travel. Travel over 50 miles adds a travel fee based on distance."
+TRAVEL_QUOTED = "Based in Downtown Dallas and available to travel. Over 50 miles out, travel is added to your quote."
+
+
+def where_html(rel, s, indent):
+    url = page_url(rel)
+    if url in WHERE_SKIP or '<footer class="footer"' not in s:
+        return ""
+    prefix = prefix_of(rel, url)
+    sr = ""
+    if url in WHERE_STUDIO:
+        k = "Serving"
+        sr = '<span class="where__sr"> Dallas–Fort Worth, including</span>'
+        line = (f'Headshot sessions are in the Downtown Dallas studio. <a href="{prefix}corporate-headshots/">Team headshots</a> '
+                f'and <a href="{prefix}branding-photography/">brand shoots</a> come to you, on location anywhere in Dallas–Fort Worth.')
+    elif url in WHERE_WEB:
+        k = "Serving businesses in"
+        line = "Based in Downtown Dallas, working with businesses anywhere, and available to travel."
+    elif url in WHERE_ONSITE:
+        k = "On site in"
+        line = "Taught in person across Dallas–Fort Worth or virtually, and available to travel."
+    else:
+        k = "On location in"
+        line = TRAVEL_QUOTED if url in WHERE_QUOTED else TRAVEL
+    # pages on the homepage system have the condensed face; the rest use the site display face
+    cond = " where--cond" if "use.typekit.net" in s else ""
+    cities = " ".join(f"<li>{c}</li>" for c in CITIES)  # spaces = the only places a line may break
+    o = [
+        "<!-- chrome:where -->",
+        f'<section class="where{cond}" aria-labelledby="where-h">',
+        '  <div class="wrap where__in">',
+        f'    <h2 class="where__k" id="where-h">{k}{sr}</h2>',
+        f'    <ul class="where__list" role="list">{cities}</ul>',
+        f'    <p class="where__line">{line}</p>',
+        "  </div>",
+        "</section>",
+        "<!-- /chrome:where -->",
+    ]
+    return ("\n" + indent).join(o)
+
 
 CHEV = '<svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M1.5 3.5 5 7l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg>'
 EXT = ' <span class="nav-ext" aria-hidden="true">↗</span>'
@@ -240,6 +297,12 @@ def rewrite(rel, s):
         old = m.group(0)
         c = re.search(r'<a class="btn btn-gold"[^>]*>.*?</a>', old, re.S)
         s = s[: m.start()] + m.group(1) + nav_html(rel, c.group(0) if c else "", m.group(1)) + s[m.end():]
+    s = re.sub(r"[ \t]*<!-- chrome:where -->.*?<!-- /chrome:where -->\n", "", s, flags=re.S)
+    fm = re.search(r'^([ \t]*)<footer class="footer"', s, re.M)
+    if fm:
+        band = where_html(rel, s, fm.group(1))
+        if band:
+            s = s[: fm.start()] + fm.group(1) + band + "\n" + s[fm.start():]
     fg = s.find('<div class="footer-grid">')
     if fg >= 0:
         first = s.find("<div", fg + 5)
