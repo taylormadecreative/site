@@ -643,6 +643,8 @@ ol.vp-list li::before { content: counter(n); position: absolute; left: 0; top: .
 /* a returning visitor in the same session gets the last frame of the intro, not the whole reveal */
 .vp-seen .vp-hero *, .vp-seen .vp-hero *::before, .vp-seen .vp-hero *::after { animation: none !important; }
 .vp-seen .vp-stage__set::before { display: none; }
+/* the ink bars only open by animating; without the intro they would sit closed over the screen */
+.vp-seen .vp-hero .vp-screen::before, .vp-seen .vp-hero .vp-screen::after { display: none; }
 
 /* phones: the headline, then the screen and phone, then the copy; buttons side by side */
 @media (max-width: 699px) {
