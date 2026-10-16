@@ -32,8 +32,8 @@
   <link rel="stylesheet" href="https://use.typekit.net/sbr6kqy.css">
   <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&amp;family=Unbounded:wght@900&amp;display=swap" rel="stylesheet">
   <link rel="preload" as="image" href="assets/img/films/reel-1280.webp" imagesrcset="assets/img/films/reel-640.webp 640w, assets/img/films/reel-1280.webp 1280w, assets/img/films/reel-1920.webp 1920w" imagesizes="(min-width: 1000px) 62vw, 100vw" fetchpriority="high">
-  <link rel="stylesheet" href="css/site.css">
-  <link rel="stylesheet" href="css/home.css?v=8">
+  <link rel="stylesheet" href="css/site.css?v=20261015n">
+  <link rel="stylesheet" href="css/home.css?v=20261015n">
 
   <!-- GA4 (carried over from the previous site so history stays continuous) -->
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PS0H5W3ZX7"></script>
@@ -168,29 +168,95 @@
   <!-- nav (same bar as every page; the CTA opens a project inquiry) -->
   <nav class="nav" aria-label="Main">
     <a class="nav-logo" href="./" aria-current="page">TAYLORMADE<span class="slash">/</span>CREATIVE<span class="tag">DFW</span></a>
-    <button class="nav-burger" aria-label="Menu" id="burger"><span></span><span></span></button>
+    <button class="nav-burger" type="button" aria-label="Menu" aria-controls="navLinks" id="burger"><span></span><span></span></button>
     <div class="nav-links" id="navLinks">
-      <a href="#films">Work</a>
-      <a href="#services">Services</a>
-      <a href="web-design/">Web design</a>
-      <a href="video-production/">Video</a>
-      <div class="nav-drop">
-        <button class="nav-drop-btn" type="button" aria-expanded="false" aria-controls="navPhoto">Photography <svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 3.5 5 7l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
-        <div class="nav-drop-panel" id="navPhoto">
-          <a href="branding-photography/"><span class="n">01</span><span class="t">Branding</span><span class="m">Quote</span></a>
-          <a href="product-photography/"><span class="n">02</span><span class="t">Product</span><span class="m">Quote</span></a>
-          <a href="digitals/"><span class="n">03</span><span class="t">Digitals</span><span class="m">$100</span></a>
-          <a href="headshots/"><span class="n">04</span><span class="t">Headshots</span><span class="m">$150</span></a>
-          <a href="corporate-headshots/"><span class="n">05</span><span class="t">Team headshots</span><span class="m">From $99 ea</span></a>
-          <a href="birthday/"><span class="n">06</span><span class="t">Birthday shoots</span><span class="m">From $150</span></a>
-          <a href="senior-photos/"><span class="n">07</span><span class="t">Senior photos</span><span class="m">From $150</span></a>
-          <a class="all" href="photography/"><span>All photography</span><span aria-hidden="true">→</span></a>
+      <div class="nav-drop" data-drop="video">
+        <button class="nav-drop-btn" type="button" aria-expanded="false" aria-controls="navVideo">Video <svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M1.5 3.5 5 7l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+        <div class="nav-drop-panel" id="navVideo">
+          <div class="nav-mega">
+            <div class="nav-mega__intro">
+              <a class="nav-mega__hub" href="video-production/"><span class="nav-mega__k">Video</span><span class="nav-mega__t">Video production <i aria-hidden="true">→</i></span><span class="nav-mega__all">All video production <i aria-hidden="true">→</i></span></a>
+              <p>Commercials, podcasts, social ads and music videos, directed, lit and cut in-house.</p>
+            </div>
+            <ul class="nav-mega__list">
+              <li><a href="video-production/commercials/"><span class="t">Commercials</span><span class="d">Ads and product videos</span></a></li>
+              <li><a href="corporate-video/"><span class="t">Corporate video</span><span class="d">Training and interview videos</span></a></li>
+              <li><a href="video-production/podcasts/"><span class="t">Video podcasts</span><span class="d">Recorded and cut like a show</span></a></li>
+              <li><a href="video-production/social-ads/"><span class="t">Social ads</span><span class="d">Reels, TikTok and Stories</span></a></li>
+              <li><a href="video-production/music-videos/"><span class="t">Music videos</span><span class="d">Concept to final cut</span></a></li>
+              <li><a href="social-media/"><span class="t">Social media</span><span class="d">Monthly reels and carousels</span></a></li>
+            </ul>
+            <a class="nav-mega__feat" href="video-production/#work"><span class="nav-mega__img" data-img="assets/img/nav/video.webp"></span><span class="nav-mega__cap"><span>Juices &amp; Botanics</span><b>Watch the films <i aria-hidden="true">→</i></b></span></a>
+          </div>
         </div>
       </div>
-      <a href="faqs/">FAQs</a>
-      <a href="https://book.taylormadecreative.net/login.html">Client portal</a>
+      <div class="nav-drop" data-drop="web">
+        <button class="nav-drop-btn" type="button" aria-expanded="false" aria-controls="navWeb">Web &amp; apps <svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M1.5 3.5 5 7l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+        <div class="nav-drop-panel" id="navWeb">
+          <div class="nav-mega">
+            <div class="nav-mega__intro">
+              <a class="nav-mega__hub" href="web-design/"><span class="nav-mega__k">Web &amp; apps</span><span class="nav-mega__t">Web design <i aria-hidden="true">→</i></span><span class="nav-mega__all">All web design <i aria-hidden="true">→</i></span></a>
+              <p>Hand-coded sites from $1,200, plus Shopify, WordPress, Squarespace, Wix and apps.</p>
+            </div>
+            <ul class="nav-mega__list">
+              <li><a href="web-design/shopify/"><span class="t">Shopify</span><span class="d">Stores designed to sell</span></a></li>
+              <li><a href="web-design/wordpress/"><span class="t">WordPress</span><span class="d">Redesigns, posts kept</span></a></li>
+              <li><a href="web-design/squarespace/"><span class="t">Squarespace</span><span class="d">Past the template</span></a></li>
+              <li><a href="web-design/wix/"><span class="t">Wix</span><span class="d">Real type, its own phone layout</span></a></li>
+              <li><a href="app-design/"><span class="t">App design</span><span class="d">iPhone, Apple Watch and Mac</span></a></li>
+              <li><a href="ai-creative/"><span class="t">AI content</span><span class="d">Spokespeople and automation</span></a></li>
+            </ul>
+            <a class="nav-mega__feat" href="web-design/#work"><span class="nav-mega__img" data-img="assets/img/nav/web.webp"></span><span class="nav-mega__cap"><span>Tabitha Brown</span><b>See the sites <i aria-hidden="true">→</i></b></span></a>
+          </div>
+        </div>
+      </div>
+      <div class="nav-drop" data-drop="photo">
+        <button class="nav-drop-btn" type="button" aria-expanded="false" aria-controls="navPhoto">Photography <svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M1.5 3.5 5 7l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+        <div class="nav-drop-panel" id="navPhoto">
+          <div class="nav-mega">
+            <div class="nav-mega__intro">
+              <a class="nav-mega__hub" href="photography/"><span class="nav-mega__k">Photography</span><span class="nav-mega__t">Photography <i aria-hidden="true">→</i></span><span class="nav-mega__all">All photography <i aria-hidden="true">→</i></span></a>
+              <p>Campaigns and products for brands, plus portraits, in Downtown Dallas or on location.</p>
+            </div>
+            <ul class="nav-mega__list nav-mega__list--prices">
+              <li><a href="branding-photography/"><span class="t">Branding</span><span class="d">Quote</span></a></li>
+              <li><a href="product-photography/"><span class="t">Product</span><span class="d">Quote</span></a></li>
+              <li><a href="digitals/"><span class="t">Digitals</span><span class="d">$100</span></a></li>
+              <li><a href="headshots/"><span class="t">Headshots</span><span class="d">$150</span></a></li>
+              <li><a href="corporate-headshots/"><span class="t">Team headshots</span><span class="d">From $99 ea</span></a></li>
+              <li><a href="birthday/"><span class="t">Birthday shoots</span><span class="d">From $150</span></a></li>
+              <li><a href="senior-photos/"><span class="t">Senior photos</span><span class="d">From $150</span></a></li>
+            </ul>
+            <a class="nav-mega__feat" href="photography/#work"><span class="nav-mega__img" data-img="assets/img/nav/photo.webp"></span><span class="nav-mega__cap"><span>Product</span><b>See the photos <i aria-hidden="true">→</i></b></span></a>
+          </div>
+        </div>
+      </div>
+      <div class="nav-drop" data-drop="studio">
+        <button class="nav-drop-btn" type="button" aria-expanded="false" aria-controls="navStudio">Studio <svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M1.5 3.5 5 7l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+        <div class="nav-drop-panel" id="navStudio">
+          <div class="nav-mega">
+            <div class="nav-mega__intro">
+              <a class="nav-mega__hub" href="./" aria-current="page"><span class="nav-mega__k">Studio</span><span class="nav-mega__t">Taylormade Creative <i aria-hidden="true">→</i></span><span class="nav-mega__all">Home <i aria-hidden="true">→</i></span></a>
+              <p>One Dallas studio for film, web, photo and apps, led by Nelson Taylor.</p>
+            </div>
+            <ul class="nav-mega__list">
+              <li><a href="#about"><span class="t">About Nelson</span><span class="d">14 years of creative direction</span></a></li>
+              <li><a href="#work"><span class="t">Selected work</span><span class="d">Web, film, photo and apps</span></a></li>
+              <li><a href="workshops/"><span class="t">Workshops</span><span class="d">AI and creative, for teams</span></a></li>
+              <li><a href="pricing/"><span class="t">Prices</span><span class="d">Every posted price</span></a></li>
+              <li><a href="faqs/"><span class="t">FAQs</span><span class="d">Booking, turnaround, delivery</span></a></li>
+              <li><a href="https://jenelstudios.com/"><span class="t">Studio rental <span class="nav-ext" aria-hidden="true">↗</span></span><span class="d">Jenel Studios, Downtown Dallas</span></a></li>
+            </ul>
+            <a class="nav-mega__cta" href="book/#project"><span class="nav-mega__k">Have a project?</span><span class="nav-mega__ct">Get a real quote within one business day.</span><b>Start a project <i aria-hidden="true">→</i></b></a>
+          </div>
+        </div>
+      </div>
+      <a class="nav-store" href="store/">Store</a>
+      <span class="nav-sep" aria-hidden="true"></span>
+      <a class="nav-util" href="https://book.taylormadecreative.net/login.html">Client portal</a>
       <a class="btn btn-gold" href="book/#project">Start a project</a>
     </div>
+    <div class="nav-scrim" aria-hidden="true"></div>
   </nav>
 
   <main id="main">
@@ -209,7 +275,6 @@
             <a class="hm-btn hm-btn--gold" href="book/#project">Start a project</a>
             <a class="hm-link" href="book/?service=brand-content">Get a video quote <span aria-hidden="true">→</span></a>
           </div>
-          <a class="hm-new" href="podcast-app/" data-load style="--i:2"><img src="assets/img/home/icon-podcast.webp" width="160" height="160" alt=""><span><b>New · Free beta</b>Taylormade Podcast for Mac</span><i aria-hidden="true">→</i></a>
         </div>
 
         <div class="hm-bb hm-bb--reel" id="reel" role="region" aria-label="Highlight reel">
@@ -241,7 +306,6 @@
       </nav>
       <div class="hm-cue">
         <p class="hm-cue__line">Taylormade Creative · Dallas web design, commercial video, photography and apps</p>
-        <a class="hm-cue__new" href="podcast-app/"><b>New</b> Taylormade Podcast for Mac, free beta <i aria-hidden="true">→</i></a>
         <span class="hm-cue__scroll" aria-hidden="true"><i></i>Scroll</span>
         <button type="button" class="hm-bb__pause" data-reel-pause aria-label="Pause the reel"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/></svg></button>
       </div>
@@ -313,6 +377,7 @@
 
 
     <!-- ============ THE CHAPTERS · web, video, photo, app, corporate as stacked cards (GSAP card stacking) ============ -->
+    <div id="work" class="hm-anchor" aria-hidden="true"></div>
     <section class="hm-deck" id="services" aria-label="Services">
 
       <!-- 01 · WEB DESIGN -->
@@ -823,30 +888,47 @@
           </form>
         </div>
         <div>
-          <h4>Services</h4>
-          <a href="web-design/">Web design</a>
+          <h2 class="footer-h">Video</h2>
           <a href="video-production/">Video production</a>
-          <a href="photography/">Commercial photography</a>
-          <a href="app-design/">App design</a>
-          <a href="podcast-app/">Podcast app for Mac</a>
+          <a href="video-production/commercials/">Commercials</a>
           <a href="corporate-video/">Corporate video</a>
-          <a href="ai-creative/">AI content</a>
+          <a href="video-production/podcasts/">Video podcasts</a>
+          <a href="video-production/social-ads/">Social ads</a>
+          <a href="video-production/music-videos/">Music videos</a>
           <a href="social-media/">Social media</a>
-          <a href="workshops/">Workshops</a>
-          <a href="https://jenelstudios.com/">Studio rental: Jenel Studios</a>
         </div>
         <div>
-          <h4>Studio</h4>
-          <a href="#films">Watch the work</a>
-          <a href="#services">Services</a>
+          <h2 class="footer-h">Web &amp; apps</h2>
+          <a href="web-design/">Web design</a>
+          <a href="web-design/shopify/">Shopify</a>
+          <a href="web-design/wordpress/">WordPress</a>
+          <a href="web-design/squarespace/">Squarespace</a>
+          <a href="web-design/wix/">Wix</a>
+          <a href="app-design/">App design</a>
+          <a href="ai-creative/">AI content</a>
+        </div>
+        <div>
+          <h2 class="footer-h">Photography</h2>
+          <a href="photography/">All photography</a>
+          <a href="branding-photography/">Branding</a>
+          <a href="product-photography/">Product</a>
+          <a href="digitals/">Digitals</a>
+          <a href="headshots/">Headshots</a>
+          <a href="corporate-headshots/">Team headshots</a>
+          <a href="birthday/">Birthday shoots</a>
+          <a href="senior-photos/">Senior photos</a>
+        </div>
+        <div>
+          <h2 class="footer-h">Studio</h2>
           <a href="#about">About Nelson</a>
+          <a href="#work">Selected work</a>
+          <a href="workshops/">Workshops</a>
+          <a href="store/">Store</a>
           <a href="pricing/">Prices</a>
           <a href="faqs/">FAQs</a>
           <a href="book/">Book a shoot</a>
-        </div>
-        <div>
-          <h4>Clients</h4>
           <a href="https://book.taylormadecreative.net/login.html">Client portal</a>
+          <a href="https://jenelstudios.com/">Studio rental: Jenel Studios</a>
           <a href="https://www.instagram.com/taylormade_creative/" rel="noopener" target="_blank">Instagram</a>
         </div>
       </div>
@@ -880,7 +962,7 @@
   <script type="application/json" id="hm-films">{"reel": {"yt": "", "t": "The highlight reel", "m": "Highlight reel · 1:00", "k": "Highlight reel", "dur": "1:00", "d": "A minute of the studio’s work: TONI&GUY, Juices & Botanics, La Supreme and other brand films, campaigns and commercials.", "ar": "16/9", "pv": "", "v": "assets/video/full/reel", "poster": "assets/img/films/reel-1280.webp", "hd": 1}, "tga": {"yt": "ai6gyONaabA", "t": "TONI&GUY Academy", "m": "Brand film · 0:53", "d": "A recruiting film for TONI&GUY Hairdressing Academy, with the admissions and education directors on camera and the students at work.", "ar": "16/9", "pv": "assets/video/films/tga-360.mp4", "v": "assets/video/full/tga", "poster": "assets/img/films/tga-1280.webp", "k": "Brand film", "dur": "0:53", "hd": 1}, "jb": {"yt": "s08nzu_A6Ic", "t": "Juices & Botanics", "m": "Hair campaign · Destination shoot · 0:31", "d": "A natural hair care campaign shot on location at a tropical lagoon and waterfall.", "ar": "16/9", "pv": "assets/video/films/jb-360.mp4", "v": "assets/video/full/jb", "poster": "assets/img/films/jb-1280.webp", "k": "Hair campaign", "dur": "0:31", "hd": 1}, "secret": {"yt": "5HZQp4vuAyI", "t": "It’s a Secret Med Spa", "m": "Commercial with voiceover · Chicago · 0:19", "d": "A commercial with voiceover for a Chicago med spa’s sale: the walk-in, the treatments and the brand.", "ar": "16/9", "pv": "assets/video/films/secret-360.mp4", "v": "assets/video/full/secret", "poster": "assets/img/films/secret-1280.webp", "k": "Commercial with voiceover", "dur": "0:19", "hd": 1}, "oribe": {"yt": "of87wf29ueg", "t": "Oribe", "m": "Product commercial · 0:24", "d": "Oribe styling products on a model and in slow-motion product shots, ending on Shop now at TONI&GUY.", "ar": "16/9", "pv": "assets/video/films/oribe-360.mp4", "v": "assets/video/full/oribe", "poster": "assets/img/films/oribe-1280.webp", "k": "Product commercial", "dur": "0:24", "hd": 1}, "tgplano": {"yt": "uF3kDgPagss", "t": "TONI&GUY Academy × Plano ISD", "m": "Commercial · 1:00", "d": "A one-minute spot inviting Plano ISD students to apply to the TONI&GUY Hairdressing Academy program.", "ar": "16/9", "pv": "assets/video/films/tgplano-360.mp4", "v": "assets/video/full/tgplano", "poster": "assets/img/films/tgplano-1280.webp", "k": "Commercial", "dur": "1:00", "hd": 1}, "marviano": {"yt": "P9gSy5sHEoc", "t": "Marviano Cosmetics", "m": "Lip gloss campaign · Dallas · 0:41", "d": "A lip gloss campaign shot in Dallas around a cherry-red classic car and a neighborhood auto shop.", "ar": "16/9", "pv": "assets/video/films/marviano-360.mp4", "v": "assets/video/full/marviano", "poster": "assets/img/films/marviano-1280.webp", "k": "Lip gloss campaign", "dur": "0:41", "hd": 1}, "lasupreme": {"yt": "Q6yvuIPWOYY", "t": "La Supreme Hair", "m": "Hair campaign · 0:30", "d": "A poolside hair extension campaign for La Supreme Hair’s North Dallas store.", "ar": "16/9", "pv": "assets/video/films/lasupreme-360.mp4", "v": "assets/video/full/lasupreme", "poster": "assets/img/films/lasupreme-640.webp", "k": "Hair campaign", "dur": "0:30"}, "lasupreme-open": {"yt": "dN1JEDfNi0k", "t": "La Supreme Hair: Grand opening", "m": "Grand opening film · North Dallas · 0:30", "d": "The grand opening of La Supreme Hair’s North Dallas store.", "ar": "16/9", "pv": "assets/video/films/lasupreme-open-360.mp4", "v": "assets/video/full/lasupreme-open", "poster": "assets/img/films/lasupreme-open-640.webp", "k": "Grand opening film", "dur": "0:30"}, "mariah": {"yt": "QzbYiE_m-iw", "t": "Mariah.B, “Bizness”", "m": "Music video · 3:35", "d": "The music video for “Bizness” by Mariah.B.", "ar": "16/9", "pv": "", "poster": "assets/img/films/mariah-640.webp", "k": "Music video", "dur": "3:35"}}</script>
 
   <script src="js/config.js" defer></script>
-  <script src="js/site.js" defer></script>
-  <script src="js/home.js?v=7" defer></script>
+  <script src="js/site.js?v=20261015n" defer></script>
+  <script src="js/home.js?v=20261015n" defer></script>
 </body>
 </html>

@@ -28,8 +28,8 @@
   <link rel="preload" as="image" href="../../assets/img/vp/light.webp" fetchpriority="high">
   <link rel="stylesheet" href="https://use.typekit.net/sbr6kqy.css">
   <link href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400..700&amp;family=Unbounded:wght@900&amp;display=swap" rel="stylesheet">
-  <link rel="stylesheet" href="../../css/site.css">
-  <link rel="stylesheet" href="../../css/home.css?v=8">
+  <link rel="stylesheet" href="../../css/site.css?v=20261015n">
+  <link rel="stylesheet" href="../../css/home.css?v=20261015n">
   <link rel="stylesheet" href="../../css/video.css?v=2">
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PS0H5W3ZX7"></script>
   <script>
@@ -278,29 +278,95 @@
 
   <nav class="nav" aria-label="Main">
     <a class="nav-logo" href="../../">TAYLORMADE<span class="slash">/</span>CREATIVE<span class="tag">DFW</span></a>
-    <button class="nav-burger" aria-label="Menu" id="burger"><span></span><span></span></button>
+    <button class="nav-burger" type="button" aria-label="Menu" aria-controls="navLinks" id="burger"><span></span><span></span></button>
     <div class="nav-links" id="navLinks">
-      <a href="../../#work">Work</a>
-      <a href="../../#services">Services</a>
-      <a href="../../web-design/">Web design</a>
-      <a href="../../video-production/">Video</a>
-      <div class="nav-drop">
-        <button class="nav-drop-btn" type="button" aria-expanded="false" aria-controls="navPhoto">Photography <svg viewBox="0 0 10 10" aria-hidden="true"><path d="M1.5 3.5 5 7l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
-        <div class="nav-drop-panel" id="navPhoto">
-          <a href="../../branding-photography/"><span class="n">01</span><span class="t">Branding</span><span class="m">Quote</span></a>
-          <a href="../../product-photography/"><span class="n">02</span><span class="t">Product</span><span class="m">Quote</span></a>
-          <a href="../../digitals/"><span class="n">03</span><span class="t">Digitals</span><span class="m">$100</span></a>
-          <a href="../../headshots/"><span class="n">04</span><span class="t">Headshots</span><span class="m">$150</span></a>
-          <a href="../../corporate-headshots/"><span class="n">05</span><span class="t">Team headshots</span><span class="m">From $99 ea</span></a>
-          <a href="../../birthday/"><span class="n">06</span><span class="t">Birthday shoots</span><span class="m">From $150</span></a>
-          <a href="../../senior-photos/"><span class="n">07</span><span class="t">Senior photos</span><span class="m">From $150</span></a>
-          <a class="all" href="../../photography/"><span>All photography</span><span aria-hidden="true">→</span></a>
+      <div class="nav-drop" data-drop="video">
+        <button class="nav-drop-btn is-section" type="button" aria-expanded="false" aria-controls="navVideo">Video <svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M1.5 3.5 5 7l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+        <div class="nav-drop-panel" id="navVideo">
+          <div class="nav-mega">
+            <div class="nav-mega__intro">
+              <a class="nav-mega__hub" href="../../video-production/"><span class="nav-mega__k">Video</span><span class="nav-mega__t">Video production <i aria-hidden="true">→</i></span><span class="nav-mega__all">All video production <i aria-hidden="true">→</i></span></a>
+              <p>Commercials, podcasts, social ads and music videos, directed, lit and cut in-house.</p>
+            </div>
+            <ul class="nav-mega__list">
+              <li><a href="../../video-production/commercials/"><span class="t">Commercials</span><span class="d">Ads and product videos</span></a></li>
+              <li><a href="../../corporate-video/"><span class="t">Corporate video</span><span class="d">Training and interview videos</span></a></li>
+              <li><a href="../../video-production/podcasts/"><span class="t">Video podcasts</span><span class="d">Recorded and cut like a show</span></a></li>
+              <li><a href="../../video-production/social-ads/"><span class="t">Social ads</span><span class="d">Reels, TikTok and Stories</span></a></li>
+              <li><a href="../../video-production/music-videos/" aria-current="page"><span class="t">Music videos</span><span class="d">Concept to final cut</span></a></li>
+              <li><a href="../../social-media/"><span class="t">Social media</span><span class="d">Monthly reels and carousels</span></a></li>
+            </ul>
+            <a class="nav-mega__feat" href="../../video-production/#work"><span class="nav-mega__img" data-img="../../assets/img/nav/video.webp"></span><span class="nav-mega__cap"><span>Juices &amp; Botanics</span><b>Watch the films <i aria-hidden="true">→</i></b></span></a>
+          </div>
         </div>
       </div>
-      <a href="../../faqs/">FAQs</a>
-      <a href="https://book.taylormadecreative.net/login.html">Client portal</a>
+      <div class="nav-drop" data-drop="web">
+        <button class="nav-drop-btn" type="button" aria-expanded="false" aria-controls="navWeb">Web &amp; apps <svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M1.5 3.5 5 7l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+        <div class="nav-drop-panel" id="navWeb">
+          <div class="nav-mega">
+            <div class="nav-mega__intro">
+              <a class="nav-mega__hub" href="../../web-design/"><span class="nav-mega__k">Web &amp; apps</span><span class="nav-mega__t">Web design <i aria-hidden="true">→</i></span><span class="nav-mega__all">All web design <i aria-hidden="true">→</i></span></a>
+              <p>Hand-coded sites from $1,200, plus Shopify, WordPress, Squarespace, Wix and apps.</p>
+            </div>
+            <ul class="nav-mega__list">
+              <li><a href="../../web-design/shopify/"><span class="t">Shopify</span><span class="d">Stores designed to sell</span></a></li>
+              <li><a href="../../web-design/wordpress/"><span class="t">WordPress</span><span class="d">Redesigns, posts kept</span></a></li>
+              <li><a href="../../web-design/squarespace/"><span class="t">Squarespace</span><span class="d">Past the template</span></a></li>
+              <li><a href="../../web-design/wix/"><span class="t">Wix</span><span class="d">Real type, its own phone layout</span></a></li>
+              <li><a href="../../app-design/"><span class="t">App design</span><span class="d">iPhone, Apple Watch and Mac</span></a></li>
+              <li><a href="../../ai-creative/"><span class="t">AI content</span><span class="d">Spokespeople and automation</span></a></li>
+            </ul>
+            <a class="nav-mega__feat" href="../../web-design/#work"><span class="nav-mega__img" data-img="../../assets/img/nav/web.webp"></span><span class="nav-mega__cap"><span>Tabitha Brown</span><b>See the sites <i aria-hidden="true">→</i></b></span></a>
+          </div>
+        </div>
+      </div>
+      <div class="nav-drop" data-drop="photo">
+        <button class="nav-drop-btn" type="button" aria-expanded="false" aria-controls="navPhoto">Photography <svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M1.5 3.5 5 7l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+        <div class="nav-drop-panel" id="navPhoto">
+          <div class="nav-mega">
+            <div class="nav-mega__intro">
+              <a class="nav-mega__hub" href="../../photography/"><span class="nav-mega__k">Photography</span><span class="nav-mega__t">Photography <i aria-hidden="true">→</i></span><span class="nav-mega__all">All photography <i aria-hidden="true">→</i></span></a>
+              <p>Campaigns and products for brands, plus portraits, in Downtown Dallas or on location.</p>
+            </div>
+            <ul class="nav-mega__list nav-mega__list--prices">
+              <li><a href="../../branding-photography/"><span class="t">Branding</span><span class="d">Quote</span></a></li>
+              <li><a href="../../product-photography/"><span class="t">Product</span><span class="d">Quote</span></a></li>
+              <li><a href="../../digitals/"><span class="t">Digitals</span><span class="d">$100</span></a></li>
+              <li><a href="../../headshots/"><span class="t">Headshots</span><span class="d">$150</span></a></li>
+              <li><a href="../../corporate-headshots/"><span class="t">Team headshots</span><span class="d">From $99 ea</span></a></li>
+              <li><a href="../../birthday/"><span class="t">Birthday shoots</span><span class="d">From $150</span></a></li>
+              <li><a href="../../senior-photos/"><span class="t">Senior photos</span><span class="d">From $150</span></a></li>
+            </ul>
+            <a class="nav-mega__feat" href="../../photography/#work"><span class="nav-mega__img" data-img="../../assets/img/nav/photo.webp"></span><span class="nav-mega__cap"><span>Product</span><b>See the photos <i aria-hidden="true">→</i></b></span></a>
+          </div>
+        </div>
+      </div>
+      <div class="nav-drop" data-drop="studio">
+        <button class="nav-drop-btn" type="button" aria-expanded="false" aria-controls="navStudio">Studio <svg viewBox="0 0 10 10" aria-hidden="true" focusable="false"><path d="M1.5 3.5 5 7l3.5-3.5" fill="none" stroke="currentColor" stroke-width="1.6"/></svg></button>
+        <div class="nav-drop-panel" id="navStudio">
+          <div class="nav-mega">
+            <div class="nav-mega__intro">
+              <a class="nav-mega__hub" href="../../"><span class="nav-mega__k">Studio</span><span class="nav-mega__t">Taylormade Creative <i aria-hidden="true">→</i></span><span class="nav-mega__all">Home <i aria-hidden="true">→</i></span></a>
+              <p>One Dallas studio for film, web, photo and apps, led by Nelson Taylor.</p>
+            </div>
+            <ul class="nav-mega__list">
+              <li><a href="../../#about"><span class="t">About Nelson</span><span class="d">14 years of creative direction</span></a></li>
+              <li><a href="../../#work"><span class="t">Selected work</span><span class="d">Web, film, photo and apps</span></a></li>
+              <li><a href="../../workshops/"><span class="t">Workshops</span><span class="d">AI and creative, for teams</span></a></li>
+              <li><a href="../../pricing/"><span class="t">Prices</span><span class="d">Every posted price</span></a></li>
+              <li><a href="../../faqs/"><span class="t">FAQs</span><span class="d">Booking, turnaround, delivery</span></a></li>
+              <li><a href="https://jenelstudios.com/"><span class="t">Studio rental <span class="nav-ext" aria-hidden="true">↗</span></span><span class="d">Jenel Studios, Downtown Dallas</span></a></li>
+            </ul>
+            <a class="nav-mega__cta" href="../../book/#project"><span class="nav-mega__k">Have a project?</span><span class="nav-mega__ct">Get a real quote within one business day.</span><b>Start a project <i aria-hidden="true">→</i></b></a>
+          </div>
+        </div>
+      </div>
+      <a class="nav-store" href="../../store/">Store</a>
+      <span class="nav-sep" aria-hidden="true"></span>
+      <a class="nav-util" href="https://book.taylormadecreative.net/login.html">Client portal</a>
       <a class="btn btn-gold" href="../../book/?service=brand-content&amp;type=video">Get a video quote</a>
     </div>
+    <div class="nav-scrim" aria-hidden="true"></div>
   </nav>
 
   <main id="main">
@@ -458,33 +524,47 @@
           </form>
         </div>
         <div>
-          <h3 class="vp-fh">Services</h3>
-          <a href="../../web-design/">Web design</a>
+          <h2 class="footer-h">Video</h2>
           <a href="../../video-production/">Video production</a>
-          <a href="../../photography/">Commercial photography</a>
-          <a href="../../app-design/">App design</a>
-          <a href="../../corporate-video/">Corporate video</a>
-          <a href="../../ai-creative/">AI content</a>
-          <a href="../../social-media/">Social media</a>
-          <a href="../../workshops/">Workshops</a>
-          <a href="https://jenelstudios.com/">Studio rental: Jenel Studios</a>
-        </div>
-        <div>
-          <h3 class="vp-fh">Video</h3>
-          <a href="../../video-production/podcasts/">Video podcasts</a>
           <a href="../../video-production/commercials/">Commercials</a>
+          <a href="../../corporate-video/">Corporate video</a>
+          <a href="../../video-production/podcasts/">Video podcasts</a>
           <a href="../../video-production/social-ads/">Social ads</a>
-          <a href="../../video-production/music-videos/">Music videos</a>
-          <a href="../../corporate-video/#interviews">Interview videos</a>
-          <a href="../../video-production/#retainer">Video on retainer</a>
+          <a href="../../video-production/music-videos/" aria-current="page">Music videos</a>
+          <a href="../../social-media/">Social media</a>
         </div>
         <div>
-          <h3 class="vp-fh">Studio</h3>
+          <h2 class="footer-h">Web &amp; apps</h2>
+          <a href="../../web-design/">Web design</a>
+          <a href="../../web-design/shopify/">Shopify</a>
+          <a href="../../web-design/wordpress/">WordPress</a>
+          <a href="../../web-design/squarespace/">Squarespace</a>
+          <a href="../../web-design/wix/">Wix</a>
+          <a href="../../app-design/">App design</a>
+          <a href="../../ai-creative/">AI content</a>
+        </div>
+        <div>
+          <h2 class="footer-h">Photography</h2>
+          <a href="../../photography/">All photography</a>
+          <a href="../../branding-photography/">Branding</a>
+          <a href="../../product-photography/">Product</a>
+          <a href="../../digitals/">Digitals</a>
+          <a href="../../headshots/">Headshots</a>
+          <a href="../../corporate-headshots/">Team headshots</a>
+          <a href="../../birthday/">Birthday shoots</a>
+          <a href="../../senior-photos/">Senior photos</a>
+        </div>
+        <div>
+          <h2 class="footer-h">Studio</h2>
           <a href="../../#about">About Nelson</a>
+          <a href="../../#work">Selected work</a>
+          <a href="../../workshops/">Workshops</a>
+          <a href="../../store/">Store</a>
           <a href="../../pricing/">Prices</a>
           <a href="../../faqs/">FAQs</a>
           <a href="../../book/">Book a shoot</a>
           <a href="https://book.taylormadecreative.net/login.html">Client portal</a>
+          <a href="https://jenelstudios.com/">Studio rental: Jenel Studios</a>
           <a href="https://www.instagram.com/taylormade_creative/" rel="noopener" target="_blank">Instagram</a>
         </div>
       </div>
@@ -498,8 +578,8 @@
   <script type="application/json" id="hm-films">{"mariah":{"yt":"QzbYiE_m-iw","t":"Mariah.B, “Bizness”","m":"Music video · 3:35","d":"The music video for “Bizness” by Mariah.B.","ar":"16/9","poster":"../../assets/img/vp/mariah-1280.webp"}}</script>
   <script type="application/json" id="cs-light">{"fps":4,"c":["be17b2","bf16b1","be48db","20adee","5dbdd9","b63e9e","4295f9","1fcccc","b14365","5d4cdd","00c8d6","a06752","b254df","306add","3269dd","3469dc","3568dc","3667db","3566da","3565d9","3565d8","a65267","8357dc","00cbdf","8f7c97","ad59e2","04d4db","4db7d0","ba4aaf","28b2ec","0fd5dc","2781eb","2880eb","2c80ed","2b7eec","2c7ceb","2a7bea","8b8db0","4182fa","49cef2","7ab4bd","506ceb","42b3fa","71b8c4","6e61db","3e93fd","68a9d3","8e68d3","3d91fe","5fbadc","266ade","256add","256bde","266bde","286bdf","296bde","2c6cde","2e6cde","2f6cdd","316ddd","2c6ce0","2d6ce0","2c6ee1","2b6fe2","b11fb6","b71eb1","b71eb0","b01fb6","b81db6","bc19ae","bb1aac","8b1fb6","b81cb9","ad1cb9","b51cb9","b41bbb","be17b1","4576f6","4db6ee","6eadcd","4d5bee","46a2f5","818bba","6c4fec","43b1f8","67b3d4","585be3","44a4f7","b31bba","b71bbb","921db8","a21cb9","b21bba","ae1db8","a41cba","b21bbb","aa1cb9","ad1cba","2d6fe5","306de4","2f6ce3","2f6ce2","2e6ce3","2d6de3","2e6de3","316de3","316de3","326de3","346ce3","4068ed","3f68ec","4168ed","4269ee","4369ed","4064e8","3e65e9","4067eb","4168ec","8f1db8","961db8"]}</script>
   <script src="../../js/config.js" defer></script>
-  <script src="../../js/site.js" defer></script>
-  <script src="../../js/home.js?v=8" defer></script>
+  <script src="../../js/site.js?v=20261015n" defer></script>
+  <script src="../../js/home.js?v=20261015n" defer></script>
   <script src="../../js/video.js?v=2" defer></script>
 </body>
 </html>

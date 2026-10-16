@@ -1,0 +1,95 @@
+/* ============================================================
+   STORE · the studio's own apps, in the homepage system (home.css)
+   hero: the line + the Mac window with the iPhone in front
+   shelf: one tile per app, price and the way to get it up front
+   ============================================================ */
+
+/* ---------- hero ---------- */
+.st-hero { padding: calc(var(--nav-h) + clamp(40px, 7vh, 96px)) 0 clamp(64px, 9vw, 128px); }
+.st-hero .hm-mast .st-gold > span { color: var(--gold); }
+.st-duo { position: relative; padding: 0 9% 9% 0; }
+.st-duo__mac { filter: drop-shadow(0 40px 70px rgba(0, 0, 0, .55)); }
+.st-duo__mac .mu-safari__screen img { height: 100%; object-fit: cover; object-position: top left; }
+.st-duo__phone { position: absolute; right: 0; bottom: 0; width: 24%; filter: drop-shadow(0 30px 50px rgba(0, 0, 0, .6)); }
+@media (min-width: 1000px) {
+  .st-hero .hm-hero__grid { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+}
+@media (max-width: 999px) {
+  .st-hero { display: block; padding-top: calc(var(--nav-h) + 32px); }
+  .st-hero .hm-hero__grid, .st-hero .hm-hero__copy { display: grid; }
+  .st-hero .hm-h1, .st-hero .hm-lede, .st-hero .hm-hero__copy > .hm-acts { margin-left: 0; margin-right: 0; }
+  .st-hero .hm-lede { margin-top: 22px; margin-bottom: 0; }
+  .st-hero .hm-hero__copy > * { order: 0; }
+  .st-hero .hm-hero__copy > .hm-acts { margin-top: 26px; }
+  .st-hero .hm-stage { margin-top: 12px; }
+}
+
+/* ---------- shelf ---------- */
+.st-shelf { padding: clamp(80px, 10vw, 152px) 0; background: var(--paper); color: var(--ink); }
+.st-shelf :focus-visible { outline-color: var(--ink); }
+.st-shelf__head { display: grid; gap: 18px; margin-bottom: clamp(36px, 4.4vw, 64px); }
+.st-shelf__head p { max-width: 44ch; font-size: clamp(17px, 1.35vw, 20px); line-height: 1.55; color: var(--mute-on-paper); }
+@media (min-width: 1000px) { .st-shelf__head { grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); align-items: end; } }
+.st-grid { display: grid; gap: clamp(16px, 2vw, 28px); }
+@media (min-width: 860px) { .st-grid { grid-template-columns: 1fr 1fr; } }
+
+.st-tile {
+  position: relative; overflow: hidden; display: flex; flex-direction: column;
+  padding: clamp(28px, 3.2vw, 48px) clamp(24px, 3.2vw, 48px) 0;
+  background: #fbf9f4; border: 1px solid var(--hair-paper); border-radius: 28px;
+}
+.st-tile__top { display: flex; align-items: center; gap: 16px; }
+.st-icon { width: 72px; height: 72px; border-radius: 22.5%; box-shadow: 0 1px 2px rgba(8, 8, 10, .16), 0 8px 24px rgba(8, 8, 10, .12); }
+.st-plat { font-weight: 600; font-size: 14px; letter-spacing: .08em; text-transform: uppercase; color: var(--gold-ink); }
+.st-name {
+  margin-top: 26px; font-family: var(--cond); font-weight: 800; text-transform: uppercase; font-synthesis: none;
+  font-size: clamp(48px, 4.6vw, 76px); line-height: .86; letter-spacing: -.01em;
+}
+.st-line { margin-top: 16px; max-width: 34ch; font-size: clamp(16.5px, 1.25vw, 18.5px); line-height: 1.5; color: var(--mute-on-paper); }
+.st-price { display: flex; align-items: baseline; gap: 10px; margin-top: 22px; font-size: 16px; color: var(--mute-on-paper); }
+.st-price b { font-family: var(--cond); font-weight: 800; font-size: 40px; line-height: 1; text-transform: uppercase; color: var(--ink); }
+.st-acts { display: flex; flex-wrap: wrap; align-items: center; gap: 14px 24px; margin-top: 22px; }
+.st-more { display: inline-flex; align-items: center; gap: 8px; min-height: 44px; font-weight: 700; font-size: 16px; color: var(--ink); }
+.st-more span { color: var(--gold-ink); transition: transform .2s var(--ease-out); }
+@media (hover: hover) and (pointer: fine) { .st-more:hover span { transform: translateX(3px); } .st-more[href^="#"]:hover span { transform: translateY(3px); } }
+.st-req { margin-top: 14px; font-size: 14px; color: var(--mute-on-paper); }
+
+/* the device rises from the bottom edge of the tile */
+.st-peek { position: relative; margin-top: auto; padding-top: 40px; height: clamp(230px, 24vw, 330px); overflow: hidden; }
+.st-peek .mu-iphone { width: clamp(170px, 15vw, 230px); margin: 0 auto; filter: drop-shadow(0 24px 40px rgba(8, 8, 10, .25)); transition: transform .6s var(--ease-out); }
+.st-peek--mac .mu-safari { width: 108%; margin-left: 4%; filter: drop-shadow(0 24px 40px rgba(8, 8, 10, .18)); transition: transform .6s var(--ease-out); }
+.st-peek--mac .mu-safari__screen img { height: 100%; object-fit: cover; object-position: top left; }
+@media (hover: hover) and (pointer: fine) {
+  .st-tile:hover .st-peek .mu-iphone, .st-tile:hover .st-peek--mac .mu-safari { transform: translateY(-10px); }
+}
+
+/* ---------- each app ---------- */
+.st-feats { list-style: none; margin: 24px 0 0; padding: 0; max-width: 52ch; display: grid; gap: 2px; }
+.st-feats li { position: relative; padding: 11px 0 11px 30px; font-size: 16.5px; line-height: 1.45; border-top: 1px solid var(--hair-ink); }
+.st-feats li::before { content: ""; position: absolute; left: 2px; top: 19px; width: 14px; height: 2px; background: var(--gold); }
+.hm-ch--paper2 .st-feats li { border-top-color: var(--hair-paper); }
+.hm-ch--paper2 .st-feats li::before { background: var(--gold-ink); }
+.hm-ch--paper2 .mu-safari__screen img { height: 100%; object-fit: cover; object-position: top left; }
+
+/* ---------- FAQ on ink, so the paper chapter above keeps its edge ---------- */
+.st-faq { background: var(--ink); color: var(--paper); }
+.st-faq :focus-visible { outline-color: var(--gold); }
+.st-faq .hm-faq__side p { color: var(--mute-on-ink); }
+.st-faq .hm-faq__side a, .st-faq .hm-faq__list a { color: var(--paper); text-decoration: underline; text-underline-offset: 4px; }
+.st-faq .hm-faq__list details { border-top-color: var(--hair-ink); }
+.st-faq .hm-faq__list details:last-child { border-bottom-color: var(--hair-ink); }
+.st-faq .hm-faq__list summary::after {
+  background: linear-gradient(var(--gold), var(--gold)) center / 18px 2px no-repeat, linear-gradient(var(--gold), var(--gold)) center / 2px 18px no-repeat;
+}
+@media (hover: hover) and (pointer: fine) { .st-faq .hm-faq__list summary:hover { color: var(--gold); } }
+.st-faq .hm-faq__list details p { color: var(--soft-on-ink); }
+
+@media (prefers-reduced-motion: reduce) {
+  .st-peek .mu-iphone, .st-peek--mac .mu-safari, .st-more span { transition: none; }
+}
+
+/* the proof: a real episode recorded with the app */
+.st-proof { margin: 0; }
+.st-proof img { display: block; width: 100%; height: auto; border-radius: 18px; box-shadow: 0 30px 60px -20px rgba(8, 8, 10, .35); }
+.st-proof figcaption { margin-top: 16px; max-width: 56ch; font-size: 15px; line-height: 1.5; color: var(--mute-on-paper); }
+.st-proof figcaption b { display: block; margin-bottom: 2px; font-weight: 700; color: var(--ink); }

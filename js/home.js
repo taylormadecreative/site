@@ -745,4 +745,19 @@
     car.addEventListener("pointerup", (e) => { const dx = e.clientX - sx; if (e.pointerType !== "mouse" && Math.abs(dx) > 44) go(k + (dx < 0 ? 1 : -1)); });
     go(0);
   }
+
+  // A link from another page to a section here (/#work, /#about, /#faq) lands on it
+  // once the pinned hero and late images have their real height. The browser's own
+  // jump happens before that, so it stops short. Never overrides a reload or a reader
+  // who has already started scrolling.
+  const nav0 = performance.getEntriesByType && performance.getEntriesByType("navigation")[0];
+  const target = location.hash.length > 1 && document.getElementById(decodeURIComponent(location.hash.slice(1)));
+  if (target && nav0?.type !== "reload" && nav0?.type !== "back_forward") {
+    let moved = false;
+    const stop = () => { moved = true; };
+    ["wheel", "touchstart", "keydown"].forEach((t) => addEventListener(t, stop, { once: true, passive: true }));
+    const land = () => { if (!moved) target.scrollIntoView({ behavior: "instant", block: "start" }); };
+    const settle = () => { requestAnimationFrame(land); setTimeout(land, 450); };
+    if (document.readyState === "complete") settle(); else addEventListener("load", settle, { once: true });
+  }
 })();
