@@ -28,6 +28,7 @@
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link href="https://fonts.googleapis.com/css2?family=Unbounded:wght@700;800;900&family=Familjen+Grotesk:ital,wght@0,400;0,500;0,600;0,700;1,400&family=Martian+Mono:wght@400;500&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="../css/site.css?v=20261016">
+  <link rel="stylesheet" href="../css/training.css?v=2">
 
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PS0H5W3ZX7"></script>
   <script>
@@ -85,6 +86,8 @@
         "acceptedAnswer": { "@type": "Answer", "text": "Corporate videos at Taylormade Creative are quoted per project, because the number of people on camera, the number of videos, the location, and the edit set the cost. Send your brief and you get a real quote within one business day. A 50% deposit locks your date." } },
       { "@type": "Question", "name": "Do you make training videos in Dallas?",
         "acceptedAnswer": { "@type": "Answer", "text": "Yes. Taylormade Creative produces corporate training and onboarding videos for Dallas–Fort Worth companies: new-hire onboarding, how-to and process walkthroughs, product training for sales and support teams, and safety and compliance lessons, taught on camera by your own experts. Script help and a teleprompter on set; captioned videos in horizontal and vertical versions. Quoted per project within one business day." } },
+      { "@type": "Question", "name": "Can you add motion graphics to our training videos?",
+        "acceptedAnswer": { "@type": "Answer", "text": "Yes. Taylormade Creative builds motion graphics into training videos: chapter markers, diagram cards that highlight what the instructor is explaining, key numbers and cautions on screen in the instructor's own words, and branded title and end cards, placed so they never cover a face or the work being shown. The It's A Secret Academy training series on the corporate video page is an example." } },
       { "@type": "Question", "name": "Do you film interview videos in Dallas?",
         "acceptedAnswer": { "@type": "Answer", "text": "Yes. Taylormade Creative films sit-down interview videos with your executives, employees, customers, and experts, at your office anywhere in Dallas–Fort Worth or at the downtown Dallas studio. The questions are planned with you before the shoot and Nelson Taylor asks them on set, so people answer in their own words with no lines to memorize. You get the full edited interview plus short captioned clips for LinkedIn, Instagram, TikTok, and YouTube Shorts. Quoted per project within one business day." } },
       { "@type": "Question", "name": "Who asks the questions in an interview video?",
@@ -139,7 +142,11 @@
       "uploadDate": "2025-03-11",
       "duration": "PT53S",
       "embedUrl": "https://www.youtube-nocookie.com/embed/ai6gyONaabA"
-    }
+    },
+    {"@context": "https://schema.org", "@type": "VideoObject", "name": "It’s A Secret Academy: Brow Lift & Crow’s Feet", "description": "Neurotoxin training lesson for It’s A Secret Academy: treating the orbicularis oculi for a brow lift and crow’s feet, with anatomy, dosing, and placement graphics. Motion graphics by Taylormade Creative.", "thumbnailUrl": "https://www.taylormadecreative.net/assets/img/training/brow-1280.jpg", "uploadDate": "2026-10-25", "duration": "PT1M4S", "contentUrl": "https://www.taylormadecreative.net/assets/video/training/brow-1080.mp4", "creator": {"@id": "https://www.taylormadecreative.net/#studio"}},
+    {"@context": "https://schema.org", "@type": "VideoObject", "name": "It’s A Secret Academy: Frontalis", "description": "Neurotoxin training lesson for It’s A Secret Academy: injecting the frontalis, with anatomy, dosing, and caution graphics. Motion graphics by Taylormade Creative.", "thumbnailUrl": "https://www.taylormadecreative.net/assets/img/training/frontalis-1280.jpg", "uploadDate": "2026-10-25", "duration": "PT1M39S", "contentUrl": "https://www.taylormadecreative.net/assets/video/training/frontalis-1080.mp4", "creator": {"@id": "https://www.taylormadecreative.net/#studio"}},
+    {"@context": "https://schema.org", "@type": "VideoObject", "name": "It’s A Secret Academy: Chin & DAO", "description": "Neurotoxin training lesson for It’s A Secret Academy covering the orbicularis oris, mentalis, and depressor anguli oris (DAO), with anatomy graphics and chaptered injection steps. Motion graphics by Taylormade Creative.", "thumbnailUrl": "https://www.taylormadecreative.net/assets/img/training/chin-1280.jpg", "uploadDate": "2026-10-25", "duration": "PT2M16S", "contentUrl": "https://www.taylormadecreative.net/assets/video/training/chin-1080.mp4", "creator": {"@id": "https://www.taylormadecreative.net/#studio"}},
+    {"@context": "https://schema.org", "@type": "VideoObject", "name": "It’s A Secret Academy: Fanning technique", "description": "Injection technique lesson for It’s A Secret Academy: the fanning technique in the lips, with an animated diagram of the technique. Motion graphics by Taylormade Creative.", "thumbnailUrl": "https://www.taylormadecreative.net/assets/img/training/fanning-1280.jpg", "uploadDate": "2026-10-25", "duration": "PT35S", "contentUrl": "https://www.taylormadecreative.net/assets/video/training/fanning-1080.mp4", "creator": {"@id": "https://www.taylormadecreative.net/#studio"}}
   ]
   </script>
 </head>
@@ -303,7 +310,7 @@
             <li>Product training for sales and support</li>
             <li>Safety and compliance lessons</li>
           </ul>
-          <p class="duo-note">Captioned, in horizontal and vertical versions, for your training platform, intranet, or YouTube.</p>
+          <p class="duo-note">Captioned, in horizontal and vertical versions, for your training platform, intranet, or YouTube. <a href="#training-series" style="color:var(--gold-ink);font-weight:600;text-decoration:underline;text-underline-offset:3px;">Watch a finished training series</a>.</p>
           <a class="btn btn-gold duo-btn" href="../book/?service=corporate-video&amp;type=training">Quote a training video</a>
         </article>
         <article class="duo-card reveal reveal-d1" id="interviews">
@@ -319,6 +326,51 @@
           <p class="duo-note">You get the full interview plus short captioned clips for LinkedIn, Instagram, TikTok, and YouTube Shorts.</p>
           <a class="btn btn-gold duo-btn" href="../book/?service=corporate-video&amp;type=interviews">Quote an interview video</a>
         </article>
+      </div>
+      <!-- training series: four finished lessons, played in place (css/training.css, js/training.js) -->
+      <div class="series reveal" id="training-series" data-series>
+        <div class="series-intro">
+          <span class="series-k">Training series · It’s A Secret Academy</span>
+          <h3 class="series-h">Four lessons, finished like a&nbsp;course</h3>
+          <p class="series-p">Your expert teaches it once; the edit makes it stick. For It’s A Secret Academy I turned four injector-training lessons into a course: each muscle lights up on an anatomy card as the instructor names it, dosing and cautions build on screen in the instructor’s own words, and the graphics step aside whenever the injector’s hands need the frame.</p>
+        </div>
+        <div class="series-stage">
+          <div class="series-screen">
+            <video class="series-video" src="../assets/video/training/brow-720.mp4" poster="../assets/img/training/brow-1280.jpg" preload="none" playsinline controls width="1920" height="1080">
+              <track kind="captions" srclang="en" label="English" src="../assets/video/training/brow.vtt">
+            </video>
+            <button class="series-play" type="button" aria-label="Play lesson 1, Brow Lift &amp; Crow’s Feet">
+              <span class="series-pill"><span class="series-pill__icon"><svg viewBox="0 0 24 24" aria-hidden="true"><path d="M7 4.5v15l12.5-7.5z"/></svg></span><span class="series-pill__txt"><b>Lesson 01</b><span>1:04</span></span></span>
+            </button>
+            <p class="series-err" role="alert" hidden>This lesson didn’t load. <button type="button">Try again</button></p>
+          </div>
+          <ol class="series-list" aria-label="Lessons">
+              <li><button class="series-item" type="button" data-slug="brow" data-title="Brow Lift & Crow’s Feet" data-dur="1:04" data-vtt aria-current="true">
+                <span class="series-thumb"><img src="../assets/img/training/brow-480.jpg" alt="" width="480" height="270" loading="lazy" decoding="async"></span>
+                <span class="series-txt"><span class="series-n">LESSON 01</span><span class="series-t">Brow Lift &amp; Crow’s Feet</span><span class="series-m">Neurotoxin · 1:04</span></span>
+                <span class="series-bar" aria-hidden="true"><i></i></span>
+              </button></li>
+              <li><button class="series-item" type="button" data-slug="frontalis" data-title="Frontalis" data-dur="1:39" data-vtt>
+                <span class="series-thumb"><img src="../assets/img/training/frontalis-480.jpg" alt="" width="480" height="270" loading="lazy" decoding="async"></span>
+                <span class="series-txt"><span class="series-n">LESSON 02</span><span class="series-t">Frontalis</span><span class="series-m">Neurotoxin · 1:39</span></span>
+                <span class="series-bar" aria-hidden="true"><i></i></span>
+              </button></li>
+              <li><button class="series-item" type="button" data-slug="chin" data-title="Chin & DAO" data-dur="2:16" data-vtt>
+                <span class="series-thumb"><img src="../assets/img/training/chin-480.jpg" alt="" width="480" height="270" loading="lazy" decoding="async"></span>
+                <span class="series-txt"><span class="series-n">LESSON 03</span><span class="series-t">Chin &amp; DAO</span><span class="series-m">Neurotoxin · 2:16</span></span>
+                <span class="series-bar" aria-hidden="true"><i></i></span>
+              </button></li>
+              <li><button class="series-item" type="button" data-slug="fanning" data-title="Fanning technique" data-dur="0:35">
+                <span class="series-thumb"><img src="../assets/img/training/fanning-480.jpg" alt="" width="480" height="270" loading="lazy" decoding="async"></span>
+                <span class="series-txt"><span class="series-n">LESSON 04</span><span class="series-t">Fanning technique</span><span class="series-m">Injection technique · 0:35</span></span>
+                <span class="series-bar" aria-hidden="true"><i></i></span>
+              </button></li>
+          </ol>
+        </div>
+        <div class="series-foot">
+          <p class="series-note">Every lesson ships with chapters, on-screen key points, a caption file and branded end cards, in 4K.</p>
+          <a class="btn btn-gold series-cta" href="../book/?service=corporate-video&amp;type=training">Quote a training series</a>
+        </div>
       </div>
       <h3 class="duo-more reveal">What else can your team say on camera?</h3>
       <div class="sheet-list">
@@ -470,6 +522,10 @@
           <p class="a">Yes. I produce corporate training and onboarding videos for Dallas–Fort Worth companies: new-hire onboarding, how-to and process walkthroughs, product training for sales and support teams, and safety and compliance lessons, taught on camera by your own experts. I help with the scripts and run a teleprompter on set, and every video comes captioned in horizontal and vertical versions. Quoted per project within one business day.</p>
         </details>
         <details>
+          <summary>Can you add motion graphics to our training videos?</summary>
+          <p class="a">Yes. I build the motion graphics into the edit: chapter markers, diagram cards that highlight what your instructor is explaining, key numbers and cautions on screen in their own words, and branded title and end cards, placed so they never cover a face or the work being shown. <a href="#training-series" style="color:var(--gold);text-decoration:underline;text-underline-offset:3px;">Watch the It’s A Secret Academy series</a>.</p>
+        </details>
+        <details>
           <summary>Do you film interview videos in Dallas?</summary>
           <p class="a">Yes. Sit-down interviews with your executives, employees, customers, and experts, at your office anywhere in DFW or at the downtown Dallas studio. We plan the questions together before the shoot, I ask them on set, and your people answer in their own words with no lines to memorize. You get the full edited interview plus short captioned clips for LinkedIn, Instagram, TikTok, and YouTube Shorts. Quoted per project within one business day.</p>
         </details>
@@ -614,5 +670,6 @@
   </footer>
 
   <script src="../js/site.js?v=20261015n" defer></script>
+  <script src="../js/training.js?v=2" defer></script>
 </body>
 </html>
