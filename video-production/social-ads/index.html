@@ -31,6 +31,14 @@
   <link rel="stylesheet" href="../../css/site.css?v=20261016">
   <link rel="stylesheet" href="../../css/home.css?v=20261015n">
   <link rel="stylesheet" href="../../css/video.css?v=3">
+  <style>
+    .vp-media--pair .vp-media__row { grid-template-columns: repeat(2, minmax(0, 210px)); max-width: 460px; }
+    .vp-snd-bar { align-items: center; gap: 8px; }
+    .vp-snd-cap { margin-right: auto; max-width: 34ch; font-size: 13.5px; line-height: 1.45; opacity: .75; }
+    .vp-snd .i-on, .vp-snd.is-on .i-off { display: none; }
+    .vp-snd.is-on .i-on { display: inline; }
+    .vp-snd svg path:first-child { fill: currentColor; }
+  </style>
   <script async src="https://www.googletagmanager.com/gtag/js?id=G-PS0H5W3ZX7"></script>
   <script>
     window.dataLayer = window.dataLayer || [];
@@ -215,6 +223,21 @@
      }
     }
    ]
+  },
+  {
+   "@type": "VideoObject",
+   "@id": "https://www.taylormadecreative.net/#video-academy-ad",
+   "name": "It’s A Secret Academy: hands-on injector training",
+   "description": "A vertical social ad for It’s A Secret Academy, an injector training academy in Irving, TX: students on camera cut with class B-roll, a hook in the first second, word-by-word captions for sound-off viewers and an Apply Now end card. Edited with motion graphics by Taylormade Creative.",
+   "thumbnailUrl": [
+    "https://www.taylormadecreative.net/assets/img/vp/academy-ad.webp"
+   ],
+   "uploadDate": "2026-10-25",
+   "duration": "PT26S",
+   "contentUrl": "https://www.taylormadecreative.net/assets/video/vp/academy-ad.mp4",
+   "creator": {
+    "@id": "https://www.taylormadecreative.net/#nelson"
+   }
   }
  ]
 }
@@ -407,7 +430,7 @@
         <div class="vp-sec__body" data-fade>
             <ul class="vp-list"><li><b>The hook.</b> The first seconds get planned first, because that's when people decide to keep watching.</li><li><b>The product.</b> Lit on set so it reads true to color on a small screen.</li><li><b>The offer.</b> One clear message and one next step, said or shown.</li><li><b>Sound off.</b> Feeds often play muted, so on-screen text or captions are planned in and listed in your quote.</li></ul>
             <p>Then I edit it and color grade it by hand, so the ad looks like the rest of your brand.</p>
-            <figure class="vp-media vp-media--phones vp-media--solo" data-loop><div class="vp-media__row"><span class="vp-media__cell"><span class="vp-media__phone"><span class="mu-iphone"><span class="mu-iphone__screen"><video muted loop playsinline preload="none" data-poster="../../assets/img/vp/social.webp" data-src="../../assets/video/vp/social.mp4" aria-label="Marviano Cosmetics, a vertical cut on a phone"></video><span class="vp-reelui" aria-hidden="true"><span class="vp-reelui__top">Reels</span><span class="vp-reelui__rail"><i></i><i></i><i></i></span><span class="vp-reelui__cap"><b>yourbrand</b> Sponsored<em>Shop now</em></span></span></span><svg class="mu-iphone__frame" viewBox="0 0 433 882" aria-hidden="true" focusable="false"><use href="#mu-phone"/></svg></span></span><b>Marviano Cosmetics, vertical</b></span></div><figcaption class="vp-media__bar"><button class="vp-ctl" type="button" data-pause="loop" aria-label="Pause the vertical ad"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="i-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/><path class="i-play" d="M8 5v14l11-7z"/></svg></button></figcaption></figure>
+            <figure class="vp-media vp-media--phones vp-media--pair" data-loop><div class="vp-media__row"><span class="vp-media__cell"><span class="vp-media__phone"><span class="mu-iphone"><span class="mu-iphone__screen"><video id="academy-ad" muted loop playsinline preload="none" data-poster="../../assets/img/vp/academy-ad.webp" data-src="../../assets/video/vp/academy-ad.mp4" aria-label="It’s A Secret Academy, a vertical social ad with burned-in captions"></video></span><svg class="mu-iphone__frame" viewBox="0 0 433 882" aria-hidden="true" focusable="false"><use href="#mu-phone"/></svg></span></span><b>It’s A Secret Academy, vertical ad</b></span><span class="vp-media__cell"><span class="vp-media__phone"><span class="mu-iphone"><span class="mu-iphone__screen"><video muted loop playsinline preload="none" data-poster="../../assets/img/vp/social.webp" data-src="../../assets/video/vp/social.mp4" aria-label="Marviano Cosmetics, a vertical cut on a phone"></video><span class="vp-reelui" aria-hidden="true"><span class="vp-reelui__top">Reels</span><span class="vp-reelui__rail"><i></i><i></i><i></i></span><span class="vp-reelui__cap"><b>yourbrand</b> Sponsored<em>Shop now</em></span></span></span><svg class="mu-iphone__frame" viewBox="0 0 433 882" aria-hidden="true" focusable="false"><use href="#mu-phone"/></svg></span></span><b>Marviano Cosmetics, vertical</b></span></div><figcaption class="vp-media__bar vp-snd-bar"><span class="vp-snd-cap">It’s A Secret Academy: a hook in the first second, captions for sound-off viewers and an Apply Now end card.</span><button class="vp-ctl vp-snd" type="button" data-sound="academy-ad" aria-pressed="false" aria-label="Play the It’s A Secret Academy ad with sound"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path d="M4 9.5v5h3.6L12 18.6V5.4L7.6 9.5z"/><path class="i-off" d="M15.5 9.5l5 5m0-5l-5 5" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/><path class="i-on" d="M15.2 9a4.2 4.2 0 0 1 0 6M17.6 6.6a7.6 7.6 0 0 1 0 10.8" fill="none" stroke="currentColor" stroke-width="1.8" stroke-linecap="round"/></svg></button><button class="vp-ctl" type="button" data-pause="loop" aria-label="Pause the vertical ad"><svg viewBox="0 0 24 24" aria-hidden="true" focusable="false"><path class="i-pause" d="M7 5h3.5v14H7zM13.5 5H17v14h-3.5z"/><path class="i-play" d="M8 5v14l11-7z"/></svg></button></figcaption></figure>
         </div>
       </div>
     </section>
@@ -608,5 +631,21 @@
   <script src="../../js/site.js?v=20261015n" defer></script>
   <script src="../../js/home.js?v=20261015n" defer></script>
   <script src="../../js/video.js?v=2" defer></script>
+  <script>
+    /* Sound toggle for the It's A Secret Academy ad: the loop plays muted; one tap restarts it with sound. */
+    document.querySelectorAll("[data-sound]").forEach((b) => {
+      const v = document.getElementById(b.dataset.sound);
+      if (!v) return;
+      b.addEventListener("click", () => {
+        const on = v.muted;
+        if (!v.getAttribute("src") && v.dataset.src) v.src = v.dataset.src;
+        v.muted = !on;
+        if (on) { v.currentTime = 0; const p = v.play(); if (p && p.catch) p.catch(() => {}); if (window.gtag) gtag("event", "vp_sound_on", {video: b.dataset.sound}); }
+        b.classList.toggle("is-on", on);
+        b.setAttribute("aria-pressed", String(on));
+        b.setAttribute("aria-label", on ? "Mute the It’s A Secret Academy ad" : "Play the It’s A Secret Academy ad with sound");
+      });
+    });
+  </script>
 </body>
 </html>
