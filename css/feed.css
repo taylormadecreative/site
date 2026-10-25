@@ -1,0 +1,130 @@
+/* "In the feed" (social-ads #in-the-feed): two client ads shown in the Instagram UI they were made for.
+   A light feed-post card for the 4:5 cut and a phone running Reels for the 9:16 cut, on a warm studio sweep. */
+.vp-feed {
+  /* card width drives the phone width, so both objects stand the same height: card = 1.25w + ~176px of UI, phone = 2.037w */
+  --cw: clamp(300px, 33vw, 452px);
+  --pw: calc((var(--cw) * 1.25 + 176px) / 2.037);
+  position: relative; overflow: hidden; color: var(--ink);
+  padding: clamp(96px, 11vw, 168px) 0 clamp(88px, 10vw, 150px);
+  background:
+    radial-gradient(70% 55% at 50% 72%, rgba(255, 255, 255, .75) 0%, rgba(255, 255, 255, 0) 70%),
+    linear-gradient(180deg, #f5f2ea 0%, #ece6da 58%, #e3dccd 100%);
+  border-top: 1px solid var(--hair-paper);
+}
+.vp-feed .vp-kick { color: var(--gold-ink); }
+.vp-feed__head { display: grid; gap: 18px; margin-bottom: clamp(48px, 6vw, 88px); }
+.vp-feed__sub { color: var(--mute-on-paper); font-size: clamp(17px, 1.35vw, 20px); line-height: 1.55; max-width: 44ch; }
+@media (min-width: 900px) {
+  .vp-feed__head { grid-template-columns: minmax(0, 1fr) minmax(0, 44ch); align-items: end; column-gap: 64px; }
+}
+
+.vp-feed__stage { display: flex; flex-wrap: wrap; justify-content: center; align-items: flex-end; gap: clamp(48px, 7vw, 120px); }
+.vp-feed__item { margin: 0; display: grid; justify-items: center; gap: 22px; }
+.vp-feed__obj { position: relative; }
+/* soft floor shadow tied to the object, so each one sits on the sweep instead of floating on it */
+.vp-feed__obj::after {
+  content: ""; position: absolute; left: 8%; right: 8%; bottom: -16px; height: 34px; z-index: -1;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(60, 44, 20, .3), rgba(60, 44, 20, 0) 70%);
+  filter: blur(6px); pointer-events: none;
+}
+.vp-feed__cap { display: flex; align-items: center; gap: 14px; text-align: left; }
+.vp-feed__cap > span { display: grid; gap: 3px; }
+.vp-feed__cap b { font-weight: 700; font-size: 16px; }
+.vp-feed__cap small { font-size: 14px; color: var(--mute-on-paper); font-variant-numeric: tabular-nums; }
+.vp-feed .vp-ctl { flex: none; color: var(--ink); background: rgba(8, 8, 10, .06); box-shadow: inset 0 0 0 1px var(--hair-paper); }
+.vp-feed__acts { justify-content: center; margin-top: clamp(44px, 5vw, 72px); }
+
+/* ---------- Instagram feed post (light mode) ---------- */
+.ig-post {
+  --ig-ink: #0c0c0d; --ig-mute: #737373;
+  width: var(--cw); background: #fff; color: var(--ig-ink); border-radius: 18px; overflow: hidden;
+  font: 400 14px/1.35 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+  box-shadow: 0 0 0 1px rgba(8, 8, 10, .07), 0 2px 4px rgba(40, 30, 14, .05), 0 36px 70px -34px rgba(52, 38, 16, .45);
+  transition: transform .5s var(--ease-out), box-shadow .5s var(--ease-out);
+}
+@media (hover: hover) and (pointer: fine) {
+  .vp-feed__item--post:hover .ig-post { transform: translateY(-4px); box-shadow: 0 0 0 1px rgba(8, 8, 10, .07), 0 2px 4px rgba(40, 30, 14, .05), 0 48px 80px -36px rgba(52, 38, 16, .5); }
+}
+.ig-post__head { display: flex; align-items: center; gap: 10px; padding: 11px 12px 11px 13px; }
+/* plain avatar ring: a gradient ring would claim a live story */
+.ig-ava { flex: none; width: 34px; height: 34px; border-radius: 50%; box-shadow: 0 0 0 1px rgba(0, 0, 0, .1); overflow: hidden; }
+.ig-ava img { display: block; width: 100%; height: 100%; }
+.ig-post__who { display: grid; line-height: 1.2; min-width: 0; }
+.ig-post__who b { font-weight: 600; font-size: 14px; }
+.ig-post__who span { font-size: 12px; opacity: .82; }
+.ig-ico { width: 24px; height: 24px; flex: none; fill: none; stroke: currentColor; stroke-width: 1.9; stroke-linecap: round; stroke-linejoin: round; }
+.ig-post__head .ig-ico { margin-left: auto; stroke: none; fill: currentColor; }
+.ig-post__media { position: relative; aspect-ratio: 4 / 5; background: #111; }
+.ig-post__media video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.ig-post__acts { display: flex; align-items: center; gap: 16px; padding: 11px 13px 6px; }
+.ig-post__acts .ig-ico:last-child { margin-left: auto; }
+.ig-post__cap { padding: 2px 13px 15px; margin: 0; }
+.ig-post__cap b { font-weight: 600; margin-right: 5px; }
+.ig-post__cap span { color: var(--ig-mute); }
+
+/* the whole video is the tap target, like the app; the speaker chip is the visible, focusable control */
+.ig-tap { position: absolute; inset: 0; z-index: 2; border: 0; padding: 0; background: transparent; cursor: pointer; -webkit-tap-highlight-color: transparent; }
+.ig-sound {
+  position: absolute; z-index: 3; right: 12px; bottom: 12px; width: 30px; height: 30px; padding: 0; border: 0; border-radius: 50%;
+  display: grid; place-items: center; color: #fff; background: rgba(38, 38, 38, .82); cursor: pointer;
+  transition: transform .16s var(--ease-out), background-color .2s ease, opacity .25s ease;
+  -webkit-tap-highlight-color: transparent;
+}
+.ig-sound::after { content: ""; position: absolute; inset: -9px; border-radius: 50%; }
+.ig-sound:active { transform: scale(.9); }
+.ig-sound svg { width: 15px; height: 15px; fill: currentColor; }
+.ig-sound .s-on, .ig-sound.is-on .s-off { display: none; }
+.ig-sound.is-on .s-on { display: block; }
+.ig-sound:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+@media (hover: hover) and (pointer: fine) { .ig-sound:hover { background: rgba(20, 20, 20, .92); } }
+.ig-hint {
+  position: absolute; z-index: 3; right: 50px; bottom: 15px; padding: 5px 10px; border-radius: 999px;
+  font: 600 12px/1 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; color: #fff; background: rgba(38, 38, 38, .82);
+  pointer-events: none; transition: opacity .3s ease, transform .3s var(--ease-out);
+}
+/* gone once the sound is used, or after the first few seconds on screen */
+[data-feed].is-heard .ig-hint, [data-feed-unit].is-hinted .ig-hint { opacity: 0; transform: translateX(6px); }
+
+/* ---------- Instagram Reels in a phone ---------- */
+.vp-feed__item--reel .mu-iphone { width: var(--pw); filter: drop-shadow(0 34px 44px rgba(52, 38, 16, .42)); }
+.ig-reel { background: #000; }
+.ig-reel video { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.ig-reel__ui {
+  position: absolute; inset: 0; pointer-events: none; color: #fff;
+  font: 400 calc(var(--pw) * .036)/1.3 -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, sans-serif; /* scales with the phone */
+  text-shadow: 0 1px 4px rgba(0, 0, 0, .45);
+}
+.ig-reel__ui::after { content: ""; position: absolute; inset: auto 0 0; height: 30%; background: linear-gradient(180deg, rgba(0, 0, 0, 0), rgba(0, 0, 0, .38)); }
+.ig-reel__top { position: absolute; z-index: 1; left: 8%; right: 8%; top: 7.5%; display: flex; align-items: center; justify-content: space-between; }
+.ig-reel__top b { font-size: 1.55em; font-weight: 700; letter-spacing: -.01em; }
+.ig-reel__top .ig-ico { width: 1.9em; height: 1.9em; }
+.ig-reel__rail { position: absolute; z-index: 1; right: 4.5%; bottom: 6%; display: grid; justify-items: center; gap: 1.4em; }
+.ig-reel__rail .ig-ico { width: 2em; height: 2em; }
+.ig-reel__rail .ig-dots { fill: currentColor; stroke: none; }
+.ig-reel__disc { width: 1.8em; height: 1.8em; border-radius: .45em; border: 2px solid #fff; overflow: hidden; }
+.ig-reel__disc img { display: block; width: 100%; height: 100%; }
+.ig-reel__meta { position: absolute; z-index: 1; left: 6%; right: 20%; bottom: 5.5%; display: grid; gap: .6em; min-width: 0; }
+.ig-reel__who { display: flex; align-items: center; gap: .6em; min-width: 0; font-weight: 600; font-size: 1.05em; }
+.ig-reel__who img { flex: none; width: 2em; height: 2em; border-radius: 50%; border: 1px solid rgba(255, 255, 255, .7); }
+.ig-reel__who .n { min-width: 0; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+.ig-reel__who em { flex: none; font-style: normal; font-weight: 600; font-size: .92em; padding: .25em .7em; border-radius: .5em; border: 1px solid rgba(255, 255, 255, .75); }
+.ig-reel__cap, .ig-reel__audio span { white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+.ig-reel__audio { display: flex; align-items: center; gap: .45em; min-width: 0; font-size: .95em; opacity: .95; }
+.ig-reel__audio svg { width: 1em; height: 1em; fill: currentColor; flex: none; }
+.ig-sound--reel { right: auto; left: 50%; top: 50%; bottom: auto; width: 44px; height: 44px; margin: -22px 0 0 -22px; background: rgba(20, 20, 20, .6); opacity: 0; pointer-events: none; }
+.ig-sound--reel svg { width: 19px; height: 19px; }
+.ig-reel .ig-tap:focus-visible { outline: 2px solid var(--gold); outline-offset: -4px; border-radius: 30px; }
+.ig-reel .ig-tap:focus-visible ~ .ig-sound--reel, .ig-reel.is-flash .ig-sound--reel { opacity: 1; }
+@media (hover: hover) and (pointer: fine) { .ig-reel:hover .ig-sound--reel { opacity: 1; } }
+.ig-reel .ig-hint { right: auto; left: 50%; bottom: auto; top: 14%; transform: translateX(-50%); }
+[data-feed].is-heard .ig-reel .ig-hint, [data-feed-unit].is-hinted .ig-reel .ig-hint { transform: translateX(-50%) translateY(4px); }
+
+@media (max-width: 760px) {
+  .vp-feed { --cw: min(100%, 420px); --pw: min(300px, 76vw); }
+  .vp-feed__stage { flex-direction: column; align-items: center; }
+  .ig-post { width: min(100%, 420px); }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ig-post, .ig-sound, .ig-hint { transition: none; }
+  .vp-feed__item--post:hover .ig-post { transform: none; }
+}
