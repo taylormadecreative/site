@@ -1,0 +1,78 @@
+/* iPhone Duo (social-ads #planning): the Marviano film on Apple's foldable. Open, the campaign fills the
+   inner screen; folded, the outer screen plays a face-tracked portrait crop of the same moment.
+   Proportions from the device: closed 84.1 x 117.8 mm, inner and outer screens both about 1.41:1. */
+.ipd-wrap { margin-top: 34px; }
+.ipd-fig { margin: 0; display: grid; justify-items: start; gap: 26px; }
+.ipd-stage { position: relative; width: calc(var(--dh) * .714 * 2); height: var(--dh); --dh: clamp(220px, 21vw, 300px); }
+.ipd {
+  --wc: calc(var(--dh) * .714);
+  --r: calc(var(--wc) * .13);
+  --body: #16181d; --rim: #4a4f59;
+  position: absolute; inset: 0; perspective: calc(var(--dh) * 5.5);
+  transition: transform .95s var(--ease-io);
+}
+.ipd.is-closed { transform: translateX(calc(var(--wc) / 2)); }
+/* soft floor shadow that narrows as it folds */
+.ipd-stage::after {
+  content: ""; position: absolute; left: 6%; right: 6%; bottom: -22px; height: 30px; z-index: -1;
+  background: radial-gradient(50% 50% at 50% 50%, rgba(0, 0, 0, .6), rgba(0, 0, 0, 0) 70%); filter: blur(6px);
+  transition: left .95s var(--ease-io), right .95s var(--ease-io);
+}
+.ipd-stage:has(.ipd.is-closed)::after { left: 28%; right: 28%; }
+
+.ipd__half { position: absolute; top: 0; width: var(--wc); height: 100%; }
+.ipd__half--l { left: 0; background: var(--body); border-radius: var(--r) 0 0 var(--r); box-shadow: inset 1.5px 0 0 var(--rim), inset 0 1.5px 0 var(--rim), inset 0 -1.5px 0 var(--rim); }
+.ipd__half--r { left: var(--wc); transform-origin: 0 50%; transform-style: preserve-3d; transition: transform .95s var(--ease-io); }
+.ipd.is-closed .ipd__half--r { transform: rotateY(-180deg); }
+/* once folded, the inner screen is under the outer half; hide it so no sliver shows at the hinge */
+.ipd__half--l { transition: opacity 0s; }
+.ipd.is-closed .ipd__half--l { opacity: 0; transition: opacity 0s .9s; }
+.ipd__face { position: absolute; inset: 0; backface-visibility: hidden; -webkit-backface-visibility: hidden; background: var(--body); }
+.ipd__face--in { border-radius: 0 var(--r) var(--r) 0; box-shadow: inset -1.5px 0 0 var(--rim), inset 0 1.5px 0 var(--rim), inset 0 -1.5px 0 var(--rim); }
+.ipd__face--out { transform: rotateY(180deg); border-radius: var(--r); box-shadow: inset 0 0 0 1.5px var(--rim); }
+
+.ipd__screen { position: absolute; overflow: hidden; background: #000; }
+.ipd__screen canvas { display: block; width: 100%; height: 100%; }
+/* inner display: one panel of glass across the hinge (thin bezel, a barely-there crease) */
+.ipd__half--l .ipd__screen { top: 2.9%; bottom: 2.9%; left: 6.2%; right: -1px; border-radius: calc(var(--r) * .78) 0 0 calc(var(--r) * .78); }
+.ipd__face--in .ipd__screen { top: 2.9%; bottom: 2.9%; left: 0; right: 6.2%; border-radius: 0 calc(var(--r) * .78) calc(var(--r) * .78) 0; }
+.ipd__face--in .ipd__screen::before { content: ""; position: absolute; left: 0; top: 0; bottom: 0; width: 3px; z-index: 1; background: linear-gradient(90deg, rgba(255, 255, 255, .035), rgba(255, 255, 255, 0)); pointer-events: none; }
+/* outer display, with its Center Stage camera */
+.ipd__face--out .ipd__screen { top: 2.3%; bottom: 2.3%; left: 4%; right: 4%; border-radius: calc(var(--r) * .82); }
+.ipd__cam { position: absolute; z-index: 1; top: 2.4%; left: 50%; width: calc(var(--wc) * .06); aspect-ratio: 1; margin-left: calc(var(--wc) * -.03); border-radius: 50%; background: #050506; box-shadow: inset 0 0 0 1px rgba(255, 255, 255, .06); }
+/* shading while the half swings through the fold */
+.ipd__shade { position: absolute; inset: 0; z-index: 2; border-radius: inherit; pointer-events: none; opacity: 0; background: linear-gradient(90deg, rgba(0, 0, 0, .05), rgba(0, 0, 0, .55)); }
+.ipd.is-folding .ipd__shade { animation: duo-shade .95s var(--ease-io); }
+@keyframes duo-shade { 0%, 100% { opacity: 0; } 50% { opacity: 1; } }
+
+/* the hidden source: one sprite video [inner | outer] drawn into the three screens, so nothing drifts */
+.ipd__src { position: absolute; left: 0; top: 0; width: 2px; height: 2px; opacity: 0; pointer-events: none; }
+.ipd__noscript { position: absolute; top: 2.9%; bottom: 2.9%; left: 3.1%; right: 3.1%; width: 93.8%; height: 94.2%; object-fit: cover; border-radius: calc(var(--r) * .78); }
+.js .ipd__noscript { display: none; }
+
+/* sound: tap anywhere on the glass; the chip rides the bottom-right corner of whichever screen shows */
+.ipd .ig-tap { z-index: 3; border-radius: var(--r); }
+.ipd .ig-tap:focus-visible { outline: 2px solid var(--gold); outline-offset: 4px; }
+.ipd .ig-sound { z-index: 4; right: calc(var(--wc) * .1); bottom: calc(var(--dh) * .07); pointer-events: none; transition: right .95s var(--ease-io), transform .16s var(--ease-out); }
+.ipd.is-closed .ig-sound { right: calc(var(--wc) + var(--wc) * .09); }
+.ipd .ig-hint { z-index: 4; right: calc(var(--wc) * .1 + 40px); bottom: calc(var(--dh) * .07 + 3px); transition: right .95s var(--ease-io), opacity .3s ease, transform .3s var(--ease-out); }
+.ipd.is-closed .ig-hint { right: calc(var(--wc) + var(--wc) * .09 + 40px); }
+.ipd.is-folding .ig-sound, .ipd.is-folding .ig-hint { opacity: 0; }
+
+.ipd-fig .vp-feed__cap { display: flex; align-items: center; gap: 12px; }
+.ipd-fig .vp-feed__cap > span { display: grid; gap: 3px; margin-right: 6px; }
+.ipd-fig .vp-feed__cap b { font-weight: 700; font-size: 16px; }
+.ipd-fig .vp-feed__cap small { font-size: 14px; color: var(--mute-on-ink); }
+.ipd__fold svg { width: 20px; height: 20px; fill: none; stroke: currentColor; stroke-width: 1.7; stroke-linejoin: round; }
+.ipd__fold .i-fold { display: block; } .ipd__fold .i-open { display: none; }
+.ipd__fold.is-closed .i-fold { display: none; } .ipd__fold.is-closed .i-open { display: block; }
+
+@media (max-width: 760px) {
+  .ipd-fig { justify-items: center; }
+  .ipd-stage { --dh: min(250px, 34vw + 120px); max-width: 100%; }
+}
+@media (max-width: 420px) { .ipd-stage { --dh: calc((100vw - 40px) / 1.428); } }
+@media (prefers-reduced-motion: reduce) {
+  .ipd, .ipd__half--r, .ipd .ig-sound, .ipd .ig-hint, .ipd-stage::after { transition: none; }
+  .ipd.is-folding .ipd__shade { animation: none; }
+}

@@ -1,11 +1,13 @@
 /* "In the feed": two muted loops that play while on screen. A speaker (or a tap on the video) gives one ad the sound,
    and only one ad has sound at a time. Each ad also has a pause, which the scroll observer respects. */
 (() => {
-  const root = document.querySelector("[data-feed]");
-  if (!root) return;
+  const roots = [...document.querySelectorAll("[data-feed]")];
+  if (!roots.length) return;
   const conn = navigator.connection || {};
   const calm = matchMedia("(prefers-reduced-motion: reduce)").matches || conn.saveData;
-  const units = [...root.querySelectorAll("[data-feed-unit]")].map((el) => ({
+  // every ad on the page shares one sound: turning one on mutes the rest, across sections
+  const units = roots.flatMap((root) => [...root.querySelectorAll("[data-feed-unit]")].map((el) => ({
+    root,
     el,
     v: el.querySelector("video"),
     btn: el.querySelector("[data-feed-sound]"),
@@ -15,7 +17,7 @@
     title: el.dataset.title,
     held: calm, // reduced motion / Save-Data: nothing moves until asked
     inView: false,
-  }));
+  })));
 
   const load = (u) => { if (!u.v.getAttribute("src") && u.v.dataset.src) u.v.src = u.v.dataset.src; };
   const play = (u) => { load(u); const p = u.v.play(); if (p && p.catch) p.catch(() => {}); };
@@ -41,7 +43,7 @@
       u.held = false;
       u.v.currentTime = 0;
       play(u);
-      root.classList.add("is-heard");
+      u.root.classList.add("is-heard");
       if (window.gtag) window.gtag("event", "vp_feed_sound", {ad: u.name});
     }
     paint(u);
