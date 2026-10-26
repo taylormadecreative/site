@@ -128,11 +128,3 @@
   .ig-post, .ig-sound, .ig-hint { transition: none; }
   .vp-feed__item--post:hover .ig-post { transform: none; }
 }
-
-/* the same Reels phone, set into the ink "Planned for the scroll" section (Marviano) */
-.vp-feed__solo { --pw: clamp(232px, 21vw, 270px); display: flex; margin-top: 34px; }
-.vp-feed__solo .vp-feed__item { justify-items: start; }
-.vp-sec--ink .vp-feed__cap small { color: var(--mute-on-ink); }
-.vp-sec--ink .vp-feed__obj::after { background: radial-gradient(50% 50% at 50% 50%, rgba(0, 0, 0, .55), rgba(0, 0, 0, 0) 70%); }
-.vp-sec--ink .vp-feed__item--reel .mu-iphone { filter: drop-shadow(0 30px 40px rgba(0, 0, 0, .55)); }
-@media (max-width: 760px) { .vp-feed__solo { --pw: min(280px, 72vw); justify-content: center; } .vp-feed__solo .vp-feed__item { justify-items: center; } }
