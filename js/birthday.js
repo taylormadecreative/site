@@ -5,6 +5,8 @@
    → Stripe), so this calendar and the main booking engine can never double-book. */
 (() => {
   const TM = window.TM;
+  const foundField = (d) => (window.TMFound ? window.TMFound.field(d.foundVia) : "");
+  const withFound = (text) => (window.TMFound ? window.TMFound.append(text, state.details.foundVia) : text);
   // package slug -> the bk_services row it books. Price and duration always come
   // from the DB; the page copy just has to agree with it.
   const PKGS = ["birthday-mini", "birthday-full"];
@@ -440,6 +442,7 @@
             </select></div>
           <div class="bk-field"><label for="fNotes">Anything I should know? (optional)</label>
             <textarea id="fNotes" name="notes" rows="4" maxlength="3000" placeholder="Studio or on location (and where), your vibe or colors, props you're bringing (balloons, crown, cake), outfit ideas, Pinterest links, questions…">${esc(d.notes)}</textarea></div>
+          ${foundField(d)}
           <label style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--smoke);cursor:pointer;">
             <input type="checkbox" name="subscribe" ${d.subscribe ? "checked" : ""} style="margin-top:3px;accent-color:var(--gold);">
             <span>Keep me in the loop — occasional studio news, new work, and open dates. No spam, unsubscribe anytime.</span>
@@ -459,6 +462,7 @@
       state.details = {
         name: f.name.value, email: f.email.value, phone: f.phone.value,
         use: f.use.value, notes: f.notes.value,
+        foundVia: f.foundVia ? f.foundVia.value : "",
         subscribe: f.subscribe.checked,
       };
     });
@@ -471,6 +475,7 @@
       state.details = {
         name: f.name.value.trim(), email, phone: f.phone.value.trim(),
         use: f.use.value, notes: f.notes.value.trim(),
+        foundVia: f.foundVia ? f.foundVia.value : "",
         subscribe: f.subscribe.checked,
       };
       renderConfirm();
@@ -547,7 +552,7 @@
           p_email: state.details.email,
           p_phone: state.details.phone || null,
           p_location: null,
-          p_details: detailsBlob() || null,
+          p_details: withFound(detailsBlob()) || null,
           p_addons: null,
         });
         state.bkCache = { key: bkKey, bk };

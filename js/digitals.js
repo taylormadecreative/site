@@ -4,6 +4,8 @@
    → Stripe), so this calendar and the main booking engine can never double-book. */
 (() => {
   const TM = window.TM;
+  const foundField = (d) => (window.TMFound ? window.TMFound.field(d.foundVia) : "");
+  const withFound = (text) => (window.TMFound ? window.TMFound.append(text, state.details.foundVia) : text);
   const SERVICE = "digitals";
   const TZ = "America/Chicago";
 
@@ -301,6 +303,7 @@
             <input id="fLoc" name="location" maxlength="240" placeholder="Studio, your location, or not sure yet" value="${esc(d.location)}"></div>
           <div class="bk-field"><label for="fNotes">Anything I should know? (optional)</label>
             <textarea id="fNotes" name="notes" rows="4" maxlength="3000" placeholder="Agency requirements, looks you need, questions…">${esc(d.notes)}</textarea></div>
+          ${foundField(d)}
           <label style="display:flex;gap:10px;align-items:flex-start;font-size:14px;color:var(--smoke);cursor:pointer;">
             <input type="checkbox" name="subscribe" ${d.subscribe ? "checked" : ""} style="margin-top:3px;accent-color:var(--gold);">
             <span>Keep me in the loop — occasional studio news, new work, and open dates. No spam, unsubscribe anytime.</span>
@@ -320,6 +323,7 @@
       state.details = {
         name: f.name.value, email: f.email.value, phone: f.phone.value,
         location: f.location.value, notes: f.notes.value,
+        foundVia: f.foundVia ? f.foundVia.value : "",
         subscribe: f.subscribe.checked,
       };
     });
@@ -332,6 +336,7 @@
       state.details = {
         name: f.name.value.trim(), email, phone: f.phone.value.trim(),
         location: f.location.value.trim(), notes: f.notes.value.trim(),
+        foundVia: f.foundVia ? f.foundVia.value : "",
         subscribe: f.subscribe.checked,
       };
       renderConfirm();
@@ -416,7 +421,7 @@
           p_email: state.details.email,
           p_phone: state.details.phone || null,
           p_location: state.details.location || null,
-          p_details: state.details.notes || null,
+          p_details: withFound(state.details.notes) || null,
           p_addons: null,
         });
         state.bkCache = { key: bkKey, bk };
