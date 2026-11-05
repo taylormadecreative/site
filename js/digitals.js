@@ -9,12 +9,6 @@
   const SERVICE = "digitals";
   const TZ = "America/Chicago";
 
-  /* 24h J3 birthday sale — window + code mirror js/sale.js and
-     bk-create-checkout v10 (the server is authoritative; this is display) */
-  const SALE_START = 1786147200000, SALE_END = 1786233600000;
-  const SALE_CODE = "J3PRODUCTIONS", SALE_OFF_CENTS = 2000;
-  const saleNow = () => Date.now() >= SALE_START && Date.now() < SALE_END;
-  const normCode = (s) => String(s || "").replace(/[^a-z0-9]/gi, "").toUpperCase();
   const host = document.getElementById("bkHost");
   const stepsBar = document.getElementById("bkSteps");
 
@@ -25,7 +19,7 @@
     day: null,        // selected CT day string
     slot: null,       // selected ISO start
     details: { name: "", email: "", phone: "", location: "", notes: "", subscribe: false },
-    promo: null,      // sale code; null = untouched (prefills during the sale window)
+    promo: "",
     submitting: false,
   };
 
@@ -362,9 +356,7 @@
   function renderConfirm() {
     setStep(3);
     const amount = state.svc.deposit_cents ?? state.svc.price_cents;
-    if (state.promo === null) state.promo = saleNow() ? SALE_CODE : "";
-    const saleOk = () => saleNow() && normCode(state.promo) === SALE_CODE;
-    const due = () => (saleOk() ? Math.max(0, amount - SALE_OFF_CENTS) : amount);
+    const due = () => amount;
     host.innerHTML = `
       <section aria-label="Confirm and pay">
         <div class="bk-summary" data-lead role="group" aria-label="Booking summary" style="max-width:560px;">
@@ -373,11 +365,6 @@
           <div class="row"><span>Time</span><b>${fmtTime(state.slot)} CT · ${state.svc.duration_min} min</b></div>
           <div class="row"><span>Name</span><b>${esc(state.details.name)}</b></div>
           <div class="row"><span>Email</span><b>${esc(state.details.email)}</b></div>
-          ${saleNow() ? `
-          <div class="row" style="align-items:center;"><span><label for="promoIn" style="cursor:pointer;">Promo code</label></span>
-            <b><input id="promoIn" value="${esc(state.promo)}" maxlength="40" autocomplete="off" autocapitalize="characters" spellcheck="false"
-              style="width:170px; background:transparent; border:1px solid var(--line-d); border-radius:6px; color:inherit; font:inherit; padding:7px 10px; letter-spacing:.04em;"></b></div>
-          <div class="row" id="promoRow" ${saleOk() ? "" : "hidden"}><span>J3 birthday sale</span><b style="color:var(--gold);">−${money(SALE_OFF_CENTS)}</b></div>` : ""}
           <div class="row" style="border-top:1px solid var(--line-d); padding-top:10px; margin-top:6px;"><span>Total due now</span><b id="dueNow">${money(due())}</b></div>
         </div>
         <p class="bk-note" style="margin:16px 0 22px; max-width:56ch;">Secure payment by Stripe. The moment it clears you'll get a confirmation email — then a prep email with what to bring, and a reminder before your session.</p>
@@ -390,16 +377,6 @@
     focusLead();
     document.getElementById("backDet").addEventListener("click", renderDetails);
     document.getElementById("goBtn").addEventListener("click", paySession);
-    const promoIn = document.getElementById("promoIn");
-    if (promoIn) {
-      promoIn.addEventListener("input", () => {
-        state.promo = promoIn.value;
-        const row = document.getElementById("promoRow");
-        if (row) row.hidden = !saleOk();
-        document.getElementById("dueNow").textContent = money(due());
-        document.getElementById("goAmt").textContent = money(due());
-      });
-    }
   }
 
   async function paySession() {

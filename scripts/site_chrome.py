@@ -134,7 +134,7 @@ WHERE_ONSITE = {"workshops/"}
 WHERE_QUOTED = {"video-production/", "video-production/commercials/", "video-production/podcasts/", "video-production/social-ads/",
                 "video-production/music-videos/", "corporate-video/", "corporate-headshots/", "branding-photography/",
                 "product-photography/", "social-media/"}
-UPDATED = "Details and prices checked November 2026."  # change when you re-check them
+UPDATED = '<time datetime="2026-11">Details checked November 2026.</time>'  # change when you re-check them
 TRAVEL = "Based in Downtown Dallas and available to travel. Travel over 50 miles adds a travel fee based on distance."
 TRAVEL_QUOTED = "Based in Downtown Dallas and available to travel. Over 50 miles out, travel is added to your quote."
 
@@ -159,7 +159,7 @@ def where_html(rel, s, indent):
     else:
         k = "On location in"
         line = TRAVEL_QUOTED if url in WHERE_QUOTED else TRAVEL
-    line = f"{line} {UPDATED}"
+    line = f"{line}<br>{UPDATED}"
     # pages on the homepage system have the condensed face; the rest use the site display face
     cond = " where--cond" if "use.typekit.net" in s else ""
     cities = " ".join(f"<li>{c}</li>" for c in CITIES)  # spaces = the only places a line may break

@@ -1,23 +1,16 @@
-/* found-via.js: where a visitor first came from, plus the optional
+/* found-via.js: where a visitor came from, plus the optional
    "How did you find me?" question on the booking forms.
 
-   The first outside source (referrer host or utm_source) is kept for 90 days in
-   this browser only, so a ChatGPT visit today still counts if they book next
-   week. Only a host name is stored. The answer rides along in the booking's
-   notes, where it shows up in the Inbox; nothing here can block a booking. */
+   The first and the latest outside source (referrer host or utm_source) are kept
+   for 90 days in this browser only, so a ChatGPT visit today still counts if they
+   book next week. Only a host name is stored. The question starts blank, so an
+   answer is always the client's own words. Both ride along in the booking's
+   notes, where they show up in the Inbox; nothing here can block a booking. */
 (function () {
   "use strict";
   var KEY = "tm-first-touch";
   var MAX_AGE = 90 * 24 * 60 * 60 * 1000;
-  var OPTIONS = ["ChatGPT", "Claude", "Another AI app", "Google", "Instagram", "TikTok", "A friend or client", "Something else"];
-  var GUESS = [
-    [/(^|\.)(chatgpt\.com|openai\.com)$|^chatgpt$/, "ChatGPT"],
-    [/(^|\.)(claude\.ai|anthropic\.com)$|^claude$/, "Claude"],
-    [/(^|\.)(perplexity\.ai|gemini\.google\.com|copilot\.microsoft\.com|meta\.ai|grok\.com)$|^(perplexity|gemini|copilot)$/, "Another AI app"],
-    [/(^|\.)google(\.|$)/, "Google"],
-    [/(^|\.)instagram(\.|$)|^ig$/, "Instagram"],
-    [/(^|\.)tiktok(\.|$)/, "TikTok"]
-  ];
+  var OPTIONS = ["ChatGPT", "Claude", "Another AI app", "Google", "Instagram", "TikTok", "Facebook", "A friend or client", "My agency", "Something else"];
   var memory = null;
 
   function clean(value) {
@@ -27,12 +20,11 @@
     if (memory) return memory;
     try {
       var saved = JSON.parse(localStorage.getItem(KEY));
-      if (saved && saved.src && Date.now() - saved.at < MAX_AGE) return saved;
+      if (saved && saved.last && Date.now() - saved.at < MAX_AGE) return saved;
     } catch (_) { /* storage blocked or garbage: treat as a new visitor */ }
     return null;
   }
   function capture() {
-    if (read()) return;
     var src = "";
     try { src = clean(new URLSearchParams(location.search).get("utm_source")); } catch (_) { /* no URLSearchParams */ }
     if (!src && document.referrer) {
@@ -42,39 +34,34 @@
       } catch (_) { /* unreadable referrer */ }
     }
     if (!src) return;
-    memory = { src: src, at: Date.now() };
+    var seen = read();
+    memory = { first: seen ? seen.first : src, last: src, at: Date.now() };
     try { localStorage.setItem(KEY, JSON.stringify(memory)); } catch (_) { /* memory only */ }
   }
-  function guess() {
-    var seen = read();
-    if (!seen) return "";
-    for (var i = 0; i < GUESS.length; i++) if (GUESS[i][0].test(seen.src)) return GUESS[i][1];
-    return "";
-  }
-  /* value undefined = they haven't touched it yet, so offer the best guess */
+  /* value undefined or "" = no answer yet */
   function field(value) {
-    var current = value === undefined ? guess() : value;
     var options = ['<option value="">Pick one</option>'].concat(OPTIONS.map(function (label) {
-      return '<option value="' + label + '"' + (label === current ? " selected" : "") + ">" + label + "</option>";
+      return '<option value="' + label + '"' + (label === value ? " selected" : "") + ">" + label + "</option>";
     }));
     return '<div class="bk-field"><label for="fFound">How did you find me? (optional)</label>' +
       '<select id="fFound" name="foundVia">' + options.join("") + "</select></div>";
   }
   function note(value) {
     var seen = read();
-    var picked = OPTIONS.indexOf(value) > -1 ? value : "";
-    if (picked) return "Found me through: " + picked + (seen ? " (came from " + seen.src + ")" : "");
-    return seen ? "Came from: " + seen.src : "";
+    var lines = [];
+    if (OPTIONS.indexOf(value) > -1) lines.push("They said they found me through: " + value);
+    if (seen) lines.push("Came from: " + seen.last + (seen.first !== seen.last ? " (first visit: " + seen.first + ")" : ""));
+    return lines.join("\n");
   }
-  /* adds the line to the booking notes and counts it in Analytics */
+  /* adds the lines to the booking notes and counts it in Analytics */
   function append(text, value) {
-    var line = note(value);
+    var lines = note(value);
     try {
-      if (line && window.gtag) window.gtag("event", "found_via", { via: OPTIONS.indexOf(value) > -1 ? value : "not_answered", came_from: (read() || {}).src || "" });
+      if (lines && window.gtag) window.gtag("event", "found_via", { via: OPTIONS.indexOf(value) > -1 ? value : "not_answered", came_from: (read() || {}).last || "" });
     } catch (_) { /* analytics never blocks booking */ }
-    return [text || "", line].filter(Boolean).join("\n\n");
+    return [text || "", lines].filter(Boolean).join("\n\n");
   }
 
   capture();
-  window.TMFound = { field: field, append: append, guess: guess };
+  window.TMFound = { field: field, append: append };
 })();
