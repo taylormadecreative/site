@@ -35,6 +35,7 @@ GROUPS = [
         "hub": ("video-production/", "Video production"), "all": "All video production",
         "blurb": "Commercials, podcasts, social ads and music videos, directed, lit and cut in-house.",
         "items": [
+            ("ai-creative/", "AI video", "AI commercials and spokespeople"),
             ("video-production/commercials/", "Commercials", "Ads and product videos"),
             ("corporate-video/", "Corporate video", "Training and interview videos"),
             ("video-production/podcasts/", "Video podcasts", "Recorded and cut like a show"),
@@ -55,7 +56,6 @@ GROUPS = [
             ("web-design/squarespace/", "Squarespace", "Past the template"),
             ("web-design/wix/", "Wix", "Real type, its own phone layout"),
             ("app-design/", "App design", "iPhone, Apple Watch and Mac"),
-            ("ai-creative/", "AI content", "Spokespeople and automation"),
         ],
         "feat": ("web-design/#work", "assets/img/nav/web.webp", "Tabitha Brown", "See the sites"),
         "also": ["web-design/"],
@@ -99,7 +99,7 @@ STORE_SECTION = ["store/", "podcast-app/", "privacy/camera/", "privacy/podcast/"
 # ---------- the footer: the same map, as columns ----------
 FOOTER = [
     ("Video", [
-        ("video-production/", "Video production"), ("video-production/commercials/", "Commercials"),
+        ("video-production/", "Video production"), ("ai-creative/", "AI video"), ("video-production/commercials/", "Commercials"),
         ("corporate-video/", "Corporate video"), ("video-production/podcasts/", "Video podcasts"),
         ("video-production/social-ads/", "Social ads"), ("video-production/music-videos/", "Music videos"),
         ("social-media/", "Social media"),
@@ -107,7 +107,6 @@ FOOTER = [
     ("Web &amp; apps", [
         ("web-design/", "Web design"), ("web-design/shopify/", "Shopify"), ("web-design/wordpress/", "WordPress"),
         ("web-design/squarespace/", "Squarespace"), ("web-design/wix/", "Wix"), ("app-design/", "App design"),
-        ("ai-creative/", "AI content"),
     ]),
     ("Photography", [
         ("photography/", "All photography"), ("branding-photography/", "Branding"), ("product-photography/", "Product"),

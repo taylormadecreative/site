@@ -363,6 +363,33 @@
     if (document.readyState === "complete") play(); else addEventListener("load", play, { once: true });
   }
 
+  /* ---------- AI FILMS · three screens preview muted while the strip is on screen; a click opens the film with sound ---------- */
+  const ai = $("[data-ai]");
+  if (ai) {
+    const vids = $$("video", ai), btn = $("[data-ai-pause]", ai);
+    let seen = false, held = !canAuto(), theater = false, covered = false;
+    const sync = () => {
+      const on = seen && !held && !theater && !covered && !document.hidden;
+      vids.forEach((v) => {
+        if (!on) return v.pause();
+        if (!v.getAttribute("src")) { v.src = small.matches ? v.dataset.sm : v.dataset.lg; v.load(); }
+        v.play().catch(() => {});
+      });
+    };
+    const ui = () => { btn.textContent = held ? "Play previews" : "Pause previews"; btn.setAttribute("aria-pressed", String(held)); };
+    vids.forEach((v) => v.addEventListener("playing", () => v.closest(".hm-ai__scr").classList.add("is-playing")));
+    btn.addEventListener("click", () => { held = !held; ui(); sync(); });
+    new IntersectionObserver(([e]) => {
+      seen = e.isIntersecting;
+      if (seen && !ai.classList.contains("is-in")) { ai.classList.add("is-in"); setTimeout(() => ai.classList.add("is-done"), 1400); }
+      sync();
+    }, { threshold: 0.08 }).observe(ai);
+    document.addEventListener("visibilitychange", sync);
+    document.addEventListener("hm-theater", (e) => { theater = e.detail; sync(); });
+    ai.closest(".hm-ch")?.addEventListener("hm-cover", (e) => { covered = e.detail; sync(); });
+    ui();
+  }
+
   /* ---------- THEATER · every film plays in the page, with sound ---------- */
   const th = $("#theater");
   if (th && th.showModal) {
@@ -376,6 +403,14 @@
       from = opener;
       th.classList.toggle("is-v", f.ar === "9/16");
       thK.textContent = f.m; thT.textContent = f.t; thD.textContent = f.d;
+      // the buttons under an AI film ask for an AI quote
+      const isAi = slug.startsWith("ai-"), cta = $("[data-th-cta]", th), more = $("[data-th-more]", th), moreT = $("[data-th-more-t]", th);
+      if (cta && more && moreT) {
+        cta.textContent = isAi ? "Get an AI video quote" : "Get a video quote";
+        cta.href = isAi ? "book/?service=ai-creative" : "book/?service=brand-content";
+        moreT.textContent = isAi ? "AI video production" : "Video production";
+        more.href = isAi ? "ai-creative/" : "video-production/";
+      }
       let player;
       if (f.v) {
         player = document.createElement("video");
@@ -606,7 +641,7 @@
     box.addEventListener("hm-cover", sync);
   }
 
-  /* ---------- THE FOUR · GSAP card stacking (desktop, tall enough screens) ---------- */
+  /* ---------- THE CHAPTERS · GSAP card stacking (desktop, tall enough screens) ---------- */
   const deck = $(".hm-deck");
   const chapters = $$(".hm-ch", deck || document);
   const coveredAt = new Map();
