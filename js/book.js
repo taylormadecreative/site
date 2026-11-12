@@ -174,6 +174,9 @@
           if (platform) return `Website on ${platform}.\nYour current site (link):\nRedesign, new build, or fixes:\nWhat isn't working now:\nLaunch date:`;
         }
         return "";
+      case "ai-creative":
+        if (params.get("type") === "twin") return "AI twin.\nWho the twin is for (name and role):\nWhere the messages would be used (email, events, social, training):\nWho approves each script:\nPreferred call date(s):";
+        return "";
       case "event-coverage":
         return `${params.get("type") === "photo" ? "Event photography." : "Event coverage.\nPhotos, video, or both:"}\nEvent and date:\nLocation:\nHours of coverage:`;
       default:

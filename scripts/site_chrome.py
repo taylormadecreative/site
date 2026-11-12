@@ -99,7 +99,7 @@ STORE_SECTION = ["store/", "podcast-app/", "privacy/camera/", "privacy/podcast/"
 # ---------- the footer: the same map, as columns ----------
 FOOTER = [
     ("Video", [
-        ("video-production/", "Video production"), ("ai-creative/", "AI video"), ("video-production/commercials/", "Commercials"),
+        ("video-production/", "Video production"), ("ai-creative/", "AI video"), ("ai-twins/", "AI twins"), ("video-production/commercials/", "Commercials"),
         ("corporate-video/", "Corporate video"), ("video-production/podcasts/", "Video podcasts"),
         ("video-production/social-ads/", "Social ads"), ("video-production/music-videos/", "Music videos"),
         ("social-media/", "Social media"),
@@ -127,7 +127,7 @@ FOOTER = [
 CITIES = ["Plano", "Frisco", "Irving", "Allen", "McKinney", "Southlake", "Westlake", "Fort Worth"]
 WHERE_SKIP = {"book/", "store/", "podcast-app/", "privacy/camera/", "privacy/podcast/", "success/", "studio-rental/", "404.html"}
 WHERE_STUDIO = {"headshots/", "headshots/cost/"}
-WHERE_WEB = {"web-design/", "web-design/shopify/", "web-design/wordpress/", "web-design/squarespace/", "web-design/wix/", "app-design/", "ai-creative/"}
+WHERE_WEB = {"web-design/", "web-design/shopify/", "web-design/wordpress/", "web-design/squarespace/", "web-design/wix/", "app-design/", "ai-creative/", "ai-twins/"}
 WHERE_ONSITE = {"workshops/"}
 # project work is quoted, so its travel lands in the quote rather than as a fee
 WHERE_QUOTED = {"video-production/", "video-production/commercials/", "video-production/podcasts/", "video-production/social-ads/",
