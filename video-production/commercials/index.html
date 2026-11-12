@@ -31,12 +31,39 @@
   <link rel="stylesheet" href="../../css/site.css?v=20261016">
   <link rel="stylesheet" href="../../css/home.css?v=20261015n">
   <link rel="stylesheet" href="../../css/video.css?v=3">
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-PS0H5W3ZX7"></script>
+  <!-- GA4, not sent from automated/test browsers, from any host but the live site, or from a
+       device that opened any page with ?notrack=1 once (?notrack=0 counts it again). -->
   <script>
     window.dataLayer = window.dataLayer || [];
     function gtag(){dataLayer.push(arguments);}
-    gtag('js', new Date());
-    gtag('config', 'G-PS0H5W3ZX7');
+    (function () {
+      var KEY = "tm-notrack", m = /[?&]notrack=([01])(?:&|#|$)/.exec(location.search), saved = false;
+      try {
+        if (m) { if (m[1] === "1") localStorage.setItem(KEY, "1"); else localStorage.removeItem(KEY); }
+        saved = localStorage.getItem(KEY) === "1";
+      } catch (e) {}
+      if (m) {
+        try { var u = new URL(location.href); u.searchParams.delete("notrack"); history.replaceState(history.state, "", u.pathname + u.search + u.hash); } catch (e) {}
+        var msg = m[1] === "1"
+          ? (saved ? "Google Analytics will not count this browser. (Undo: add ?notrack=0 to any page.)" : "This browser blocked the setting (private mode?). Visits here may still count.")
+          : (saved ? "This browser is still set to not count." : "Google Analytics counts this browser again.");
+        document.addEventListener("DOMContentLoaded", function () {
+          var t = document.createElement("div");
+          t.setAttribute("role", "status");
+          t.textContent = msg;
+          t.style.cssText = "position:fixed;left:50%;bottom:20px;transform:translateX(-50%);z-index:2147483647;max-width:calc(100% - 32px);box-sizing:border-box;padding:12px 18px;border-radius:12px;background:#111;color:#fff;font:600 14px/1.4 system-ui,-apple-system,sans-serif;text-align:center;box-shadow:0 6px 24px rgba(0,0,0,.35)";
+          document.body.appendChild(t);
+          setTimeout(function () { t.remove(); }, 7000);
+        });
+      }
+      if (saved || navigator.webdriver || !/^(www\.)?taylormadecreative\.net$/.test(location.hostname)) return;
+      var s = document.createElement("script");
+      s.async = true;
+      s.src = "https://www.googletagmanager.com/gtag/js?id=G-PS0H5W3ZX7";
+      document.head.appendChild(s);
+      gtag("js", new Date());
+      gtag("config", "G-PS0H5W3ZX7");
+    })();
   </script>
   <script type="application/ld+json">
 {
