@@ -828,6 +828,9 @@ html.hm-locked { overflow: hidden; }
 .hm-cta__row p { max-width: 40ch; font-size: clamp(18px, 1.5vw, 22px); line-height: 1.5; }
 .hm-cta__row .hm-acts { margin-top: 0; }
 .hm-cta :focus-visible { outline-color: var(--ink); }
+.hm-cta__direct { margin-top: clamp(36px, 4vw, 56px); padding-top: 22px; border-top: 1px solid color-mix(in srgb, var(--ink) 30%, transparent); font-size: clamp(17px, 1.4vw, 20px); line-height: 1.5; }
+.hm-cta__direct a { display: inline-block; padding: 10px 0; font-weight: 700; text-decoration: underline; text-decoration-thickness: 1.5px; text-underline-offset: 4px; }
+.hm-cta__direct span { margin: 0 .35em; opacity: .55; }
 
 /* footer: same measure as the page, body face for the small labels */
 .hm .footer .wrap { max-width: var(--max-w); padding: 0 var(--g); }

@@ -111,8 +111,6 @@
 
   // business shoots run as long as headcount and scope need, so no fixed length is shown
   const BRIEF_SLUGS = ["corporate-headshots", "corporate-video", "content-day", "video-podcast", "brand-content", "music-video"];
-  // video quotes go bigger than the general $5,000+ bucket (visitor's own range, not a posted price)
-  const VIDEO_SLUGS = ["brand-content", "video-podcast", "music-video", "corporate-video", "content-day", "event-coverage"];
 
   // quote briefs: start the notes with what a quote for that service needs.
   // ?where= and ?type= from deep links sharpen the first line.
@@ -409,7 +407,7 @@
               ${state.svc.slug === "web-design" ? "" : `<option${d.budget === "Under $1,000" ? " selected" : ""}>Under $1,000</option>`}
               <option${d.budget === "$1,000–$2,500" ? " selected" : ""}>$1,000–$2,500</option>
               <option${d.budget === "$2,500–$5,000" ? " selected" : ""}>$2,500–$5,000</option>
-              ${VIDEO_SLUGS.includes(state.svc.slug) ? ["$5,000–$10,000", "$10,000–$25,000", "$25,000+"].map((b) => `<option${d.budget === b ? " selected" : ""}>${b}</option>`).join("") : `<option${d.budget === "$5,000+" ? " selected" : ""}>$5,000+</option>`}
+              ${["$5,000–$10,000", "$10,000–$25,000", "$25,000–$50,000", "$50,000+"].map((b) => `<option${d.budget === b ? " selected" : ""}>${b}</option>`).join("")}
             </select></div>`}
           <div class="bk-field"><label for="fNotes">${isSession ? "Anything I should know? (optional)" : "Tell me about the project *"}</label>
             <textarea id="fNotes" name="notes" rows="${Math.min(12, Math.max(4, (d.notes || "").split("\n").length + 1))}" maxlength="3000" ${isSession ? "" : "required"} placeholder="${isSession ? "Looks you want, references, questions…" : "What are we making? Goals, timeline, references…"}">${esc(d.notes)}</textarea></div>
@@ -631,7 +629,7 @@
         landing: ["Tier interest: Ad Landing Page — $1,200", "$1,000–$2,500"],
         starter: ["Tier interest: Starter Business Website — $2,000", "$1,000–$2,500"],
         premium: ["Tier interest: Premium Business Website — $3,500", "$2,500–$5,000"],
-        custom: ["Tier interest: Custom / Multi-Site — from $6,000", "$5,000+"],
+        custom: ["Tier interest: Custom / Multi-Site — from $6,000", "$5,000–$10,000"],
       };
       const tier = TIERS[params.get("tier")];
       if (tier && want === "web-design") {
@@ -640,9 +638,9 @@
       }
       // social-media term deep links (HT proposal and future retainer pitches)
       const SM_TIERS = {
-        presence: ["Tier interest: Presence, fall term Sept–Nov — $5,400", "$5,000+"],
-        "fall-term": ["Tier interest: The Fall Term, Sept–Nov — $10,500", "$5,000+"],
-        "full-term": ["Tier interest: Full Term, Sept–Nov — $19,500", "$5,000+"],
+        presence: ["Tier interest: Presence, fall term Sept–Nov — $5,400", "$5,000–$10,000"],
+        "fall-term": ["Tier interest: The Fall Term, Sept–Nov — $10,500", "$10,000–$25,000"],
+        "full-term": ["Tier interest: Full Term, Sept–Nov — $19,500", "$10,000–$25,000"],
       };
       const smTier = SM_TIERS[params.get("tier")];
       if (smTier && want === "social-media") {

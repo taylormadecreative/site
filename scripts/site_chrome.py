@@ -25,6 +25,8 @@ SKIP = {"creator-workshop/index.html", "success/index.html"}
 PORTAL = "https://book.taylormadecreative.net/login.html"
 JENEL = "https://jenelstudios.com/"
 INSTAGRAM = "https://www.instagram.com/taylormade_creative/"
+LINKEDIN = "https://www.linkedin.com/in/taylormademd/"
+START = "start/"  # the project inquiry page: brief or call request, with the direct line
 
 # ---------- the menu ----------
 # Each group: button label, panel id, hub link, a one-line promise, the pages
@@ -89,8 +91,8 @@ GROUPS = [
             ("faqs/", "FAQs", "Booking, turnaround, delivery"),
             (JENEL, "Studio rental", "Jenel Studios, Downtown Dallas"),
         ],
-        "cta": ("book/#project", "Have a project?", "Get a real quote within one business day."),
-        "also": ["pricing/", "faqs/", "workshops/"],
+        "cta": (START, "Have a project?", "Send a brief or request a call. A reply within one business day."),
+        "also": ["pricing/", "faqs/", "workshops/", START],
     },
 ]
 STORE = ("store/", "Store")
@@ -114,9 +116,9 @@ FOOTER = [
         ("birthday/", "Birthday shoots"), ("senior-photos/", "Senior photos"),
     ]),
     ("Studio", [
-        ("#about", "About Nelson"), ("#work", "Selected work"), ("workshops/", "Workshops"), ("store/", "Store"),
+        ("#about", "About Nelson"), ("#work", "Selected work"), (START, "Start a project"), ("workshops/", "Workshops"), ("store/", "Store"),
         ("pricing/", "Prices"), ("faqs/", "FAQs"), ("book/", "Book a shoot"), (PORTAL, "Client portal"),
-        (JENEL, "Studio rental: Jenel Studios"), (INSTAGRAM, "Instagram"),
+        (JENEL, "Studio rental: Jenel Studios"), (INSTAGRAM, "Instagram"), (LINKEDIN, "LinkedIn"),
     ]),
 ]
 
@@ -125,7 +127,7 @@ FOOTER = [
 # west of Dallas) and says he travels. Studio-only sessions say "Serving" instead,
 # so the band never promises a location shoot the page doesn't sell.
 CITIES = ["Plano", "Frisco", "Irving", "Allen", "McKinney", "Southlake", "Westlake", "Fort Worth"]
-WHERE_SKIP = {"book/", "store/", "podcast-app/", "privacy/camera/", "privacy/podcast/", "success/", "studio-rental/", "404.html"}
+WHERE_SKIP = {"start/", "book/", "store/", "podcast-app/", "privacy/camera/", "privacy/podcast/", "success/", "studio-rental/", "404.html"}
 WHERE_STUDIO = {"headshots/", "headshots/cost/"}
 WHERE_WEB = {"web-design/", "web-design/shopify/", "web-design/wordpress/", "web-design/squarespace/", "web-design/wix/", "app-design/", "ai-creative/", "ai-twins/"}
 WHERE_ONSITE = {"workshops/"}
@@ -274,7 +276,7 @@ def footer_cols(rel, indent):
         o.append("<div>")
         o.append(f'  <h2 class="footer-h">{h}</h2>')
         for href, t in items:
-            extra = ' rel="noopener" target="_blank"' if href == INSTAGRAM else ""
+            extra = ' rel="noopener" target="_blank"' if href in (INSTAGRAM, LINKEDIN) else ""
             o.append(f'  <a href="{link(prefix, href)}"{cur(href, url)}{extra}>{t}</a>')
         o.append("</div>")
     return ("\n" + indent).join(o)
@@ -292,7 +294,7 @@ def div_end(s, start):
 
 def rewrite(rel, s):
     if rel == "404.html" and 'class="nav"' not in s:
-        s = s.replace("<body>\n", "<body>\n  " + nav_html(rel, '<a class="btn btn-gold" href="/book/#project">Start a project</a>', "  ") + "\n", 1)
+        s = s.replace("<body>\n", "<body>\n  " + nav_html(rel, '<a class="btn btn-gold" href="/start/">Start a project</a>', "  ") + "\n", 1)
     m = re.search(r'^([ \t]*)<nav class="nav"[^>]*>.*?</nav>', s, re.S | re.M)
     if m and 'id="navLinks"' in m.group(0):
         old = m.group(0)
