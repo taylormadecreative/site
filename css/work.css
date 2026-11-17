@@ -1,0 +1,188 @@
+/* ============================================================
+   CASE STUDIES · /work/ and one page per client (11/2026)
+   Sits on the homepage system (home.css): Acumin Pro ExtraCondensed +
+   Familjen Grotesk; ink, paper, gold. The pages are written by
+   scripts/build_work.py; this file is their layout.
+   ============================================================ */
+
+/* these pages are read, so the hero arrives fast (the homepage waits for its shutter) */
+.wk .hm-mast .w > span { animation-delay: calc(var(--i) * 55ms + 60ms); animation-duration: .7s; }
+.wk [data-load] { animation-delay: calc(260ms + var(--i, 0) * 70ms); animation-duration: .5s; }
+
+/* ---------- hero ---------- */
+.wk-hero { padding: calc(var(--nav-h) + clamp(36px, 6vh, 80px)) 0 clamp(40px, 5vw, 72px); }
+.wk-hero__in { max-width: var(--max-w); margin: 0 auto; padding: 0 var(--g); display: grid; gap: 40px; }
+@media (min-width: 1000px) {
+  .wk-hero__in { grid-template-columns: minmax(0, 7fr) minmax(0, 4fr); align-items: end; gap: clamp(48px, 6vw, 120px); }
+  .wk-hero--index .wk-hero__in { grid-template-columns: minmax(0, 1fr); }
+}
+.wk .hm-h1 { margin: 0; }
+.wk .hm-kick { max-width: none; color: var(--gold); font-weight: 600; letter-spacing: .01em; }
+.wk .hm-mast { font-size: clamp(60px, 15.5vw, 92px); max-width: 4.7em; }   /* em, so the lines break the same before and after the font loads */
+@media (min-width: 700px) { .wk .hm-mast { font-size: clamp(92px, 12vw, 140px); } }
+@media (min-width: 1000px) { .wk .hm-mast { font-size: clamp(100px, 9vw, 168px); } }
+.wk .hm-lede { margin: 24px 0 0; max-width: 40ch; font-size: clamp(18px, 1.5vw, 22px); }
+
+.wk-crumb { display: flex; flex-wrap: wrap; align-items: baseline; gap: 4px 10px; margin: 0 0 14px; font-size: 15px; font-weight: 600; color: var(--mute-on-ink); }
+.wk-crumb a { padding: 10px 0; color: var(--gold); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--gold) 55%, transparent); text-underline-offset: 5px; text-decoration-thickness: 1px; }
+.wk-crumb > span[aria-hidden] { color: var(--gold); }
+
+/* the facts: type on the ground, no box */
+.wk-facts { margin: 0; border-top: 1px solid var(--hair-ink); }
+.wk-facts div { display: grid; grid-template-columns: 92px minmax(0, 1fr); align-items: baseline; gap: 12px; padding: 13px 0 14px; border-bottom: 1px solid var(--hair-ink); }
+.wk-facts dt { font-size: 13px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase; color: var(--mute-on-ink); }
+.wk-facts dd { margin: 0; font-size: 17px; font-weight: 600; line-height: 1.4; color: var(--paper); }
+.wk-facts a { display: inline-block; margin: -11px 0; padding: 11px 0; color: var(--paper); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--gold) 70%, transparent); text-underline-offset: 5px; text-decoration-thickness: 1px; transition: color .2s ease; }
+@media (hover: hover) and (pointer: fine) { .wk-facts a:hover, .wk-crumb a:hover { color: var(--gold-hi); } }
+
+/* ---------- the films ---------- */
+.wk-media { padding: 0 0 clamp(64px, 8vw, 128px); }
+.wk-film { margin: 0; min-width: 0; }
+.wk-film__screen { position: relative; aspect-ratio: 16 / 9; border-radius: 12px; overflow: hidden; background: var(--ink-2); }
+.wk-film--lead .wk-film__screen { border-radius: 16px; }
+.wk-film video { display: block; width: 100%; height: 100%; object-fit: cover; background: var(--ink); }
+
+/* the gold button starts a film; without JavaScript the browser's own controls do */
+.wk-play { display: none; position: absolute; inset: 0; width: 100%; padding: 0; border: 0; cursor: pointer; place-items: end start;
+  background: linear-gradient(to top, rgba(8, 8, 10, .6), rgba(8, 8, 10, 0) 48%); color: var(--ink); font: inherit; text-align: left; }
+.wk-ready .wk-play { display: grid; }   /* set by work.js once it runs, so the button never covers a player it cannot start */
+.wk-film.is-on .wk-play { display: none; }
+.wk-play__pill { display: inline-flex; align-items: center; gap: 12px; margin: clamp(12px, 1.6vw, 24px); padding: 8px 20px 8px 8px; border-radius: 999px; background: var(--gold); transition: transform .16s var(--ease-out), background-color .2s ease; }
+.wk-play__pill svg { width: 40px; height: 40px; padding: 11px; border-radius: 50%; background: var(--ink); fill: var(--gold); }
+.wk-play__pill b { display: block; font-size: 15px; font-weight: 700; line-height: 1.15; }
+.wk-play__pill span span { display: block; font-size: 13px; font-weight: 600; line-height: 1.15; font-variant-numeric: tabular-nums; }
+.wk-play:active .wk-play__pill { transform: scale(.97); }
+.wk-play:focus-visible { outline: 0; }
+.wk-play:focus-visible .wk-play__pill { outline: 2px solid var(--paper); outline-offset: 3px; }
+@media (hover: hover) and (pointer: fine) { .wk-play:hover .wk-play__pill { background: var(--gold-hi); } }
+.wk-films--3 .wk-play__pill { padding: 6px 16px 6px 6px; gap: 10px; }
+.wk-films--3 .wk-play__pill svg { width: 34px; height: 34px; padding: 9px; }
+
+.wk-film__cap { display: grid; justify-items: start; gap: 5px; margin-top: 14px; }
+.wk-film__cap b { font-family: var(--cond); font-weight: 800; font-size: clamp(26px, 2.2vw, 36px); line-height: 1; text-transform: uppercase; font-synthesis: none; }
+.wk-film--lead .wk-film__cap b { font-size: clamp(32px, 3.4vw, 56px); }
+.wk-film__cap > span { font-size: 15px; color: var(--mute-on-ink); font-variant-numeric: tabular-nums; }
+.wk-film__cap p { margin: 5px 0 0; font-size: 17px; line-height: 1.5; color: var(--soft-on-ink); max-width: 56ch; }
+.wk-film__yt { margin-top: 2px; padding: 10px 0; font-size: 15px; font-weight: 600; color: var(--paper); text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--gold) 70%, transparent); text-underline-offset: 5px; text-decoration-thickness: 1px; }
+
+.wk-films { display: grid; gap: clamp(30px, 3vw, 44px) 14px; margin-top: clamp(40px, 4.6vw, 72px); }
+@media (min-width: 760px) {
+  .wk-films--3 { grid-template-columns: repeat(3, minmax(0, 1fr)); }
+  /* a film on its own sits beside its caption instead of floating in a half-empty row */
+  .wk-films--1 .wk-film, .wk-films--also .wk-film { display: grid; grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(20px, 3vw, 56px); align-items: end; }
+  .wk-films--1 .wk-film__cap, .wk-films--also .wk-film__cap { margin: 0 0 6px; }
+}
+.wk-also { margin: clamp(56px, 6vw, 96px) 0 0; padding-top: 22px; border-top: 1px solid var(--hair-ink); font-size: 14px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--gold); }
+.wk-films--also { margin-top: 22px; }
+
+/* ---------- website screens ---------- */
+.wk-shots { display: grid; gap: clamp(22px, 2.4vw, 36px) 14px; }
+@media (min-width: 760px) { .wk-shots { grid-template-columns: repeat(2, minmax(0, 1fr)); } }
+@media (min-width: 1100px) { .wk-shots { grid-template-columns: repeat(3, minmax(0, 1fr)); } }
+.wk-shot { margin: 0; min-width: 0; }
+.wk-shot--lead { grid-column: 1 / -1; }
+.wk-shot img { display: block; width: 100%; height: auto; border-radius: 10px; background: var(--ink-2); }
+.wk-shot--lead img { border-radius: 16px; }
+.wk-shot figcaption { display: flex; align-items: baseline; gap: 10px; margin-top: 10px; font-size: 15px; color: var(--mute-on-ink); }
+.wk-shot figcaption b { font-family: var(--cond); font-weight: 700; font-size: 22px; line-height: 1; color: var(--gold); font-variant-numeric: tabular-nums; }
+.wk-visit { display: flex; flex-wrap: wrap; align-items: baseline; gap: 6px 18px; margin: clamp(24px, 2.6vw, 40px) 0 0; font-size: 16px; color: var(--mute-on-ink); }
+
+/* ---------- the scrolling preview (a long homepage, laptop and phone) ---------- */
+.wk-duo { position: relative; display: grid; grid-template-columns: minmax(0, 1fr); gap: 14px; align-items: end; }
+@media (min-width: 760px) { .wk-duo { grid-template-columns: minmax(0, 10fr) minmax(0, 3fr); gap: clamp(16px, 2.4vw, 40px); } }
+.wk-browser, .wk-phone { margin: 0; min-width: 0; }
+.wk-browser { border: 1px solid var(--hair-ink); border-radius: 14px; overflow: hidden; background: var(--ink-2); }
+.wk-browser__bar { display: flex; align-items: center; gap: 7px; padding: 11px 14px; border-bottom: 1px solid var(--hair-ink); }
+.wk-browser__bar i { width: 10px; height: 10px; border-radius: 50%; background: color-mix(in srgb, var(--paper) 22%, var(--ink)); }
+.wk-browser__bar span { margin-left: 10px; font-size: 13px; color: var(--mute-on-ink); }
+/* still (no script, or reduced motion): the frames scroll by hand. Moving: work.js is running and there is a pause button. */
+.wk-browser__view { aspect-ratio: 16 / 10; overflow: hidden auto; container-type: size; }
+.wk-phone__view { aspect-ratio: 9 / 19; overflow: hidden auto; container-type: size; border: 1px solid var(--hair-ink); border-radius: clamp(16px, 2vw, 28px); background: var(--ink-2); }
+.wk-browser__view:focus-visible, .wk-phone__view:focus-visible { outline: 2px solid var(--gold); outline-offset: 3px; }
+@media (max-width: 759px) { .wk-phone { width: min(54%, 230px); margin: 0 auto; } }
+.wk-browser__view img, .wk-phone__view img { display: block; width: 100%; height: auto; }
+@keyframes wk-scroll {
+  0%, 5% { transform: translateY(0); }
+  95%, 100% { transform: translateY(calc(-100% + 100cqh)); }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .wk-ready .wk-browser__view, .wk-ready .wk-phone__view { overflow: hidden; }
+  .wk-ready .wk-browser__view img, .wk-ready .wk-phone__view img { animation: wk-scroll 30s cubic-bezier(.45, .05, .55, .95) 1.2s infinite alternate; will-change: transform; }
+  .wk-ready .wk-phone__view img { animation-duration: 38s; }
+  .wk-ready .wk-duo.is-paused img, .wk-ready .wk-duo.is-off img { animation-play-state: paused; }
+}
+.wk-pause { display: none; position: absolute; left: 12px; bottom: 12px; align-items: center; gap: 8px; min-height: 44px; padding: 0 16px 0 12px;
+  border: 1px solid var(--hair-ink); border-radius: 999px; background: var(--ink); color: var(--paper); font: inherit; font-size: 14px; font-weight: 600; cursor: pointer; transition: transform .16s var(--ease-out); }
+.wk-pause:active { transform: scale(.97); }
+.wk-pause svg { display: block; width: 18px; height: 18px; fill: currentColor; }
+.wk-pause__i[hidden] { display: none; }
+@media (prefers-reduced-motion: no-preference) { .wk-ready .wk-pause { display: inline-flex; } }
+@media (max-width: 759px) { .wk-pause { position: static; justify-self: center; } }
+
+/* ---------- the write-up ---------- */
+.wk-story { background: var(--paper); color: var(--ink); border-radius: 28px 28px 0 0; padding: clamp(48px, 6vw, 96px) 0 clamp(64px, 8vw, 120px); }
+.wk-story :focus-visible, .wk-more :focus-visible, .wk-index :focus-visible, .wk-cta :focus-visible, .wk-quote :focus-visible { outline-color: var(--ink); }
+.wk-story__list { border-top: 1px solid var(--hair-paper); }
+.wk-story__row { display: grid; gap: 14px 24px; padding: clamp(26px, 3.2vw, 48px) 0; border-bottom: 1px solid var(--hair-paper); }
+@media (min-width: 900px) { .wk-story__row { grid-template-columns: minmax(0, 4fr) minmax(0, 7fr); gap: clamp(48px, 6vw, 120px); align-items: start; } }
+.wk-story__h { margin: 0; font-family: var(--cond); font-weight: 800; font-size: clamp(44px, 5vw, 80px); line-height: .88; text-transform: uppercase; font-synthesis: none; }
+.wk-story__row p { margin: 0; font-size: clamp(19px, 1.6vw, 24px); line-height: 1.5; max-width: 34em; }
+
+/* a client's words, shown only once they have approved them in writing */
+.wk-quote { background: var(--paper); color: var(--ink); padding: 0 0 clamp(64px, 8vw, 120px); }
+.wk-quote figure { margin: 0; }
+.wk-quote blockquote { margin: 0; }
+.wk-quote blockquote p { margin: 0; font-size: clamp(24px, 2.8vw, 44px); font-weight: 600; line-height: 1.22; letter-spacing: -.01em; max-width: 26em; text-wrap: balance; }
+.wk-quote figcaption { display: grid; gap: 2px; margin-top: 22px; }
+.wk-quote figcaption b { font-size: 17px; font-weight: 700; }
+.wk-quote figcaption span { font-size: 15.5px; color: var(--mute-on-paper); }
+
+/* ---------- more case studies ---------- */
+.wk-more { background: var(--paper-2); color: var(--ink); padding: clamp(56px, 7vw, 104px) 0; }
+.wk-more__h { margin: 0; font-size: 14px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--gold-ink); }
+.wk-more__list { list-style: none; margin: 16px 0 0; padding: 0; border-top: 1px solid var(--hair-paper); }
+.wk-more__list a { display: grid; grid-template-columns: minmax(0, 1fr) auto; align-items: baseline; gap: 4px 20px; padding: 18px 0 19px; border-bottom: 1px solid var(--hair-paper); color: var(--ink); }
+.wk-more__list b { font-family: var(--cond); font-weight: 800; font-size: clamp(38px, 4.4vw, 72px); line-height: .9; text-transform: uppercase; font-synthesis: none; }
+.wk-more__list span { grid-column: 1; font-size: 16px; color: var(--mute-on-paper); }
+.wk-more__list i { grid-column: 2; grid-row: 1 / 3; align-self: center; font-style: normal; font-size: 28px; line-height: 1; transition: transform .2s var(--ease-out); }
+@media (hover: hover) and (pointer: fine) { .wk-more__list a:hover i { transform: translateX(6px); } }
+
+/* ---------- the index ---------- */
+.wk-index { background: var(--paper); color: var(--ink); border-radius: 28px 28px 0 0; padding: clamp(16px, 2vw, 32px) 0 clamp(64px, 8vw, 120px); }
+.wk-rows { list-style: none; margin: 0; padding: 0; }
+.wk-row { border-bottom: 1px solid var(--hair-paper); }
+.wk-row a { display: grid; gap: 22px; padding: clamp(32px, 4.4vw, 72px) 0; color: var(--ink); }
+@media (min-width: 900px) {
+  .wk-row a { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(32px, 5vw, 96px); align-items: center; }
+  .wk-row:nth-child(even) a { grid-template-columns: minmax(0, 5fr) minmax(0, 7fr); }
+  .wk-row:nth-child(even) .wk-row__art { order: 2; }
+}
+.wk-row__art { display: block; aspect-ratio: 16 / 10; border-radius: 14px; overflow: hidden; background: var(--paper-3); }
+.wk .wk-row__art img { display: block; width: 100%; height: 100%; object-fit: cover; transition: transform .6s var(--ease-out); }
+.wk-row__art--top img { object-position: top center; }
+.wk-row__copy { display: grid; justify-items: start; }
+.wk-row__n { font-family: var(--cond); font-weight: 700; font-size: 26px; line-height: 1; color: var(--gold-ink); font-variant-numeric: tabular-nums; }
+.wk-row__k { margin-top: 14px; font-size: 14px; font-weight: 700; letter-spacing: .06em; text-transform: uppercase; color: var(--mute-on-paper); }
+.wk-row__t { margin: 8px 0 0; font-family: var(--cond); font-weight: 800; font-size: clamp(52px, 6.4vw, 112px); line-height: .86; text-transform: uppercase; font-synthesis: none; }
+.wk-row__d { margin: 16px 0 0; font-size: clamp(17px, 1.4vw, 20px); line-height: 1.5; color: var(--mute-on-paper); max-width: 44ch; }
+.wk-row__go { margin-top: 20px; font-size: 16px; font-weight: 700; text-decoration: underline; text-decoration-color: var(--gold-ink); text-underline-offset: 5px; text-decoration-thickness: 1.5px; }
+.wk-row__go i { display: inline-block; font-style: normal; transition: transform .2s var(--ease-out); }
+@media (hover: hover) and (pointer: fine) {
+  .wk-row a:hover .wk-row__art img { transform: scale(1.025); }
+  .wk-row a:hover .wk-row__go i { transform: translateX(5px); }
+}
+
+/* ---------- the close ---------- */
+.wk-cta { background: var(--gold); color: var(--ink); padding: clamp(64px, 8vw, 128px) 0; }
+.wk-cta__in { display: grid; gap: 28px; }
+@media (min-width: 900px) { .wk-cta__in { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); gap: clamp(48px, 6vw, 120px); align-items: end; } }
+.wk-cta__h { margin: 0; font-family: var(--cond); font-weight: 800; font-size: clamp(60px, 9vw, 150px); line-height: .86; text-transform: uppercase; font-synthesis: none; max-width: 9ch; }
+.wk-cta__side p { margin: 0; font-size: clamp(18px, 1.5vw, 22px); line-height: 1.5; max-width: 36ch; }
+.wk-cta__acts { display: flex; flex-wrap: wrap; align-items: center; gap: 12px 26px; margin-top: 26px; }
+.wk-btn { display: inline-flex; align-items: center; min-height: 52px; padding: 0 26px; border-radius: 999px; background: var(--ink); color: var(--paper); font-size: 17px; font-weight: 700; transition: transform .16s var(--ease-out); }
+.wk-btn:active { transform: scale(.97); }
+.wk-cta__link { padding: 12px 0; font-size: 17px; font-weight: 700; color: var(--ink); text-decoration: underline; text-underline-offset: 5px; text-decoration-thickness: 1.5px; }
+
+@media (prefers-reduced-motion: reduce) {
+  .wk-row__art img, .wk-row__go i, .wk-more__list i, .wk-play__pill, .wk-btn, .wk-pause { transition: none; }
+}

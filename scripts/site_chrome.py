@@ -27,6 +27,7 @@ JENEL = "https://jenelstudios.com/"
 INSTAGRAM = "https://www.instagram.com/taylormade_creative/"
 LINKEDIN = "https://www.linkedin.com/in/taylormademd/"
 START = "start/"  # the project inquiry page: brief or call request, with the direct line
+WORK = "work/"    # the case studies; the pages are written by scripts/build_work.py
 
 # ---------- the menu ----------
 # Each group: button label, panel id, hub link, a one-line promise, the pages
@@ -86,13 +87,14 @@ GROUPS = [
         "items": [
             ("#about", "About Nelson", "14 years of creative direction"),
             ("#work", "Selected work", "Web, film, photo and apps"),
+            (WORK, "Case studies", "Client projects in detail"),
             ("workshops/", "Workshops", "AI and creative, for teams"),
             ("pricing/", "Prices", "Every posted price"),
             ("faqs/", "FAQs", "Booking, turnaround, delivery"),
             (JENEL, "Studio rental", "Jenel Studios, Downtown Dallas"),
         ],
         "cta": (START, "Have a project?", "Send a brief or request a call. A reply within one business day."),
-        "also": ["pricing/", "faqs/", "workshops/", START],
+        "also": ["pricing/", "faqs/", "workshops/", START, WORK],
     },
 ]
 STORE = ("store/", "Store")
@@ -116,7 +118,7 @@ FOOTER = [
         ("birthday/", "Birthday shoots"), ("senior-photos/", "Senior photos"),
     ]),
     ("Studio", [
-        ("#about", "About Nelson"), ("#work", "Selected work"), (START, "Start a project"), ("workshops/", "Workshops"), ("store/", "Store"),
+        ("#about", "About Nelson"), ("#work", "Selected work"), (WORK, "Case studies"), (START, "Start a project"), ("workshops/", "Workshops"), ("store/", "Store"),
         ("pricing/", "Prices"), ("faqs/", "FAQs"), ("book/", "Book a shoot"), (PORTAL, "Client portal"),
         (JENEL, "Studio rental: Jenel Studios"), (INSTAGRAM, "Instagram"), (LINKEDIN, "LinkedIn"),
     ]),
@@ -127,7 +129,7 @@ FOOTER = [
 # west of Dallas) and says he travels. Studio-only sessions say "Serving" instead,
 # so the band never promises a location shoot the page doesn't sell.
 CITIES = ["Plano", "Frisco", "Irving", "Allen", "McKinney", "Southlake", "Westlake", "Fort Worth"]
-WHERE_SKIP = {"start/", "book/", "store/", "podcast-app/", "privacy/camera/", "privacy/podcast/", "success/", "studio-rental/", "404.html"}
+WHERE_SKIP = {"start/", "work/", "book/", "store/", "podcast-app/", "privacy/camera/", "privacy/podcast/", "success/", "studio-rental/", "404.html"}
 WHERE_STUDIO = {"headshots/", "headshots/cost/"}
 WHERE_WEB = {"web-design/", "web-design/shopify/", "web-design/wordpress/", "web-design/squarespace/", "web-design/wix/", "app-design/", "ai-creative/", "ai-twins/"}
 WHERE_ONSITE = {"workshops/"}
@@ -142,7 +144,7 @@ TRAVEL_QUOTED = "Based in Downtown Dallas and available to travel. Over 50 miles
 
 def where_html(rel, s, indent):
     url = page_url(rel)
-    if url in WHERE_SKIP or '<footer class="footer"' not in s:
+    if url in WHERE_SKIP or url.startswith(WORK) or '<footer class="footer"' not in s:
         return ""
     prefix = prefix_of(rel, url)
     sr = ""
@@ -202,6 +204,8 @@ def page_url(rel):
 
 
 def group_of(url):
+    if url.startswith(WORK):  # each case study page sits under Studio
+        return "studio"
     for g in GROUPS:
         urls = ({g["hub"][0]} - {""}) | {i[0] for i in g["items"]} | set(g.get("also", []))
         if url in urls:

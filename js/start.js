@@ -140,7 +140,7 @@
     setErr(null, els.slotErr, "");
     syncSend();
     if (state.mode === "call" && !state.slots && !state.loading) loadSlots();
-    saveDraft();
+    if (!(opts && opts.quiet)) saveDraft();   // the first paint saves nothing: a box ticked by a link is not the visitor's choice yet
   }
   function toSwitch() {
     var box = form.querySelector(".st-mode");

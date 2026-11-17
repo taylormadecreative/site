@@ -160,6 +160,28 @@
   }
 }
   </script>
+  <style>
+    /* who has been in the room: three plain facts and three people's own words */
+    #proof .slate { flex-shrink: 1; }
+    .proof-list { margin: 0; border-top: 1px solid var(--line-p); }
+    .proof-list > div { display: grid; gap: 8px 32px; padding: 26px 0 27px; border-bottom: 1px solid var(--line-p); }
+    .proof-list dt { font-weight: 700; font-size: clamp(20px, 2vw, 26px); letter-spacing: -.01em; color: var(--ink); }
+    .proof-list dd { margin: 0; font-size: clamp(17px, 1.5vw, 20px); line-height: 1.6; color: var(--ink-soft); max-width: 60ch; }
+    .proof-list a { font-weight: 600; color: var(--ink); white-space: nowrap; text-decoration: underline; text-decoration-color: var(--gold-deep); text-underline-offset: 4px; }
+    .proof-quotes { display: grid; gap: 32px 48px; margin-top: clamp(36px, 4vw, 56px); }
+    .proof-quotes figure { margin: 0; padding-top: 18px; border-top: 2px solid var(--ink); }
+    .proof-quotes blockquote { margin: 0; }
+    .proof-quotes blockquote p { margin: 0; font-size: clamp(19px, 1.7vw, 23px); font-weight: 500; line-height: 1.45; color: var(--ink); }
+    .proof-quotes figure:first-child blockquote p { font-size: clamp(22px, 2.4vw, 32px); line-height: 1.3; letter-spacing: -.01em; }
+    .proof-quotes figcaption { display: grid; gap: 2px; margin-top: 14px; font-size: 15px; }
+    .proof-quotes figcaption b { color: var(--ink); }
+    .proof-quotes figcaption span { color: var(--ink-soft); }
+    @media (min-width: 860px) {
+      .proof-list > div { grid-template-columns: minmax(0, 3fr) minmax(0, 7fr); align-items: baseline; }
+      .proof-quotes { grid-template-columns: minmax(0, 7fr) minmax(0, 5fr); }
+      .proof-quotes figure:first-child { grid-row: 1 / 3; }
+    }
+  </style>
 </head>
 <body>
   <nav class="nav" aria-label="Main">
@@ -238,6 +260,7 @@
             <ul class="nav-mega__list">
               <li><a href="../#about"><span class="t">About Nelson</span><span class="d">14 years of creative direction</span></a></li>
               <li><a href="../#work"><span class="t">Selected work</span><span class="d">Web, film, photo and apps</span></a></li>
+              <li><a href="../work/"><span class="t">Case studies</span><span class="d">Client projects in detail</span></a></li>
               <li><a href="../workshops/" aria-current="page"><span class="t">Workshops</span><span class="d">AI and creative, for teams</span></a></li>
               <li><a href="../pricing/"><span class="t">Prices</span><span class="d">Every posted price</span></a></li>
               <li><a href="../faqs/"><span class="t">FAQs</span><span class="d">Booking, turnaround, delivery</span></a></li>
@@ -320,6 +343,36 @@
   </section>
 
   <!-- faq -->
+  <!-- proof: who has been in the room. Every line here is checked; add nothing that is not. -->
+  <section class="act act--paper on-paper" id="proof">
+    <div class="wrap">
+      <div class="rule"></div>
+      <div class="act-head reveal">
+        <h2 class="display">Who have I taught?</h2>
+        <span class="slate slate--dim">PROOF · CLASSES I HAVE TAUGHT</span>
+      </div>
+      <dl class="proof-list">
+        <div class="reveal"><dt>College programs</dt><dd>I taught AI to HBCU students with the Atlanta University Center (AUC) Data Science Initiative and Johns Hopkins.</dd></div>
+        <div class="reveal"><dt>Public classes</dt><dd>AI 101 is my free one-hour live class for people using AI for the first time. It ran on October 9, 2026 at Taylormade Academy. <a href="https://academy.taylormadecreative.net/ai101/">See the class page</a></dd></div>
+        <div class="reveal"><dt>Creator workshops</dt><dd>The Content Creator Workshop teaches lighting, sound and camera to creators. Three people who were in the room in August 2026 said this on camera. I also go by Elliott Taylor.</dd></div>
+      </dl>
+      <div class="proof-quotes">
+        <figure class="reveal">
+          <blockquote><p>“It’s just an amazing experience, and then also learning how to handle sound and things like that, that’s super important for us because we do commercials, we do auditions, we are also content creators.”</p></blockquote>
+          <figcaption><b>Paris Eboné</b><span>Model and actor</span></figcaption>
+        </figure>
+        <figure class="reveal reveal-d1">
+          <blockquote><p>“Had an amazing time tonight at the first annual Content Creators Workshop hosted by Elliott Taylor from Taylormade Creative Studios.”</p></blockquote>
+          <figcaption><b>Willie Johnson</b><span>Owner and CEO, J3 by Willie Johnson</span></figcaption>
+        </figure>
+        <figure class="reveal reveal-d2">
+          <blockquote><p>“Two things I took away from this class was sound and lighting in every video.”</p></blockquote>
+          <figcaption><b>Houston Williams</b><span>Content Creator Workshop, August 2026</span></figcaption>
+        </figure>
+      </div>
+    </div>
+  </section>
+
   <section class="act" id="faq">
     <div class="wrap">
       <div class="rule"></div>
@@ -420,6 +473,7 @@
           <h2 class="footer-h">Studio</h2>
           <a href="../#about">About Nelson</a>
           <a href="../#work">Selected work</a>
+          <a href="../work/">Case studies</a>
           <a href="../start/">Start a project</a>
           <a href="../workshops/" aria-current="page">Workshops</a>
           <a href="../store/">Store</a>

@@ -335,6 +335,9 @@ body.hm-pinning .nav.is-hidden { transform: none; }
 @media (min-width: 900px) { .hm-clients__side { flex-direction: column; align-items: flex-start; gap: 4px; } }
 .hm-mq-toggle { min-height: 44px; padding: 0; font-weight: 600; font-size: 13px; color: var(--mute-on-ink); text-decoration: underline; text-underline-offset: 4px; }
 @media (hover: hover) and (pointer: fine) { .hm-mq-toggle:hover { color: var(--paper); } }
+.hm-clients__more { display: inline-flex; align-items: center; gap: 6px; min-height: 44px; margin-left: auto; padding-right: var(--g); font-weight: 600; font-size: 14px; color: var(--paper); white-space: nowrap; text-decoration: underline; text-decoration-color: color-mix(in srgb, var(--gold) 70%, transparent); text-underline-offset: 5px; text-decoration-thickness: 1px; }
+@media (min-width: 900px) { .hm-clients__more { margin-left: 0; padding-right: 0; } }
+@media (hover: hover) and (pointer: fine) { .hm-clients__more:hover { color: var(--gold-hi); } }
 .hm-clients__h {
   padding-left: 0; font-family: var(--body); font-weight: 600; font-size: 13px; letter-spacing: .08em; text-transform: uppercase;
   color: var(--gold); white-space: nowrap;
